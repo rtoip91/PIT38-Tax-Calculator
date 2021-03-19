@@ -4,10 +4,12 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Database;
 using Database.Entities;
 using EtoroExcelReader.Dto;
 using ExcelReader.Interfaces;
+using ExcelReader.MappingProfiles;
 using OfficeOpenXml;
 using OfficeOpenXml.Export.ToDataTable;
 
@@ -55,23 +57,21 @@ namespace ExcelReader
                 ClosedPositionExcelDto closedPosition = closedPositionDtos.First();
                 TransactionReportExcelDto transactionReport = transactionReportDtos.First(a => a.PositionId == closedPosition.PositionId);
 
+                var config = new MapperConfiguration(cfg => {
+                    cfg.AddProfile<ClosedPositionProfile>();
+                    cfg.AddProfile<TransactionReportProfile>();
+                });
 
-                TransactionReportEntity transactionReportEntity = new TransactionReportEntity
-                {
-                    PositionId = transactionReport.PositionId,
-                    Amount = transactionReport.Amount,
-                    Date = transactionReport.Date
-                };
+                var mapper = new Mapper(config);
 
-                ClosedPositionEntity closedPositionEntity = new ClosedPositionEntity
-                {
-                    Amount = closedPosition.Amount,
-                    PositionId = closedPosition.PositionId,
-                    Operation = closedPosition.Operation,
-                    TransactionReports = new List<TransactionReportEntity> {transactionReportEntity}
-                };
+                TransactionReportEntity transactionReportEntity = mapper.Map<TransactionReportEntity>(transactionReport);
+
+
+                ClosedPositionEntity closedPositionEntity = mapper.Map<ClosedPositionEntity>(closedPosition);
+
 
                 await context.AddAsync<ClosedPositionEntity>(closedPositionEntity);
+                await context.AddAsync<TransactionReportEntity>(transactionReportEntity);
 
                 try
                 {
