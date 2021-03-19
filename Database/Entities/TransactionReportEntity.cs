@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace EtoroExcelReader.Entities
+namespace Database.Entities
 {
     [Table("TransactionReports")]
-    class TransactionReportEntity
+    public class TransactionReportEntity
     {
         [Key]
         public int Id { get; set; }

@@ -1,10 +1,9 @@
-﻿using EtoroExcelReader.Dto;
-using EtoroExcelReader.Entities;
+﻿using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace EtoroExcelReader.Database
+namespace Database
 {
-    class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
         public DbSet<ClosedPositionEntity> ClosedPositions { get; set; }
         public DbSet<TransactionReportEntity> TransactionReports { get; set; }

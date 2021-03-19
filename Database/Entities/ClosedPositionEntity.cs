@@ -2,12 +2,11 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
-namespace EtoroExcelReader.Entities
+namespace Database.Entities
 {
     [Table("ClosedPositions")]
-    internal class ClosedPositionEntity
+    public class ClosedPositionEntity
     {
         [Key]
         public int? PositionId { get; set; }

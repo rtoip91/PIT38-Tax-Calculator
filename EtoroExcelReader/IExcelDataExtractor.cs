@@ -1,23 +1,24 @@
-﻿using OfficeOpenXml;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using EtoroExcelReader.Database;
+using Database;
+using Database.Entities;
 using EtoroExcelReader.Dto;
-using EtoroExcelReader.Entities;
+using ExcelReader.Interfaces;
+using OfficeOpenXml;
 using OfficeOpenXml.Export.ToDataTable;
 
-namespace EtoroExcelReader
+namespace ExcelReader
 {
-    public class ExcelReader
+    public class ExcelDataExtractor : IExcelDataExtractor
     {
         private const int ClosedPositions = 1;
         private const int TransactionReports = 2;
         
-        public async Task Run()
+        public async Task<bool> ImportDataFromExcelIntoDbAsync()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
             var filePath = FileInputUtil.GetFileInfo(@"C:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2020 - 31-12-2020.xlsx").FullName;
@@ -43,37 +44,45 @@ namespace EtoroExcelReader
 
                 await Task.WhenAll(extractingTasks);
 
-                await IntoTheDatabaseAsync(closedPositionDtos, transactionReportDtos);
+               return await IntoTheDatabaseAsync(closedPositionDtos, transactionReportDtos);
             }
-
-            Console.WriteLine();
-            Console.WriteLine();
         }
-
 
         private async Task<bool> IntoTheDatabaseAsync(IList<ClosedPositionExcelDto> closedPositionDtos, IList<TransactionReportExcelDto> transactionReportDtos)
         {
             using (var context = new ApplicationDbContext())
             {
-                var closedPosition = closedPositionDtos.First();
-                var transactionReport = transactionReportDtos.First(a => a.PositionId == closedPosition.PositionId);
+                ClosedPositionExcelDto closedPosition = closedPositionDtos.First();
+                TransactionReportExcelDto transactionReport = transactionReportDtos.First(a => a.PositionId == closedPosition.PositionId);
 
 
-                TransactionReportEntity transactionReportEntity = new TransactionReportEntity();
-                transactionReportEntity.PositionId = transactionReport.PositionId;
-                transactionReportEntity.Amount = transactionReport.Amount;
-                transactionReportEntity.Date = transactionReport.Date;
-                
-                ClosedPositionEntity closedPositionEntity = new ClosedPositionEntity();
+                TransactionReportEntity transactionReportEntity = new TransactionReportEntity
+                {
+                    PositionId = transactionReport.PositionId,
+                    Amount = transactionReport.Amount,
+                    Date = transactionReport.Date
+                };
 
-                closedPositionEntity.Amount = closedPosition.Amount;
-                closedPositionEntity.PositionId = closedPosition.PositionId;
-                closedPositionEntity.Operation = closedPosition.Operation;
-                closedPositionEntity.TransactionReports = new List<TransactionReportEntity> {transactionReportEntity};
+                ClosedPositionEntity closedPositionEntity = new ClosedPositionEntity
+                {
+                    Amount = closedPosition.Amount,
+                    PositionId = closedPosition.PositionId,
+                    Operation = closedPosition.Operation,
+                    TransactionReports = new List<TransactionReportEntity> {transactionReportEntity}
+                };
 
                 await context.AddAsync<ClosedPositionEntity>(closedPositionEntity);
 
-                await context.SaveChangesAsync();
+                try
+                {
+                    await context.SaveChangesAsync();
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                }
+               
 
             }
 

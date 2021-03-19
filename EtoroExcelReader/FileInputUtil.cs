@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
-namespace EtoroExcelReader
+namespace ExcelReader
 {
-    public class FileInputUtil
+    internal static class FileInputUtil
     {
 
         /// <summary>
