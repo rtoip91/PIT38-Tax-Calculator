@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxEtoro", "TaxEtoro.csproj", "{9E35CA3A-3680-49FD-9CA7-ED9452545301}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EtoroExcelReader", "..\EtoroExcelReader\EtoroExcelReader.csproj", "{D2CC48F6-02A1-4649-9609-33A5AA5CD918}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelReader", "..\EtoroExcelReader\ExcelReader.csproj", "{D2CC48F6-02A1-4649-9609-33A5AA5CD918}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

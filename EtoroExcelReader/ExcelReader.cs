@@ -55,20 +55,20 @@ namespace EtoroExcelReader
         {
             using (var context = new ApplicationDbContext())
             {
-                var t = closedPositionDtos.First();
-                var z = transactionReportDtos.First(a => a.PositionId == t.PositionId);
+                var closedPosition = closedPositionDtos.First();
+                var transactionReport = transactionReportDtos.First(a => a.PositionId == closedPosition.PositionId);
 
 
                 TransactionReportEntity transactionReportEntity = new TransactionReportEntity();
-                transactionReportEntity.PositionId = z.PositionId;
-                transactionReportEntity.Amount = z.Amount;
-                transactionReportEntity.Date = z.Date;
+                transactionReportEntity.PositionId = transactionReport.PositionId;
+                transactionReportEntity.Amount = transactionReport.Amount;
+                transactionReportEntity.Date = transactionReport.Date;
                 
                 ClosedPositionEntity closedPositionEntity = new ClosedPositionEntity();
 
-                closedPositionEntity.Amount = t.Amount;
-                closedPositionEntity.PositionId = t.PositionId;
-                closedPositionEntity.Operation = t.Operation;
+                closedPositionEntity.Amount = closedPosition.Amount;
+                closedPositionEntity.PositionId = closedPosition.PositionId;
+                closedPositionEntity.Operation = closedPosition.Operation;
                 closedPositionEntity.TransactionReports = new List<TransactionReportEntity> {transactionReportEntity};
 
                 await context.AddAsync<ClosedPositionEntity>(closedPositionEntity);
