@@ -20,8 +20,8 @@ namespace EtoroExcelReader.Dto
             int.TryParse(row[4].ToString(), out int outPositonId);
             PositionId = outPositonId;
 
-            Amount = decimal.Parse(row[5].ToString());
-
+            Amount = decimal.Parse(row[5].ToString());                  
+            
             RealizedEquityChange = decimal.Parse(row[6].ToString());
 
             RealizedEquity = decimal.Parse(row[7].ToString());

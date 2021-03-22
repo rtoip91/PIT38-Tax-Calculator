@@ -11,12 +11,14 @@ namespace Database
 
         public ApplicationDbContext()
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
         {
+            Database.EnsureDeleted();
             Database.EnsureCreated();
         }
             

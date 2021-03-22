@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Database;
@@ -53,31 +54,39 @@ namespace ExcelReader
         {
             using (var context = new ApplicationDbContext())
             {
-               
                 var config = new MapperConfiguration(cfg => {
                     cfg.AddProfile<ClosedPositionProfile>();
                     cfg.AddProfile<TransactionReportProfile>();
                 });
 
                 var mapper = new Mapper(config);
-
                 IList<TransactionReportEntity> transactionReportEntities = new List<TransactionReportEntity>();
                 IList<ClosedPositionEntity> closedPositionEntities = new List<ClosedPositionEntity>();
 
-                foreach(TransactionReportExcelDto transactionReport in transactionReportDtos)
-                {
-                    transactionReportEntities.Add(mapper.Map<TransactionReportEntity>(transactionReport));
-                }
-
                 foreach (ClosedPositionExcelDto closedPosition in closedPositionDtos)
                 {
-                    closedPositionEntities.Add(mapper.Map<ClosedPositionEntity>(closedPosition));
+                    ClosedPositionEntity closedPositionEntity = mapper.Map<ClosedPositionEntity>(closedPosition);
+                    closedPositionEntity.TransactionReports = new List<TransactionReportEntity>();
+                    
+                    foreach (TransactionReportExcelDto transactionReport in transactionReportDtos.Where(t=>t.PositionId == closedPosition.PositionId).ToList())
+                    {
+                        closedPositionEntity.TransactionReports.Add(mapper.Map<TransactionReportEntity>(transactionReport));
+                        transactionReportDtos.Remove(transactionReport);
+                    }
+
+                    closedPositionEntities.Add(closedPositionEntity);
                 }
 
+                foreach (TransactionReportExcelDto transactionReport in transactionReportDtos)
+                {
+                    TransactionReportEntity transactionReportEntity = mapper.Map<TransactionReportEntity>(transactionReport);
+                    transactionReportEntity.PositionId = null;
+                    transactionReportEntities.Add(transactionReportEntity);
+                }
 
-                //await context.AddRangeAsync(transactionReportEntities);
                 await context.AddRangeAsync(closedPositionEntities);
-
+                await context.AddRangeAsync(transactionReportEntities);
+                
                 try
                 {
                     await context.SaveChangesAsync();
@@ -87,7 +96,6 @@ namespace ExcelReader
                     Console.WriteLine(e);
                     return false;
                 }
-               
 
             }
 

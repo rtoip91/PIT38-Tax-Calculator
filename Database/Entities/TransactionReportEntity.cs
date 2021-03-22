@@ -18,8 +18,7 @@ namespace Database.Entities
 
         public string Details { get; set; }
 
-        [Required]
-        public int PositionId { get; set; }
+        public int? PositionId { get; set; }
         
         [ForeignKey("PositionId")]
         public ClosedPositionEntity ClosedPosition { get; set; }
