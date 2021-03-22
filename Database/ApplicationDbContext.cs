@@ -11,20 +11,20 @@ namespace Database
 
         public ApplicationDbContext()
         {
-            Database.EnsureDeleted();
-            Database.EnsureCreated();
+           // Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
         {
-            Database.EnsureDeleted();
-            Database.EnsureCreated();
+            //Database.EnsureDeleted();
+            //Database.EnsureCreated();
         }
             
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("DataSource=EtoroTaxCalculatorDB.db;");
+            optionsBuilder.UseSqlite("DataSource=TaxCalculator.db;");
         }
     }
 }

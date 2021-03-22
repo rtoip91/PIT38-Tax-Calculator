@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Database.Migrations
 {
-    public partial class InitialMigration : Migration
+    public partial class FirstMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -61,7 +61,7 @@ namespace Database.Migrations
                     AccountBalance = table.Column<decimal>(type: "TEXT", nullable: false),
                     Type = table.Column<string>(type: "TEXT", nullable: true),
                     Details = table.Column<string>(type: "TEXT", nullable: true),
-                    PositionId = table.Column<int>(type: "INTEGER", nullable: false),
+                    PositionId = table.Column<int>(type: "INTEGER", nullable: true),
                     Amount = table.Column<decimal>(type: "TEXT", nullable: false),
                     RealizedEquityChange = table.Column<decimal>(type: "TEXT", nullable: false),
                     RealizedEquity = table.Column<decimal>(type: "TEXT", nullable: false),
@@ -75,7 +75,7 @@ namespace Database.Migrations
                         column: x => x.PositionId,
                         principalTable: "ClosedPositions",
                         principalColumn: "PositionId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(
