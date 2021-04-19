@@ -11,15 +11,14 @@ namespace Database
 
         public ApplicationDbContext()
         {
-           // Database.EnsureDeleted();
-            //Database.EnsureCreated();
+            Database.Migrate();
+
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
         {
-            //Database.EnsureDeleted();
-            //Database.EnsureCreated();
+            Database.Migrate();
         }
             
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Globalization;
 
 namespace EtoroExcelReader.Dto
 {
@@ -8,33 +9,33 @@ namespace EtoroExcelReader.Dto
     {
         public ClosedPositionExcelDto(DataRow row)
         {
-            PositionId = int.Parse(row[0].ToString());
+            PositionId = int.Parse(row[0].ToString(), CultureInfo.InvariantCulture);
 
             Operation = row[1].ToString();
 
             CopiedInvestor = row[2].ToString();
 
-            Amount = decimal.Parse(row[3].ToString());
+            Amount = decimal.Parse(row[3].ToString(), CultureInfo.InvariantCulture);
 
-            Units = decimal.Parse(row[4].ToString());
+            Units = decimal.Parse(row[4].ToString(), CultureInfo.InvariantCulture);
 
-            OpeningRate = decimal.Parse(row[5].ToString());
+            OpeningRate = decimal.Parse(row[5].ToString(), CultureInfo.InvariantCulture);
 
-            ClosingRate = decimal.Parse(row[6].ToString());
+            ClosingRate = decimal.Parse(row[6].ToString(), CultureInfo.InvariantCulture);
 
-            Spread = decimal.Parse(row[7].ToString());
+            Spread = decimal.Parse(row[7].ToString(), CultureInfo.InvariantCulture);
 
-            Profit = decimal.Parse(row[8].ToString());
+            Profit = decimal.Parse(row[8].ToString(), CultureInfo.InvariantCulture);
 
             OpeningDate = DateTime.Parse(row[9].ToString());
 
             ClosingDate = DateTime.Parse(row[10].ToString());
 
-            TakeProfitRate = decimal.Parse(row[11].ToString());
+            TakeProfitRate = decimal.Parse(row[11].ToString(), CultureInfo.InvariantCulture);
 
-            StopLossRate = decimal.Parse(row[12].ToString());
+            StopLossRate = decimal.Parse(row[12].ToString(), CultureInfo.InvariantCulture);
 
-            FeesAndDividends = decimal.Parse(row[13].ToString());
+            FeesAndDividends = decimal.Parse(row[13].ToString(), CultureInfo.InvariantCulture);
 
             IsReal = row[14].ToString();
 
