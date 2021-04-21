@@ -24,7 +24,7 @@ namespace ExcelReader
         public async Task<bool> ImportDataFromExcelIntoDbAsync()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var filePath = FileInputUtil.GetFileInfo(@"D:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2020 - 31-12-2020.xlsx").FullName;
+            var filePath = FileInputUtil.GetFileInfo(@"C:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2020 - 31-12-2020.xlsx").FullName;
             FileInfo fileInfo = new FileInfo(filePath);
 
             IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();
@@ -83,11 +83,7 @@ namespace ExcelReader
                     TransactionReportEntity transactionReportEntity = mapper.Map<TransactionReportEntity>(transactionReport);
                     transactionReportEntity.PositionId = null;
                     transactionReportEntities.Add(transactionReportEntity);
-                }
-
-                await context.Database.BeginTransactionAsync();
-                await context.Database.ExecuteSqlRawAsync("Delete from TransactionReports");
-                await context.Database.ExecuteSqlRawAsync("Delete from ClosedPositions");
+                }              
               
                 await context.AddRangeAsync(closedPositionEntities);
                 await context.AddRangeAsync(transactionReportEntities);

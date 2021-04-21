@@ -7,35 +7,39 @@ namespace EtoroExcelReader.Dto
 {
     public class ClosedPositionExcelDto
     {
+         
+
         public ClosedPositionExcelDto(DataRow row)
         {
-            PositionId = int.Parse(row[0].ToString(), CultureInfo.InvariantCulture);
+            CultureInfo provider = new CultureInfo("pl-PL");
+
+            PositionId = int.Parse(row[0].ToString(), provider);
 
             Operation = row[1].ToString();
 
             CopiedInvestor = row[2].ToString();
 
-            Amount = decimal.Parse(row[3].ToString(), CultureInfo.InvariantCulture);
+            Amount = decimal.Parse(row[3].ToString(), provider);
 
-            Units = decimal.Parse(row[4].ToString(), CultureInfo.InvariantCulture);
+            Units = decimal.Parse(row[4].ToString(), provider);
 
-            OpeningRate = decimal.Parse(row[5].ToString(), CultureInfo.InvariantCulture);
+            OpeningRate = decimal.Parse(row[5].ToString(), provider);
 
-            ClosingRate = decimal.Parse(row[6].ToString(), CultureInfo.InvariantCulture);
+            ClosingRate = decimal.Parse(row[6].ToString(), provider);
 
-            Spread = decimal.Parse(row[7].ToString(), CultureInfo.InvariantCulture);
+            Spread = decimal.Parse(row[7].ToString(), provider);
 
-            Profit = decimal.Parse(row[8].ToString(), CultureInfo.InvariantCulture);
+            Profit = decimal.Parse(row[8].ToString(), provider);
 
             OpeningDate = DateTime.Parse(row[9].ToString());
 
             ClosingDate = DateTime.Parse(row[10].ToString());
 
-            TakeProfitRate = decimal.Parse(row[11].ToString(), CultureInfo.InvariantCulture);
+            TakeProfitRate = decimal.Parse(row[11].ToString(), provider);
 
-            StopLossRate = decimal.Parse(row[12].ToString(), CultureInfo.InvariantCulture);
+            StopLossRate = decimal.Parse(row[12].ToString(), provider);
 
-            FeesAndDividends = decimal.Parse(row[13].ToString(), CultureInfo.InvariantCulture);
+            FeesAndDividends = decimal.Parse(row[13].ToString(), provider);
 
             IsReal = row[14].ToString();
 
