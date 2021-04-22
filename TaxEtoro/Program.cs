@@ -3,6 +3,7 @@ using Autofac;
 using ExcelReader;
 using ExcelReader.Interfaces;
 using TaxEtoro.BussinessLogic;
+using TaxEtoro.Interfaces;
 
 namespace TaxEtoro
 {
@@ -31,6 +32,7 @@ namespace TaxEtoro
             builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();
             builder.RegisterType<CfdCalculator>().As<ICfdCalculator>();
             builder.RegisterType<Calculator>().As<ICalculator>();
+            builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();
             Container = builder.Build();
         }
     }
