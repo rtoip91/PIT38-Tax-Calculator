@@ -25,7 +25,23 @@ namespace EtoroExcelReader.Dto
         public static Dictionary<string, string> CryptoCurrenciesDictionary = new Dictionary<string, string>
         {
             {"BTC", "Bitcoin" },
-            {"Ethereum","eth" }
+            {"ETHEREUM","Ethereum" },
+            {"BCH","Bitcoin Cash" },
+            {"XRP", "Ripple" },
+            {"DASH", "Dash" },
+            {"LTC", "Litecoin" },
+            {"ETC", "Ethereum CLassic" },
+            {"ADA", "Cardano" },
+            {"MIOTA", "IOTA" },
+            {"XLM", "Stellar" },
+            {"EOS", "EOS" },
+            {"NEO", "NEO" },
+            {"TRX", "TRON" },
+            {"ZEC", "ZCASH" },
+            {"BNB", "Binance Coin" },
+            {"XTZ", "Tezos" },
+            {"Link", "ChainLink" },
+            {"UNI", "Uniswap" }
         };
     }
 }

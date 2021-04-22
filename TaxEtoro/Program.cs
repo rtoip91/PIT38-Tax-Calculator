@@ -2,6 +2,8 @@
 using Autofac;
 using ExcelReader;
 using ExcelReader.Interfaces;
+using TaxEtoro.BussinessLogic;
+using TaxEtoro.Interfaces;
 
 namespace TaxEtoro
 {
@@ -18,13 +20,19 @@ namespace TaxEtoro
         {
             await using ILifetimeScope scope = Container.BeginLifetimeScope();
             IExcelDataExtractor reader = scope.Resolve<IExcelDataExtractor>();
+            ICalculator calculator = scope.Resolve<ICalculator>();
+
             await reader.ImportDataFromExcelIntoDbAsync();
+            await calculator.Calculate();
         }
 
         private static void RegisterContainer()
         {
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();
+            builder.RegisterType<CfdCalculator>().As<ICfdCalculator>();
+            builder.RegisterType<Calculator>().As<ICalculator>();
+            builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();
             Container = builder.Build();
         }
     }

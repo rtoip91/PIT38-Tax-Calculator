@@ -8,18 +8,18 @@ namespace Database
         public DbSet<ClosedPositionEntity> ClosedPositions { get; set; }
         public DbSet<TransactionReportEntity> TransactionReports { get; set; }
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
+        public DbSet<CfdEntity> CfdCalculations { get; set; }
 
         public ApplicationDbContext()
         {
-           // Database.EnsureDeleted();
-            //Database.EnsureCreated();
+            Database.Migrate();
+
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
         {
-            //Database.EnsureDeleted();
-            //Database.EnsureCreated();
+            Database.Migrate();
         }
             
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

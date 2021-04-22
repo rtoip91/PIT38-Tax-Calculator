@@ -10,6 +10,7 @@ using Database.Entities;
 using EtoroExcelReader.Dto;
 using ExcelReader.Interfaces;
 using ExcelReader.MappingProfiles;
+using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using OfficeOpenXml.Export.ToDataTable;
 
@@ -82,8 +83,8 @@ namespace ExcelReader
                     TransactionReportEntity transactionReportEntity = mapper.Map<TransactionReportEntity>(transactionReport);
                     transactionReportEntity.PositionId = null;
                     transactionReportEntities.Add(transactionReportEntity);
-                }
-
+                }              
+              
                 await context.AddRangeAsync(closedPositionEntities);
                 await context.AddRangeAsync(transactionReportEntities);
                 

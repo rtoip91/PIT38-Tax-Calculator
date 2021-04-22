@@ -1,6 +1,6 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Data;
+using System.Globalization;
 
 namespace EtoroExcelReader.Dto
 {
@@ -9,9 +9,11 @@ namespace EtoroExcelReader.Dto
 
         public TransactionReportExcelDto(DataRow row)
         {
+            CultureInfo provider = new CultureInfo("pl-PL");
+
             Date = DateTime.Parse(row[0].ToString());
             
-            AccountBalance = decimal.Parse(row[1].ToString());
+            AccountBalance = decimal.Parse(row[1].ToString(), provider);
 
             Type = row[2].ToString();
 
@@ -20,11 +22,11 @@ namespace EtoroExcelReader.Dto
             int.TryParse(row[4].ToString(), out int outPositonId);
             PositionId = outPositonId;
 
-            Amount = decimal.Parse(row[5].ToString());                  
+            Amount = decimal.Parse(row[5].ToString(), provider);                  
             
-            RealizedEquityChange = decimal.Parse(row[6].ToString());
+            RealizedEquityChange = decimal.Parse(row[6].ToString(), provider);
 
-            RealizedEquity = decimal.Parse(row[7].ToString());
+            RealizedEquity = decimal.Parse(row[7].ToString(), provider);
 
             NWA = int.Parse(row[8].ToString());
         }

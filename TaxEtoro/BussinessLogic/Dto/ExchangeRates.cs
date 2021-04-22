@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 
-namespace EtoroExcelReader.Dto
+namespace TaxEtoro.BussinessLogic.Dto
 {
-    public class ExchangeRates
+    internal class ExchangeRates
     {
         [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }
