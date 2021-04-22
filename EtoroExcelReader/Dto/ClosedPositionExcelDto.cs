@@ -11,7 +11,16 @@ namespace EtoroExcelReader.Dto
 
         public ClosedPositionExcelDto(DataRow row)
         {
-            CultureInfo provider = new CultureInfo("pl-PL");
+            CultureInfo provider;
+            if (row[3].ToString().Contains('.'))
+            {
+                 provider = CultureInfo.InvariantCulture;
+            }
+            else
+            {
+                provider = new CultureInfo("pl-PL");
+            }
+           
 
             PositionId = int.Parse(row[0].ToString(), provider);
 
