@@ -44,7 +44,17 @@ namespace TaxEtoro.BussinessLogic
                     ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
                     cfdEntity.ExchangeRate = exchangeRateEntity.Rate;
-                    cfdEntity.GainExchangedValue = Math.Round(cfdEntity.GainValue * cfdEntity.ExchangeRate, 2);                    
+
+                    decimal exchangedValue = Math.Round(cfdEntity.GainValue * cfdEntity.ExchangeRate, 2);
+
+                    if (exchangedValue > 0)
+                    {
+                        cfdEntity.GainExchangedValue = exchangedValue;
+                    }
+                    else
+                    {
+                        cfdEntity.LossExchangedValue = exchangedValue;
+                    }
 
                     cfdEntities.Add(cfdEntity);                    
 

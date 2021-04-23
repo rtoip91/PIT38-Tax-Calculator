@@ -28,7 +28,8 @@ namespace Database.Entities
 
         public decimal ExchangeRate { get; set; }
 
-        public decimal GainExchangedValue { get; set; }     
+        public decimal GainExchangedValue { get; set; }
 
+        public decimal LossExchangedValue { get; set; }
     }
 }

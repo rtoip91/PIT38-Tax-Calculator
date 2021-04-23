@@ -33,6 +33,7 @@ namespace TaxEtoro
             builder.RegisterType<CfdCalculator>().As<ICfdCalculator>();
             builder.RegisterType<Calculator>().As<ICalculator>();
             builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();
+            builder.RegisterType<CryptoCalculator>().As<ICryptoCalculator>();
             Container = builder.Build();
         }
     }
