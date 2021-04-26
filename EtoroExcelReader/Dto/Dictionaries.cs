@@ -2,7 +2,7 @@
 
 namespace EtoroExcelReader.Dto
 {
-    internal static class Dictionaries
+    public static class Dictionaries
     {
         public static Dictionary<string, string> StockExchangesDictionary = new Dictionary<string, string>
         {

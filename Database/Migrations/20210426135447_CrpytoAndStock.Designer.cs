@@ -3,14 +3,16 @@ using System;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210426135447_CrpytoAndStock")]
+    partial class CrpytoAndStock
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -119,50 +121,6 @@ namespace Database.Migrations
                     b.ToTable("ClosedPositions");
                 });
 
-            modelBuilder.Entity("Database.Entities.CryptoEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("ClosingExchangeRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("ClosingRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CurrencySymbol")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("GainExchangedValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("LossExchangedValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("OpeningExchangeRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("OpeningRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("SellDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Units")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CryptoCalculations");
-                });
-
             modelBuilder.Entity("Database.Entities.ExchangeRateEntity", b =>
                 {
                     b.Property<int>("Id")
@@ -184,50 +142,6 @@ namespace Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ExchangeRates");
-                });
-
-            modelBuilder.Entity("Database.Entities.StockEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("ClosingExchangeRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("ClosingRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("CurrencySymbol")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("GainExchangedValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("LossExchangedValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("OpeningExchangeRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("OpeningRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("SellDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Units")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("StockCalculations");
                 });
 
             modelBuilder.Entity("Database.Entities.TransactionReportEntity", b =>

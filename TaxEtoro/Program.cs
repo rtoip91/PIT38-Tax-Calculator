@@ -24,6 +24,7 @@ namespace TaxEtoro
 
             await reader.ImportDataFromExcelIntoDbAsync();
             await calculator.Calculate();
+
         }
 
         private static void RegisterContainer()
