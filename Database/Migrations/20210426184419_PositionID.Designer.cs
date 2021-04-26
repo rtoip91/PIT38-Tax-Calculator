@@ -3,14 +3,16 @@ using System;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210426184419_PositionID")]
+    partial class PositionID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -131,7 +133,7 @@ namespace Database.Migrations
                     b.Property<decimal>("ClosingExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("ClosingValue")
+                    b.Property<decimal>("ClosingRate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CurrencySymbol")
@@ -149,19 +151,19 @@ namespace Database.Migrations
                     b.Property<decimal>("OpeningExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("OpeningValue")
+                    b.Property<decimal>("OpeningRate")
                         .HasColumnType("TEXT");
 
                     b.Property<long>("PositionId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Profit")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("SellDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Units")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -201,7 +203,7 @@ namespace Database.Migrations
                     b.Property<decimal>("ClosingExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("ClosingValue")
+                    b.Property<decimal>("ClosingRate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CurrencySymbol")
@@ -219,19 +221,19 @@ namespace Database.Migrations
                     b.Property<decimal>("OpeningExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("OpeningValue")
+                    b.Property<decimal>("OpeningRate")
                         .HasColumnType("TEXT");
 
                     b.Property<long>("PositionId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<decimal>("Profit")
-                        .HasColumnType("TEXT");
-
                     b.Property<DateTime>("PurchaseDate")
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("SellDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Units")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

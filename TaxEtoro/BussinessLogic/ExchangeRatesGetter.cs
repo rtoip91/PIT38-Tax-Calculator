@@ -53,8 +53,7 @@ namespace TaxEtoro.BussinessLogic
 
                 exchangeRate = await GetRatesFromApi(currencyCode, date);
                 await context.AddAsync(exchangeRate);
-                await context.SaveChangesAsync();
-                await Task.Delay(500);
+                await context.SaveChangesAsync();              
 
                 return exchangeRate;
             }

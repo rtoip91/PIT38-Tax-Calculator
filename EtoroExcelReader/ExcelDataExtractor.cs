@@ -24,7 +24,7 @@ namespace ExcelReader
         public async Task<bool> ImportDataFromExcelIntoDbAsync()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var filePath = FileInputUtil.GetFileInfo(@"D:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2020 - 31-12-2020.xlsx").FullName;
+            var filePath = FileInputUtil.GetFileInfo(@"C:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2020 - 31-12-2020.xlsx").FullName;
             FileInfo fileInfo = new FileInfo(filePath);
 
             IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();
@@ -91,6 +91,9 @@ namespace ExcelReader
                 try
                 {
                     await context.SaveChangesAsync();
+                    decimal sum = closedPositionEntities.Sum(g => g.Profit ?? 0);
+
+                    Console.WriteLine($"Suma profitów z pliku excel = {sum}");
                 }
                 catch (Exception e)
                 {

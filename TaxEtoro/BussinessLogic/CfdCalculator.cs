@@ -37,7 +37,8 @@ namespace TaxEtoro.BussinessLogic
                         SellDate = cfdClosedPosition.ClosingDate,
                         Units = cfdClosedPosition.Units ?? 0,
                         CurrencySymbol = "USD",
-                        GainValue = cfdClosedPosition.Profit ?? 0
+                        GainValue = cfdClosedPosition.Profit ?? 0,
+                        PositionId = cfdClosedPosition.PositionId ?? 0
                     };
 
 
@@ -78,6 +79,7 @@ namespace TaxEtoro.BussinessLogic
                     Console.WriteLine("CFD:");
                     Console.WriteLine($"Zysk = {totalGain}");
                     Console.WriteLine($"Strata = {totalLoss}");
+                    Console.WriteLine($"Dochód = {totalGain + totalLoss}");
                     Console.WriteLine();
                 }
                 catch (Exception e)

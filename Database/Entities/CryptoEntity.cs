@@ -10,19 +10,21 @@ namespace Database.Entities
         [Key]
         public int Id { get; set; }
 
+        public long PositionId { get; set; }
+
         public string Name { get; set; }
 
         public DateTime PurchaseDate { get; set; }
 
         public DateTime SellDate { get; set; }
 
-        public decimal Units { get; set; }
-
-        public decimal OpeningRate { get; set; }
-
-        public decimal ClosingRate { get; set; }
-
         public string CurrencySymbol { get; set; }
+
+        public decimal Profit { get; set; }
+
+        public decimal OpeningValue { get; set; }
+
+        public decimal ClosingValue { get; set; }
 
         public decimal OpeningExchangeRate { get; set; }
 

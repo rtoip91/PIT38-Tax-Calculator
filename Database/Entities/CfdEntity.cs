@@ -12,6 +12,8 @@ namespace Database.Entities
 
         public string Name { get; set; }
 
+        public long PositionId { get; set; }
+
         public DateTime PurchaseDate { get; set; }
 
         public DateTime SellDate { get; set; }
