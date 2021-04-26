@@ -46,19 +46,16 @@ namespace TaxEtoro.BussinessLogic
             {
                 ExchangeRateEntity exchangeRate = context.ExchangeRates.FirstOrDefault(rate => rate.Code == currencyCode && rate.Date.Date == date.Date);
 
-                if (exchangeRate == null)
+                if (exchangeRate != null)
                 {
-                    exchangeRate = await GetRatesFromApi(currencyCode, date);
-                    await context.AddAsync(exchangeRate);
-                    await context.SaveChangesAsync();
-                    Console.WriteLine($"Pobrano z API dla dnia {exchangeRate.Date} kurs wynosił {exchangeRate.Rate}");
-                    await Task.Delay(1000);                   
+                    return exchangeRate;
                 }
-                else
-                {
-                    Console.WriteLine($"Wczytano z bazy dla dnia {exchangeRate.Date} kurs wynosił {exchangeRate.Rate}");
-                }
-           
+
+                exchangeRate = await GetRatesFromApi(currencyCode, date);
+                await context.AddAsync(exchangeRate);
+                await context.SaveChangesAsync();
+                await Task.Delay(500);
+
                 return exchangeRate;
             }
         }      
@@ -76,7 +73,7 @@ namespace TaxEtoro.BussinessLogic
             }
             catch
             {
-                Console.WriteLine($"Nie udało się pobrać danych z api dla waluty {currencyCode} i daty {date:yyyy-MM-dd}");
+               // Console.WriteLine($"Nie udało się pobrać danych z api dla waluty {currencyCode} i daty {date:yyyy-MM-dd}");
                 throw new Exception("Bank Holiday Exception");
             }
 

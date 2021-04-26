@@ -71,6 +71,14 @@ namespace TaxEtoro.BussinessLogic
                 try
                 {
                     await context.SaveChangesAsync();
+
+                    decimal totalLoss = cfdEntities.Sum(c => c.LossExchangedValue);
+                    decimal totalGain = cfdEntities.Sum(c => c.GainExchangedValue);
+
+                    Console.WriteLine("CFD:");
+                    Console.WriteLine($"Zysk = {totalGain}");
+                    Console.WriteLine($"Strata = {totalLoss}");
+                    Console.WriteLine();
                 }
                 catch (Exception e)
                 {

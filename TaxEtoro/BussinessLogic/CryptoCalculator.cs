@@ -50,9 +50,7 @@ namespace TaxEtoro.BussinessLogic
                         cryptoEntity.ClosingExchangeRate = exchangeRateEntity.Rate;
                         exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.PurchaseDate);
                         cryptoEntity.OpeningExchangeRate = exchangeRateEntity.Rate;
-
-                        cryptoEntity.LossExchangedValue = Math.Round(cryptoEntity.OpeningRate * cryptoEntity.Units * cryptoEntity.OpeningExchangeRate, 2);
-                        
+                        cryptoEntity.LossExchangedValue = Math.Round(cryptoEntity.OpeningRate * cryptoEntity.Units * cryptoEntity.OpeningExchangeRate, 2);                        
                         cryptoEntity.GainExchangedValue = Math.Round(cryptoEntity.ClosingRate * cryptoEntity.Units * cryptoEntity.ClosingExchangeRate, 2);
 
                         cryptoEntities.Add(cryptoEntity);
@@ -72,6 +70,13 @@ namespace TaxEtoro.BussinessLogic
                 try
                 {
                     await context.SaveChangesAsync();
+                    decimal totalLoss = cryptoEntities.Sum(c => c.LossExchangedValue);
+                    decimal totalGain = cryptoEntities.Sum(c => c.GainExchangedValue);
+
+                    Console.WriteLine("Kryptowaluty:");
+                    Console.WriteLine($"Koszt zakupu = {totalLoss}");
+                    Console.WriteLine($"Przychód = {totalGain}");
+                    Console.WriteLine();
                 }
                 catch (Exception e)
                 {
