@@ -36,6 +36,7 @@ namespace TaxEtoro
             builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();
             builder.RegisterType<CryptoCalculator>().As<ICryptoCalculator>();
             builder.RegisterType<StockCalculator>().As<IStockCalculator>();
+            builder.RegisterType<DividendCalculator>().As<IDividendCalculator>();
             Container = builder.Build();
         }
     }

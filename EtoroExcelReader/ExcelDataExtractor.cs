@@ -10,7 +10,6 @@ using Database.Entities;
 using EtoroExcelReader.Dto;
 using ExcelReader.Interfaces;
 using ExcelReader.MappingProfiles;
-using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using OfficeOpenXml.Export.ToDataTable;
 
@@ -24,7 +23,7 @@ namespace ExcelReader
         public async Task<bool> ImportDataFromExcelIntoDbAsync()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var filePath = FileInputUtil.GetFileInfo(@"C:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2020 - 31-12-2020.xlsx").FullName;
+            var filePath = FileInputUtil.GetFileInfo(@"C:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2021 - 24-04-2021.xlsx").FullName;
             FileInfo fileInfo = new FileInfo(filePath);
 
             IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();

@@ -8,20 +8,24 @@ namespace TaxEtoro.BussinessLogic
         private readonly ICfdCalculator _cfdCalculator;
         private readonly ICryptoCalculator _cryptoCalculator;
         private readonly IStockCalculator _stockCalculator;
+        private readonly IDividendCalculator _dividendCalculator;
 
         public Calculator(ICfdCalculator cfdCalculator,
             ICryptoCalculator cryptoCalculator,
-            IStockCalculator stockCalculator)
+            IStockCalculator stockCalculator,
+            IDividendCalculator dividendCalculator)
         {
             _cfdCalculator = cfdCalculator;
             _cryptoCalculator = cryptoCalculator;
             _stockCalculator = stockCalculator;
+            _dividendCalculator = dividendCalculator;
         }
 
         public async Task Calculate()
         {
-            await _cfdCalculator.Calculate();           
+            await _cfdCalculator.Calculate();
             await _cryptoCalculator.Calculate();
+            await _dividendCalculator.CalculateDividend();
             await _stockCalculator.Calculate();
         }
     }
