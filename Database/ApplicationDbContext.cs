@@ -15,15 +15,14 @@ namespace Database
 
 
         public ApplicationDbContext()
-        {
-            Database.Migrate();
-
+        {            
+            Database.EnsureCreated();
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
             : base(options)
-        {
-            Database.Migrate();
+        {            
+            Database.EnsureCreated();
         }
             
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

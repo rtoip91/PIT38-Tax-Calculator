@@ -23,7 +23,7 @@ namespace ExcelReader
         public async Task<bool> ImportDataFromExcelIntoDbAsync()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var filePath = FileInputUtil.GetFileInfo(@"C:\Etoro", "eToroAccountStatement - rtoip91 - 01-01-2021 - 24-04-2021.xlsx").FullName;
+            var filePath = FileInputUtil.GetFileInfo(@"D:\etoro", "etoro-account-statement-1-1-2021-11-10-2021.xlsx").FullName;
             FileInfo fileInfo = new FileInfo(filePath);
 
             IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();

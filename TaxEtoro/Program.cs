@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Autofac;
 using ExcelReader;
 using ExcelReader.Interfaces;
@@ -21,9 +22,23 @@ namespace TaxEtoro
             await using ILifetimeScope scope = Container.BeginLifetimeScope();
             IExcelDataExtractor reader = scope.Resolve<IExcelDataExtractor>();
             ICalculator calculator = scope.Resolve<ICalculator>();
+            IDataCleaner dataCleaner = scope.Resolve<IDataCleaner>();   
 
-            await reader.ImportDataFromExcelIntoDbAsync();
-            await calculator.Calculate();
+            try
+            {
+                await reader.ImportDataFromExcelIntoDbAsync();
+                await calculator.Calculate();
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+            finally
+            {
+                Console.WriteLine("Czyszczenie bazy danych");
+                await dataCleaner.CleanData();
+            }
+            
 
         }
 
@@ -37,6 +52,7 @@ namespace TaxEtoro
             builder.RegisterType<CryptoCalculator>().As<ICryptoCalculator>();
             builder.RegisterType<StockCalculator>().As<IStockCalculator>();
             builder.RegisterType<DividendCalculator>().As<IDividendCalculator>();
+            builder.RegisterType<DataCleaner>().As<IDataCleaner>();
             Container = builder.Build();
         }
     }

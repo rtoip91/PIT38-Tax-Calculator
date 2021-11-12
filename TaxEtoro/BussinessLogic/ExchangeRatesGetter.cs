@@ -61,35 +61,37 @@ namespace TaxEtoro.BussinessLogic
 
         private async Task<ExchangeRateEntity> GetRatesFromApi (string currencyCode, DateTime date)
         {
-            HttpClient client = new HttpClient();
-            string url = $"http://api.nbp.pl/api/exchangerates/rates/a/{currencyCode.ToLower()}/{date:yyyy-MM-dd}/";
-            var resp = await client.GetAsync(url);
-            string result = await resp.Content.ReadAsStringAsync();
-            ExchangeRates exchangeRates = new ExchangeRates();
-            try
+            using (HttpClient client = new HttpClient())
             {
-                exchangeRates = JsonConvert.DeserializeObject<ExchangeRates>(result);
+                string url = $"http://api.nbp.pl/api/exchangerates/rates/a/{currencyCode.ToLower()}/{date:yyyy-MM-dd}/";
+                var resp = await client.GetAsync(url);
+                string result = await resp.Content.ReadAsStringAsync();
+                ExchangeRates exchangeRates = new ExchangeRates();
+                try
+                {
+                    exchangeRates = JsonConvert.DeserializeObject<ExchangeRates>(result);
+                }
+                catch
+                {
+                    // Console.WriteLine($"Nie udało się pobrać danych z api dla waluty {currencyCode} i daty {date:yyyy-MM-dd}");
+                    throw new Exception("Bank Holiday Exception");
+                }
+
+                ExchangeRateEntity entity = new ExchangeRateEntity();
+
+                entity.Code = currencyCode;
+                entity.Currency = exchangeRates.Currency;
+
+                var tempRate = exchangeRates.Rates.FirstOrDefault();
+
+                if (tempRate != null)
+                {
+                    entity.Date = tempRate.Date;
+                    entity.Rate = tempRate.Rate;
+                }
+
+                return entity;
             }
-            catch
-            {
-               // Console.WriteLine($"Nie udało się pobrać danych z api dla waluty {currencyCode} i daty {date:yyyy-MM-dd}");
-                throw new Exception("Bank Holiday Exception");
-            }
-
-            ExchangeRateEntity entity = new ExchangeRateEntity();
-
-            entity.Code = currencyCode;
-            entity.Currency = exchangeRates.Currency;
-
-            var tempRate = exchangeRates.Rates.FirstOrDefault();
-
-            if (tempRate != null)
-            {
-                entity.Date = tempRate.Date;
-                entity.Rate = tempRate.Rate;
-            }
-
-            return entity;
         }
 
         

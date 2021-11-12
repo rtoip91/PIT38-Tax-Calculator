@@ -23,7 +23,7 @@ namespace TaxEtoro.BussinessLogic
         {
             using (var context = new ApplicationDbContext())
             {
-                var cfdClosedPositions = context.ClosedPositions.Where(c => c.IsReal == "CFD").Include(c => c.TransactionReports);
+                var cfdClosedPositions = context.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).Include(c => c.TransactionReports);
                 IList<CfdEntity> cfdEntities = new List<CfdEntity>();
 
                 foreach (var cfdClosedPosition in cfdClosedPositions)

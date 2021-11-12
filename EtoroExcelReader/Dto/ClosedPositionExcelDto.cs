@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExcelReader.ExtensionMethods;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using System.Globalization;
@@ -10,50 +11,38 @@ namespace EtoroExcelReader.Dto
          
 
         public ClosedPositionExcelDto(DataRow row)
-        {
-            CultureInfo provider;
-            if (row[3].ToString().Contains('.'))
-            {
-                 provider = CultureInfo.InvariantCulture;
-            }
-            else
-            {
-                provider = new CultureInfo("pl-PL");
-            }
-           
-
-            PositionId = int.Parse(row[0].ToString(), provider);
+        {            
+            PositionId = row[0].ToInt();
 
             Operation = row[1].ToString();
 
-            CopiedInvestor = row[2].ToString();
+            CopiedInvestor = row[14].ToString();
 
-            Amount = decimal.Parse(row[3].ToString(), provider);
+            Amount =row[2].ToDecimal();         
 
-            Units = decimal.Parse(row[4].ToString(), provider);
+            Units = row[3].ToDecimal();
 
-            OpeningRate = decimal.Parse(row[5].ToString(), provider);
+            OpeningRate = row[9].ToDecimal();
 
-            ClosingRate = decimal.Parse(row[6].ToString(), provider);
+            ClosingRate = row[10].ToDecimal();
 
-            Spread = decimal.Parse(row[7].ToString(), provider);
+            Spread = row[7].ToDecimal();
+             
+            Profit = row[8].ToDecimal();
 
-            Profit = decimal.Parse(row[8].ToString(), provider);
+            OpeningDate = row[4].ToDate();
 
-            OpeningDate = DateTime.Parse(row[9].ToString());
+            ClosingDate = row[5].ToDate();
 
-            ClosingDate = DateTime.Parse(row[10].ToString());
+            TakeProfitRate = row[11].ToDecimal();
 
-            TakeProfitRate = decimal.Parse(row[11].ToString(), provider);
+            StopLossRate = row[12].ToDecimal();
 
-            StopLossRate = decimal.Parse(row[12].ToString(), provider);
+            FeesAndDividends = row[13].ToDecimal();
 
-            FeesAndDividends = decimal.Parse(row[13].ToString(), provider);
+            IsReal = row[15].ToString();
 
-            IsReal = row[14].ToString();
-
-            int.TryParse(row[15].ToString(), out int outLeverage);
-            Leverage = outLeverage;
+            Leverage = row[6].ToInt();
 
             Comments = row[16].ToString();
         }
