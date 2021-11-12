@@ -41,7 +41,20 @@ namespace EtoroExcelReader.Dto
             {"BNB", "Binance Coin" },
             {"XTZ", "Tezos" },
             {"Link", "ChainLink" },
-            {"UNI", "Uniswap" }
+            {"UNI", "Uniswap" },
+            {"AXS", "Axie Infinity"},
+            {"SHIBxM", "Shiba (in millions)"},
+            {"QNT", "Quant"},
+            {"SUSHI", "SushiSwap" },
+            {"CRV", "Curve" },
+            {"1INCH", "1inch" },
+            {"GRT", "The Graph" },
+            {"SOL", "Solana" },
+            {"CHZ", "Chiliz" },
+            {"FLR", "Spark" },
+            {"MATIC", "Polygon" },
+            {"BAT", "Basic Assertion Token" },
+            {"ENJ", "Enjin" }
         };
     }
 }
