@@ -74,10 +74,7 @@ namespace TaxEtoro.BussinessLogic
                     Console.WriteLine($"Koszt zakupu = {totalLoss}");
                     Console.WriteLine($"Przychód = {totalGain}");
                     Console.WriteLine($"Dochód = {totalGain - totalLoss}");
-                    Console.WriteLine();
-
-                    decimal notSelled = await NotSelledCryptos();
-                    Console.WriteLine($"Nie sprzedane krytowaluty = {notSelled}");
+                    Console.WriteLine();                  
                 }
                 catch (Exception e)
                 {
@@ -86,32 +83,6 @@ namespace TaxEtoro.BussinessLogic
 
             }
 
-        }
-
-        private async Task<decimal> NotSelledCryptos()
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                int count = context.TransactionReports.Count();
-
-                Console.WriteLine($"Ilość pozostałych transakcji = {count}");
-                IList<string> cryptoList = Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
-                decimal sum = 0;
-                foreach (var crypto in cryptoList)
-                {
-                    var transReports = context.TransactionReports.Where(c => c.Details.ToLower().Contains($"{crypto.ToLower()}/") && !c.Details.ToLower().Contains("ABNB"));
-                    foreach (var transaction in transReports)
-                    {
-                        ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay("USD", transaction.Date);
-                        decimal value = transaction.Amount * exchangeRateEntity.Rate;                       
-                        sum += value;
-                    }
-
-                }
-
-                return sum;
-            }
-
-        }
+        }       
     }
 }

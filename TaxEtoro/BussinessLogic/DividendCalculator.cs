@@ -34,6 +34,9 @@ namespace TaxEtoro.BussinessLogic
                     originalSum += transaction.Amount;
                 }
 
+                sum = Math.Round(sum, 2, MidpointRounding.AwayFromZero);
+
+                Console.WriteLine();
                 Console.WriteLine("Dywidendy:");
                 Console.WriteLine($"Suma dywidend = {sum}");
                 Console.WriteLine();

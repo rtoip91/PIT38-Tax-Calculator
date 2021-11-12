@@ -31,13 +31,18 @@ namespace TaxEtoro.BussinessLogic
             try
             {
                 entity = await GetRateForDay(currencyCode, newDate);
+                return entity;
             }
-            catch
-            {
+            catch (BankHolidayException)
+            {                
                 entity = await GetRateForPreviousDay(currencyCode, newDate);
+                return entity;
             }
-
-            return entity;
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return null;
+            }
         }
 
         private async Task<ExchangeRateEntity> GetRateForDay(string currencyCode, DateTime date)
@@ -59,7 +64,7 @@ namespace TaxEtoro.BussinessLogic
             }
         }      
 
-        private async Task<ExchangeRateEntity> GetRatesFromApi (string currencyCode, DateTime date)
+        private async Task<ExchangeRateEntity> GetRatesFromApi(string currencyCode, DateTime date)
         {
             using (HttpClient client = new HttpClient())
             {
@@ -73,8 +78,8 @@ namespace TaxEtoro.BussinessLogic
                 }
                 catch
                 {
-                    // Console.WriteLine($"Nie udało się pobrać danych z api dla waluty {currencyCode} i daty {date:yyyy-MM-dd}");
-                    throw new Exception("Bank Holiday Exception");
+                    // There will be no rates when this day is bank holiday
+                    throw new BankHolidayException();
                 }
 
                 ExchangeRateEntity entity = new ExchangeRateEntity();

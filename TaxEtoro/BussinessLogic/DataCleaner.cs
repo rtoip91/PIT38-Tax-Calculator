@@ -9,7 +9,7 @@ namespace TaxEtoro.BussinessLogic
         async Task IDataCleaner.CleanData()
         {
             using (var context = new ApplicationDbContext())
-            {
+            {               
                 var closed = context.ClosedPositions;
                 var transactionReports = context.TransactionReports;
                 var cfdCalculations = context.CfdCalculations;

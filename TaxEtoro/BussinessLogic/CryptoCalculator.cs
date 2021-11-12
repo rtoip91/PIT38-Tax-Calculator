@@ -28,7 +28,7 @@ namespace TaxEtoro.BussinessLogic
 
                 foreach (var crypto in cryptoList)
                 {
-                    var cryptoClosedPositions = context.ClosedPositions.Where(c => c.Operation.ToLower().Contains($" {crypto.ToLower()}"))
+                    var cryptoClosedPositions = context.ClosedPositions.Where(c => c.Operation.ToLower().Contains($" {crypto.ToLower()}") && !c.IsReal.Contains("CFD"))
                         .Include(c => c.TransactionReports);
 
                     foreach (var cryptoClosedPosition in cryptoClosedPositions)
@@ -52,8 +52,8 @@ namespace TaxEtoro.BussinessLogic
                         exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.PurchaseDate);
                         cryptoEntity.OpeningExchangeRate = exchangeRateEntity.Rate;                   
 
-                        cryptoEntity.LossExchangedValue = Math.Round(cryptoEntity.OpeningValue * cryptoEntity.OpeningExchangeRate, 2);                        
-                        cryptoEntity.GainExchangedValue = Math.Round(cryptoEntity.ClosingValue * cryptoEntity.ClosingExchangeRate, 2);
+                        cryptoEntity.LossExchangedValue = Math.Round(cryptoEntity.OpeningValue * cryptoEntity.OpeningExchangeRate, 2, MidpointRounding.AwayFromZero);                        
+                        cryptoEntity.GainExchangedValue = Math.Round(cryptoEntity.ClosingValue * cryptoEntity.ClosingExchangeRate, 2, MidpointRounding.AwayFromZero);
 
                         cryptoEntities.Add(cryptoEntity);
 
@@ -73,16 +73,13 @@ namespace TaxEtoro.BussinessLogic
                 {
                     await context.SaveChangesAsync();
                     decimal totalLoss = cryptoEntities.Sum(c => c.LossExchangedValue);
-                    decimal totalGain = cryptoEntities.Sum(c => c.GainExchangedValue);
-
-                   
+                    decimal totalGain = cryptoEntities.Sum(c => c.GainExchangedValue);                   
 
                     Console.WriteLine("Kryptowaluty:");
                     Console.WriteLine($"Koszt zakupu = {totalLoss}");
                     Console.WriteLine($"Przychód = {totalGain}");
                     Console.WriteLine($"Dochód = {totalGain - totalLoss}");
-                   
-                    Console.WriteLine();
+                    await NotSelledCryptos();
                 }
                 catch (Exception e)
                 {
@@ -91,6 +88,37 @@ namespace TaxEtoro.BussinessLogic
 
             }           
         }
-       
+
+        private async Task<decimal> NotSelledCryptos()
+        {
+            using (var context = new ApplicationDbContext())
+            {
+
+                IList<string> cryptoList = Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
+                decimal sum = 0;
+                foreach (var crypto in cryptoList)
+                {
+                    var transReports = context.TransactionReports.Where(c =>
+                    c.Type.ToLower().Contains("Otwarta pozycja".ToLower())
+                    && c.Details.ToLower().Contains($"{crypto.ToLower()}/")
+                    && !c.Details.ToLower().Contains("ABNB")
+                    && c.ClosedPosition == null);
+
+                    foreach (var transaction in transReports)
+                    {
+                        ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay("USD", transaction.Date);
+                        decimal value = transaction.Amount * exchangeRateEntity.Rate;
+                        sum += value;
+                    }
+
+                }
+
+                sum = Math.Round(sum, 2, MidpointRounding.AwayFromZero);
+                Console.WriteLine($"Niesprzedane kryptowaluty = {sum}");
+                return sum;
+            }
+
         }
+
+    }
     }
