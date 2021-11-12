@@ -38,20 +38,14 @@ namespace TaxEtoro
                 Console.WriteLine("Czyszczenie bazy danych");
                 await dataCleaner.CleanData();
             }
-            
-
         }
 
         private static void RegisterContainer()
         {
             ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();
-            builder.RegisterType<CfdCalculator>().As<ICfdCalculator>();
+            builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();           
             builder.RegisterType<Calculator>().As<ICalculator>();
-            builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();
-            builder.RegisterType<CryptoCalculator>().As<ICryptoCalculator>();
-            builder.RegisterType<StockCalculator>().As<IStockCalculator>();
-            builder.RegisterType<DividendCalculator>().As<IDividendCalculator>();
+            builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();           
             builder.RegisterType<DataCleaner>().As<IDataCleaner>();
             Container = builder.Build();
         }

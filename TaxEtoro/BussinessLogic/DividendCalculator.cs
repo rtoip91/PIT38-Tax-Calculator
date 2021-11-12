@@ -7,7 +7,7 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class DividendCalculator : IDividendCalculator
+    internal class DividendCalculator : ICalculator
     {
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
 
@@ -17,7 +17,7 @@ namespace TaxEtoro.BussinessLogic
         }
 
 
-        public async Task CalculateDividend()
+        public async Task Calculate()
         {
             using (var context = new ApplicationDbContext())
             {

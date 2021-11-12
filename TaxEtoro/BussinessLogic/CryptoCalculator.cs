@@ -10,7 +10,7 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class CryptoCalculator : ICryptoCalculator
+    internal class CryptoCalculator : ICalculator
     {
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
 

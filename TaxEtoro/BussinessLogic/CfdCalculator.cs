@@ -9,7 +9,7 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class CfdCalculator : ICfdCalculator
+    internal class CfdCalculator : ICalculator
     {
 
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
@@ -19,7 +19,7 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesGetter = exchangeRatesGetter;
         }
 
-        public async Task<bool> Calculate()
+        public async Task Calculate()
         {
             using (var context = new ApplicationDbContext())
             {
@@ -84,12 +84,9 @@ namespace TaxEtoro.BussinessLogic
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
-                    return false;
+                    Console.WriteLine(e);                   
                 }
-            }
-
-            return true;
+            }            
         }
     }
 }

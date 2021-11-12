@@ -89,10 +89,7 @@ namespace ExcelReader
                 
                 try
                 {
-                    await context.SaveChangesAsync();
-                    decimal sum = closedPositionEntities.Sum(g => g.Profit ?? 0);
-
-                    Console.WriteLine($"Suma profitów z pliku excel = {sum}");
+                    await context.SaveChangesAsync();                   
                 }
                 catch (Exception e)
                 {

@@ -10,7 +10,7 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    class StockCalculator : IStockCalculator
+    class StockCalculator : ICalculator
     {
 
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
