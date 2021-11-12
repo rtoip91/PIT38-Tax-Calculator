@@ -21,8 +21,8 @@ namespace EtoroExcelReader.Dto
            
             PositionId = row[7].ToInt();
 
-           // Amount = decimal.Parse(row[6].ToString(), provider);                  
-            
+            Amount = row[3].ToDecimal();
+
             RealizedEquityChange = row[4].ToDecimal();
 
             RealizedEquity = row[5].ToDecimal();

@@ -32,15 +32,15 @@ namespace TaxEtoro.BussinessLogic
                     StockEntity stockEntity = new StockEntity
                     {
                         Name = stockClosedPosition.Operation,
-                        PurchaseDate = stockClosedPosition.OpeningDate,
-                        OpeningValue = stockClosedPosition.Amount ?? 0,
+                        PurchaseDate = stockClosedPosition.OpeningDate,                       
                         SellDate = stockClosedPosition.ClosingDate,
                         CurrencySymbol = "USD",
-                        PositionId = stockClosedPosition.PositionId ?? 0,
-                        Profit = stockClosedPosition.Profit ?? 0
+                        PositionId = stockClosedPosition.PositionId ?? 0                        
                     };
-
-                    stockEntity.ClosingValue = stockEntity.OpeningValue + stockEntity.Profit;
+                    stockEntity.OpeningValue = stockClosedPosition.OpeningRate * stockClosedPosition.Units ?? 0;
+                    stockEntity.ClosingValue = stockClosedPosition.ClosingRate * stockClosedPosition.Units ?? 0;
+                    stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;
+                    
 
                     ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
                     stockEntity.ClosingExchangeRate = exchangeRateEntity.Rate;
@@ -92,6 +92,9 @@ namespace TaxEtoro.BussinessLogic
         {
             using (var context = new ApplicationDbContext())
             {
+                int count = context.TransactionReports.Count();
+
+                Console.WriteLine($"Ilość pozostałych transakcji = {count}");
                 IList<string> cryptoList = Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
                 decimal sum = 0;
                 foreach (var crypto in cryptoList)

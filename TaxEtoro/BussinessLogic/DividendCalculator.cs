@@ -16,14 +16,14 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesGetter = exchangeRatesGetter;
         }
 
-
         public async Task Calculate()
         {
             using (var context = new ApplicationDbContext())
             {
                 decimal sum = 0;
                 decimal originalSum = 0;
-                var transReports = context.TransactionReports.Where(c => c.Details.ToLower().Contains("Payment caused by dividend".ToLower()));
+                var transReports = context.TransactionReports.Where(c => c.Details.ToLower().Contains("Payment caused by dividend".ToLower()) 
+                                                                    || c.Details.ToLower().Contains("Płatność w wyniku dywidendy".ToLower()));
                 int temp = transReports.Count();
 
                 foreach (var transaction in transReports)
@@ -38,7 +38,6 @@ namespace TaxEtoro.BussinessLogic
                 Console.WriteLine($"Suma dywidend = {sum}");
                 Console.WriteLine();
             }
-
         }
     }
 }
