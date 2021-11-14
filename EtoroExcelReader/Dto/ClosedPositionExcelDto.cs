@@ -8,8 +8,6 @@ namespace EtoroExcelReader.Dto
 {
     public class ClosedPositionExcelDto
     {
-         
-
         public ClosedPositionExcelDto(DataRow row)
         {            
             PositionId = row[0].ToInt();

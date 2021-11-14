@@ -3,10 +3,9 @@ using System.Globalization;
 
 namespace ExcelReader.ExtensionMethods
 {
-    public static class DataRowExtensions
-
+    internal static class DataRowExtensions
     {
-        public static decimal ToDecimal(this object item)
+        internal static decimal ToDecimal(this object item)
         {
             string value = item.ToString();
             if (string.IsNullOrWhiteSpace(value))
@@ -17,7 +16,7 @@ namespace ExcelReader.ExtensionMethods
             return decimal.Parse(value, ChooseProvider(value));
         }
 
-        public static int ToInt(this object item)
+        internal static int ToInt(this object item)
         {
             string value = item.ToString();
             if(string.IsNullOrWhiteSpace(value))
@@ -28,7 +27,7 @@ namespace ExcelReader.ExtensionMethods
             return int.Parse(value, ChooseProvider(value));
         }
 
-        public static DateTime ToDate(this object item)
+        internal static DateTime ToDate(this object item)
         {
             string value = item.ToString();
             return DateTime.Parse(value);
