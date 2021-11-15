@@ -1,4 +1,5 @@
-﻿using ExcelReader.ExtensionMethods;
+﻿using ExcelReader.Dictionatries;
+using ExcelReader.ExtensionMethods;
 using System;
 using System.Data;
 using System.Globalization;
@@ -9,25 +10,24 @@ namespace EtoroExcelReader.Dto
     {
 
         public TransactionReportExcelDto(DataRow row)
-        {
-           
-            Date = DateTime.Parse(row[0].ToString());
+        {           
+            Date = DateTime.Parse(row[TransactionReportsColumns.Date].ToString());
             
-            AccountBalance = row[6].ToDecimal();
+            AccountBalance = row[TransactionReportsColumns.AccountBalance].ToDecimal();
 
-            Type = row[1].ToString();
+            Type = row[TransactionReportsColumns.Type].ToString();
 
-            Details = row[2].ToString();
+            Details = row[TransactionReportsColumns.Details].ToString();
            
-            PositionId = row[7].ToInt();
+            PositionId = row[TransactionReportsColumns.PositionId].ToInt();
 
-            Amount = row[3].ToDecimal();
+            Amount = row[TransactionReportsColumns.Amount].ToDecimal();
 
-            RealizedEquityChange = row[4].ToDecimal();
+            RealizedEquityChange = row[TransactionReportsColumns.RealizedEquityChange].ToDecimal();
 
-            RealizedEquity = row[5].ToDecimal();
+            RealizedEquity = row[TransactionReportsColumns.RealizedEquity].ToDecimal();
 
-            NWA = row[8].ToInt();
+            NWA = row[TransactionReportsColumns.NWA].ToInt();
         }
         
         public DateTime Date { get;}

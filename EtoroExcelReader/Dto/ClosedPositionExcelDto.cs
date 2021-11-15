@@ -1,4 +1,5 @@
-﻿using ExcelReader.ExtensionMethods;
+﻿using ExcelReader.Dictionatries;
+using ExcelReader.ExtensionMethods;
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
@@ -10,39 +11,39 @@ namespace EtoroExcelReader.Dto
     {
         public ClosedPositionExcelDto(DataRow row)
         {            
-            PositionId = row[0].ToInt();
+            PositionId = row[ClosedPositionsColumns.PositionId].ToInt();
 
-            Operation = row[1].ToString();
+            Operation = row[ClosedPositionsColumns.Operation].ToString();
 
-            CopiedInvestor = row[14].ToString();
+            CopiedInvestor = row[ClosedPositionsColumns.CopiedInvestor].ToString();
 
-            Amount =row[2].ToDecimal();         
+            Amount =row[ClosedPositionsColumns.Amount].ToDecimal();         
 
-            Units = row[3].ToDecimal();
+            Units = row[ClosedPositionsColumns.Units].ToDecimal();
 
-            OpeningRate = row[9].ToDecimal();
+            OpeningRate = row[ClosedPositionsColumns.OpeningRate].ToDecimal();
 
-            ClosingRate = row[10].ToDecimal();
+            ClosingRate = row[ClosedPositionsColumns.ClosingRate].ToDecimal();
 
-            Spread = row[7].ToDecimal();
+            Spread = row[ClosedPositionsColumns.Spread].ToDecimal();
              
-            Profit = row[8].ToDecimal();
+            Profit = row[ClosedPositionsColumns.Profit].ToDecimal();
 
-            OpeningDate = row[4].ToDate();
+            OpeningDate = row[ClosedPositionsColumns.OpeningDate].ToDate();
 
-            ClosingDate = row[5].ToDate();
+            ClosingDate = row[ClosedPositionsColumns.ClosingDate].ToDate();
 
-            TakeProfitRate = row[11].ToDecimal();
+            TakeProfitRate = row[ClosedPositionsColumns.TakeProfitRate].ToDecimal();
 
-            StopLossRate = row[12].ToDecimal();
+            StopLossRate = row[ClosedPositionsColumns.StopLossRate].ToDecimal();
 
-            FeesAndDividends = row[13].ToDecimal();
+            FeesAndDividends = row[ClosedPositionsColumns.FeesAndDividends].ToDecimal();
 
-            IsReal = row[15].ToString();
+            IsReal = row[ClosedPositionsColumns.IsReal].ToString();
 
-            Leverage = row[6].ToInt();
+            Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
 
-            Comments = row[16].ToString();
+            Comments = row[ClosedPositionsColumns.Comments].ToString();
         }
 
         public int? PositionId { get; }

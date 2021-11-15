@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Database;
 using Database.Entities;
-using EtoroExcelReader.Dto;
+using EtoroExcelReader.Dictionaries;
 using Microsoft.EntityFrameworkCore;
 using TaxEtoro.Interfaces;
 
@@ -85,7 +85,6 @@ namespace TaxEtoro.BussinessLogic
                 {
                     Console.WriteLine(e);
                 }
-
             }           
         }
 
@@ -100,8 +99,7 @@ namespace TaxEtoro.BussinessLogic
                 {
                     var transReports = context.TransactionReports.Where(c =>
                     c.Type.ToLower().Contains("Otwarta pozycja".ToLower())
-                    && c.Details.ToLower().Contains($"{crypto.ToLower()}/")
-                    && !c.Details.ToLower().Contains("ABNB")
+                    && c.Details.ToLower().Contains($"{crypto.ToLower()}/")                   
                     && c.ClosedPosition == null);
 
                     foreach (var transaction in transReports)

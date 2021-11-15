@@ -1,9 +1,10 @@
 ﻿using System.Collections.Generic;
 
-namespace EtoroExcelReader.Dto
+namespace EtoroExcelReader.Dictionaries
 {
     public static class Dictionaries
     {
+
         public static Dictionary<string, string> StockExchangesDictionary = new Dictionary<string, string>
         {
             {"ZU","Szwajcaria"},
