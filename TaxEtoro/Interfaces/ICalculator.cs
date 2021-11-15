@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace TaxEtoro.Interfaces
 {
-    interface ICalculator
+    interface ICalculator <in A> 
     {
-        Task Calculate();
+        Task<T> Calculate<T>() where T : A;
     }
 }

@@ -6,11 +6,12 @@ using Database;
 using Database.Entities;
 using EtoroExcelReader.Dictionaries;
 using Microsoft.EntityFrameworkCore;
+using TaxEtoro.BussinessLogic.Dto;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class CryptoCalculator : ICalculator
+    internal class CryptoCalculator : ICalculator<CryptoDto>
     {
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
 
@@ -19,7 +20,7 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesGetter = exchangeRatesGetter;
         }
 
-        public async Task Calculate()
+        public async Task<T> Calculate<T>() where T : CryptoDto
         {
             using (var context = new ApplicationDbContext())
             {
@@ -73,18 +74,29 @@ namespace TaxEtoro.BussinessLogic
                 {
                     await context.SaveChangesAsync();
                     decimal totalLoss = cryptoEntities.Sum(c => c.LossExchangedValue);
-                    decimal totalGain = cryptoEntities.Sum(c => c.GainExchangedValue);                   
+                    decimal totalGain = cryptoEntities.Sum(c => c.GainExchangedValue);
+
+                    var cryptoDto = new CryptoDto
+                    {
+                        Cost = totalLoss,
+                        Revenue = totalGain,
+                        Income = totalGain - totalLoss
+                    };
+
+                    return (T)cryptoDto;
 
                     Console.WriteLine("Kryptowaluty:");
-                    Console.WriteLine($"Koszt zakupu = {totalLoss}");
-                    Console.WriteLine($"Przychód = {totalGain}");
-                    Console.WriteLine($"Dochód = {totalGain - totalLoss}");
+                    Console.WriteLine($"Koszt zakupu = {totalLoss}PLN");
+                    Console.WriteLine($"Przychód = {totalGain}PLN");
+                    Console.WriteLine($"Dochód = {totalGain - totalLoss}PLN");
                     await NotSelledCryptos();
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    return null;
                 }
+
             }           
         }
 
