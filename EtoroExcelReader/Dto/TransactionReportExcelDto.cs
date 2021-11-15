@@ -2,7 +2,6 @@
 using ExcelReader.ExtensionMethods;
 using System;
 using System.Data;
-using System.Globalization;
 
 namespace EtoroExcelReader.Dto
 {
