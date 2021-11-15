@@ -17,13 +17,16 @@ namespace EtoroExcelReader.Dto
 
             CopiedInvestor = row[ClosedPositionsColumns.CopiedInvestor].ToString();
 
-            Amount =row[ClosedPositionsColumns.Amount].ToDecimal();         
-
-            Units = row[ClosedPositionsColumns.Units].ToDecimal();
+            Amount =row[ClosedPositionsColumns.Amount].ToDecimal();             
 
             OpeningRate = row[ClosedPositionsColumns.OpeningRate].ToDecimal();
 
             ClosingRate = row[ClosedPositionsColumns.ClosingRate].ToDecimal();
+
+            Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
+
+            //Units = row[ClosedPositionsColumns.Units].ToDecimal();
+            Units = Math.Round((decimal)(Amount * Leverage / OpeningRate), 6);
 
             Spread = row[ClosedPositionsColumns.Spread].ToDecimal();
              

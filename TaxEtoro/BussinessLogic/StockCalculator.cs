@@ -1,16 +1,16 @@
 ﻿using Database;
 using Database.Entities;
-using EtoroExcelReader.Dto;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TaxEtoro.BussinessLogic.Dto;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    class StockCalculator : ICalculator
+    class StockCalculator : ICalculator<StockCalculatorDto>
     {
 
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
@@ -20,7 +20,7 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesGetter = exchangeRatesGetter;
         }
 
-        public async Task Calculate()
+        public async Task<T> Calculate<T>() where T : StockCalculatorDto
         {
             using (var context = new ApplicationDbContext())
             {
@@ -37,10 +37,10 @@ namespace TaxEtoro.BussinessLogic
                         CurrencySymbol = "USD",
                         PositionId = stockClosedPosition.PositionId ?? 0                        
                     };
+                    
                     stockEntity.OpeningValue = stockClosedPosition.OpeningRate * stockClosedPosition.Units ?? 0;
                     stockEntity.ClosingValue = stockClosedPosition.ClosingRate * stockClosedPosition.Units ?? 0;
-                    stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;
-                    
+                    stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;                    
 
                     ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
                     stockEntity.ClosingExchangeRate = exchangeRateEntity.Rate;
@@ -70,19 +70,23 @@ namespace TaxEtoro.BussinessLogic
                     decimal totalLoss = stockEntities.Sum(c => c.LossExchangedValue);
                     decimal totalGain = stockEntities.Sum(c => c.GainExchangedValue);
 
-                    Console.WriteLine("Akcje:");
-                    Console.WriteLine($"Koszt zakupu = {totalLoss}");
-                    Console.WriteLine($"Przychód = {totalGain}");
-                    Console.WriteLine($"Dochód = {totalGain - totalLoss}");
-                    Console.WriteLine();                  
+                    var stockCalculatorDto = new StockCalculatorDto
+                    {
+                        Cost = totalLoss,
+                        Revenue = totalGain,
+                        Income = totalGain - totalLoss
+                    };
+
+                    return stockCalculatorDto as T;                            
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
+                    return null;
                 }
 
             }
 
-        }       
+        }        
     }
 }

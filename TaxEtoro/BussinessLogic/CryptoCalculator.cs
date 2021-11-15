@@ -6,11 +6,12 @@ using Database;
 using Database.Entities;
 using EtoroExcelReader.Dictionaries;
 using Microsoft.EntityFrameworkCore;
+using TaxEtoro.BussinessLogic.Dto;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class CryptoCalculator : ICalculator
+    public class CryptoCalculator : ICalculator<CryptoDto>
     {
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
 
@@ -19,7 +20,7 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesGetter = exchangeRatesGetter;
         }
 
-        public async Task Calculate()
+        public async Task<T> Calculate<T>() where T : CryptoDto
         {
             using (var context = new ApplicationDbContext())
             {
@@ -52,8 +53,8 @@ namespace TaxEtoro.BussinessLogic
                         exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.PurchaseDate);
                         cryptoEntity.OpeningExchangeRate = exchangeRateEntity.Rate;                   
 
-                        cryptoEntity.LossExchangedValue = Math.Round(cryptoEntity.OpeningValue * cryptoEntity.OpeningExchangeRate, 2, MidpointRounding.AwayFromZero);                        
-                        cryptoEntity.GainExchangedValue = Math.Round(cryptoEntity.ClosingValue * cryptoEntity.ClosingExchangeRate, 2, MidpointRounding.AwayFromZero);
+                        cryptoEntity.LossExchangedValue = Math.Round(cryptoEntity.OpeningValue * cryptoEntity.OpeningExchangeRate, 2);                        
+                        cryptoEntity.GainExchangedValue = Math.Round(cryptoEntity.ClosingValue * cryptoEntity.ClosingExchangeRate, 2);
 
                         cryptoEntities.Add(cryptoEntity);
 
@@ -73,18 +74,25 @@ namespace TaxEtoro.BussinessLogic
                 {
                     await context.SaveChangesAsync();
                     decimal totalLoss = cryptoEntities.Sum(c => c.LossExchangedValue);
-                    decimal totalGain = cryptoEntities.Sum(c => c.GainExchangedValue);                   
+                    decimal totalGain = cryptoEntities.Sum(c => c.GainExchangedValue);
+                    decimal unsoldCryptos =await NotSelledCryptos();
 
-                    Console.WriteLine("Kryptowaluty:");
-                    Console.WriteLine($"Koszt zakupu = {totalLoss}");
-                    Console.WriteLine($"Przychód = {totalGain}");
-                    Console.WriteLine($"Dochód = {totalGain - totalLoss}");
-                    await NotSelledCryptos();
+                    var cryptoDto = new CryptoDto
+                    {
+                        Cost = totalLoss,
+                        Revenue = totalGain,
+                        Income = totalGain - totalLoss,
+                        UnsoldCryptos = unsoldCryptos,
+                    };
+
+                    return cryptoDto as T;                  
+                   
                 }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
+                catch (Exception)
+                {                    
+                    return null;
                 }
+
             }           
         }
 
@@ -111,8 +119,7 @@ namespace TaxEtoro.BussinessLogic
 
                 }
 
-                sum = Math.Round(sum, 2, MidpointRounding.AwayFromZero);
-                Console.WriteLine($"Niesprzedane kryptowaluty = {sum}");
+                sum = Math.Round(sum, 2, MidpointRounding.AwayFromZero);              
                 return sum;
             }
 

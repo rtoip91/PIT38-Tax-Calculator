@@ -3,11 +3,12 @@ using Database.Entities;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using TaxEtoro.BussinessLogic.Dto;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class DividendCalculator : ICalculator
+    public class DividendCalculator : ICalculator<DividendCalculatorDto>
     {
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
 
@@ -16,7 +17,7 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesGetter = exchangeRatesGetter;
         }
 
-        public async Task Calculate()
+        public async Task<T> Calculate<T>() where T : DividendCalculatorDto
         {
             using (var context = new ApplicationDbContext())
             {
@@ -34,12 +35,9 @@ namespace TaxEtoro.BussinessLogic
                     originalSum += transaction.Amount;
                 }
 
-                sum = Math.Round(sum, 2, MidpointRounding.AwayFromZero);
+                sum = Math.Round(sum, 2);
 
-                Console.WriteLine();
-                Console.WriteLine("Dywidendy:");
-                Console.WriteLine($"Suma dywidend = {sum}");
-                Console.WriteLine();
+                return new DividendCalculatorDto { Dividend = sum } as T;               
             }
         }
     }

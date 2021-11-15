@@ -1,31 +1,36 @@
 ﻿using System.Threading.Tasks;
+using TaxEtoro.BussinessLogic.Dto;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class Calculator : ICalculator
+    internal class Calculator : ICalculator<CalculationResultDto>
     {
-        private readonly ICalculator _cfdCalculator;
-        private readonly ICalculator _cryptoCalculator;
-        private readonly ICalculator _stockCalculator;
-        private readonly ICalculator _dividendCalculator;
-        private readonly IExchangeRatesGetter _exchangeRatesGetter;
+        private readonly ICalculator<CfdCalculatorDto> _cfdCalculator;
+        private readonly ICalculator<CryptoDto> _cryptoCalculator;
+        private readonly ICalculator<StockCalculatorDto> _stockCalculator;
+        private readonly ICalculator<DividendCalculatorDto> _dividendCalculator;       
 
-        public Calculator(IExchangeRatesGetter exchangeRatesGetter)
-        {
-            _exchangeRatesGetter = exchangeRatesGetter;
-            _cfdCalculator = new CfdCalculator(exchangeRatesGetter);
-            _cryptoCalculator = new CryptoCalculator(exchangeRatesGetter);
-            _stockCalculator = new StockCalculator(exchangeRatesGetter);
-            _dividendCalculator = new DividendCalculator(exchangeRatesGetter);
+        public Calculator(IExchangeRatesGetter exchangeRatesGetter,
+            ICalculator<CfdCalculatorDto> cfdCalculator,
+            ICalculator<CryptoDto> cryptoCalculator,
+            ICalculator<StockCalculatorDto> stockCalculator,
+            ICalculator<DividendCalculatorDto> dividendCalculator)
+        {           
+            _cfdCalculator = cfdCalculator;
+            _cryptoCalculator = cryptoCalculator;
+            _stockCalculator = stockCalculator;
+            _dividendCalculator = dividendCalculator;
         }
 
-        public async Task Calculate()
+        public async Task<T> Calculate<T>() where T : CalculationResultDto
         {
-            await _cfdCalculator.Calculate();
-            await _cryptoCalculator.Calculate();
-            await _dividendCalculator.Calculate();
-            await _stockCalculator.Calculate();
+            var calculationResultDto = new CalculationResultDto();
+            calculationResultDto.CdfDto = await _cfdCalculator.Calculate<CfdCalculatorDto>();
+            calculationResultDto.CryptoDto = await _cryptoCalculator.Calculate<CryptoDto>();
+            calculationResultDto.DividendDto = await _dividendCalculator.Calculate<DividendCalculatorDto>();
+            calculationResultDto.StockDto = await _stockCalculator.Calculate<StockCalculatorDto>();
+            return calculationResultDto as T;
         }
     }
 }
