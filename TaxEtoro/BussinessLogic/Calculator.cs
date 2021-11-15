@@ -11,8 +11,7 @@ namespace TaxEtoro.BussinessLogic
         private readonly ICalculator<StockCalculatorDto> _stockCalculator;
         private readonly ICalculator<DividendCalculatorDto> _dividendCalculator;       
 
-        public Calculator(IExchangeRatesGetter exchangeRatesGetter,
-            ICalculator<CfdCalculatorDto> cfdCalculator,
+        public Calculator(ICalculator<CfdCalculatorDto> cfdCalculator,
             ICalculator<CryptoDto> cryptoCalculator,
             ICalculator<StockCalculatorDto> stockCalculator,
             ICalculator<DividendCalculatorDto> dividendCalculator)
