@@ -10,7 +10,7 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class CfdCalculator : ICalculator<CfdCalculatorDto>
+    public class CfdCalculator : ICalculator<CfdCalculatorDto>
     {
 
         private readonly IExchangeRatesGetter _exchangeRatesGetter;
@@ -20,7 +20,7 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesGetter = exchangeRatesGetter;
         }
 
-        public async Task Calculate()
+        public async Task<T> Calculate<T>() where T : CfdCalculatorDto
         {
             using (var context = new ApplicationDbContext())
             {
@@ -89,15 +89,19 @@ namespace TaxEtoro.BussinessLogic
                     decimal totalLoss = cfdEntities.Sum(c => c.LossExchangedValue);
                     decimal totalGain = cfdEntities.Sum(c => c.GainExchangedValue);
 
-                    Console.WriteLine("CFD:");
-                    Console.WriteLine($"Zysk = {totalGain} PLN");
-                    Console.WriteLine($"Strata = {totalLoss} PLN");
-                    Console.WriteLine($"Dochód = {totalGain + totalLoss} PLN");
-                    Console.WriteLine();
+                    CfdCalculatorDto cfdCalculatorDto = new CfdCalculatorDto
+                    {
+                        Loss = totalLoss,
+                        Gain = totalGain,
+                        Income = totalGain + totalLoss
+                    };
+
+                    return cfdCalculatorDto as T;
+                    
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    Console.WriteLine(e);                   
+                    return null;             
                 }
             }            
         }

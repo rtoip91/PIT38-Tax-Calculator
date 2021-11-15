@@ -77,7 +77,7 @@ namespace TaxEtoro.BussinessLogic
                         Income = totalGain - totalLoss
                     };
 
-                    return (T)stockCalculatorDto;                            
+                    return stockCalculatorDto as T;                            
                 }
                 catch (Exception e)
                 {
