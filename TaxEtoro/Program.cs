@@ -23,6 +23,7 @@ namespace TaxEtoro
             await using ILifetimeScope scope = Container.BeginLifetimeScope();
             IExcelDataExtractor reader = scope.Resolve<IExcelDataExtractor>();
             ICalculator<CalculationResultDto> calculator = scope.Resolve<ICalculator<CalculationResultDto>>();
+            ICalculationEvents events =  scope.Resolve<ICalculationEvents>();
             IDataCleaner dataCleaner = scope.Resolve<IDataCleaner>();   
 
             try
@@ -70,7 +71,7 @@ namespace TaxEtoro
             builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();                  
             builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();           
             builder.RegisterType<DataCleaner>().As<IDataCleaner>();
-            builder.RegisterType<Calculator>().As<ICalculator<CalculationResultDto>>();
+            builder.RegisterType<Calculator>().As<ICalculator<CalculationResultDto>, ICalculationEvents>().SingleInstance();
             builder.RegisterType<CfdCalculator>().As<ICalculator<CfdCalculatorDto>>();
             builder.RegisterType<CryptoCalculator>().As<ICalculator<CryptoDto>>();
             builder.RegisterType<DividendCalculator>().As<ICalculator<DividendCalculatorDto>>();
