@@ -71,7 +71,7 @@ namespace TaxEtoro
             builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();                  
             builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();           
             builder.RegisterType<DataCleaner>().As<IDataCleaner>();
-            builder.RegisterType<Calculator>().As<ICalculator<CalculationResultDto>, ICalculationEvents>().SingleInstance();
+            builder.RegisterType<Calculator>().As<ICalculator<CalculationResultDto>, ICalculationEvents>().InstancePerLifetimeScope();
             builder.RegisterType<CfdCalculator>().As<ICalculator<CfdCalculatorDto>>();
             builder.RegisterType<CryptoCalculator>().As<ICalculator<CryptoDto>>();
             builder.RegisterType<DividendCalculator>().As<ICalculator<DividendCalculatorDto>>();
