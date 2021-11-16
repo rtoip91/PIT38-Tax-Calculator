@@ -24,13 +24,20 @@ namespace TaxEtoro
             IExcelDataExtractor reader = scope.Resolve<IExcelDataExtractor>();
             ICalculator<CalculationResultDto> calculator = scope.Resolve<ICalculator<CalculationResultDto>>();
             ICalculationEvents events =  scope.Resolve<ICalculationEvents>();
-            IDataCleaner dataCleaner = scope.Resolve<IDataCleaner>();   
+            IEventsSubscriber eventsSubscriber = scope.Resolve<IEventsSubscriber>();
+            IDataCleaner dataCleaner = scope.Resolve<IDataCleaner>();
+
+            events.CfdCalculationFinished += eventsSubscriber.AfterCfd;
+            events.DividendCalculationFinished += eventsSubscriber.AfterDividend;
+            events.CryptoCalculationFinished += eventsSubscriber.AfterCrypto;
+            events.StockCalculationFinished += eventsSubscriber.AfterStock;
 
             try
             {
                 await reader.ImportDataFromExcelIntoDbAsync();
                 var result = await calculator.Calculate<CalculationResultDto>();
 
+                Console.WriteLine();
                 Console.WriteLine("CFD:");
                 Console.WriteLine($"Zysk = {result.CdfDto.Gain} PLN");
                 Console.WriteLine($"Strata = {result.CdfDto.Loss} PLN");
@@ -63,7 +70,7 @@ namespace TaxEtoro
                 Console.WriteLine("Czyszczenie bazy danych");
                 await dataCleaner.CleanData();
             }
-        }
+        }      
 
         private static void RegisterContainer()
         {
@@ -76,6 +83,7 @@ namespace TaxEtoro
             builder.RegisterType<CryptoCalculator>().As<ICalculator<CryptoDto>>();
             builder.RegisterType<DividendCalculator>().As<ICalculator<DividendCalculatorDto>>();
             builder.RegisterType<StockCalculator>().As<ICalculator<StockCalculatorDto>>();
+            builder.RegisterType<EventsSubscriber>().As<IEventsSubscriber>();
             Container = builder.Build();
         }
     }

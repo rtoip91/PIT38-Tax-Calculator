@@ -70,7 +70,7 @@ namespace TaxEtoro.BussinessLogic
         {
             if (StockCalculationFinished != null)
             {
-                DividendCalculationFinished(this, null);
+                StockCalculationFinished(this, null);
             }
         }
     }
