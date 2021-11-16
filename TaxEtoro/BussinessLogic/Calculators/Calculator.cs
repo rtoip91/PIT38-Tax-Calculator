@@ -1,11 +1,17 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using TaxEtoro.BussinessLogic.Dto;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class Calculator : ICalculator<CalculationResultDto>
-    {
+    internal class Calculator : ICalculator<CalculationResultDto>, ICalculationEvents
+    {       
+        public event EventHandler CfdCalculationFinished;
+        public event EventHandler CryptoCalculationFinished;
+        public event EventHandler DividendCalculationFinished;
+        public event EventHandler StockCalculationFinished;
+
         private readonly ICalculator<CfdCalculatorDto> _cfdCalculator;
         private readonly ICalculator<CryptoDto> _cryptoCalculator;
         private readonly ICalculator<StockCalculatorDto> _stockCalculator;
@@ -26,10 +32,46 @@ namespace TaxEtoro.BussinessLogic
         {
             var calculationResultDto = new CalculationResultDto();
             calculationResultDto.CdfDto = await _cfdCalculator.Calculate<CfdCalculatorDto>();
+            OnCfdCalculationFinished();
             calculationResultDto.CryptoDto = await _cryptoCalculator.Calculate<CryptoDto>();
+            OnCryptoCalculationFinished();
             calculationResultDto.DividendDto = await _dividendCalculator.Calculate<DividendCalculatorDto>();
+            OnDividendCalculationFinished();
             calculationResultDto.StockDto = await _stockCalculator.Calculate<StockCalculatorDto>();
+            OnStockCalculationFinished();
             return calculationResultDto as T;
+        }
+
+        private void OnCfdCalculationFinished()
+        {
+            if(CfdCalculationFinished != null)
+            {
+                CfdCalculationFinished(this, null);
+            }
+        }
+
+        private void OnCryptoCalculationFinished()
+        {
+            if (CryptoCalculationFinished != null)
+            {
+                CryptoCalculationFinished(this, null);
+            }
+        }
+
+        private void OnDividendCalculationFinished()
+        {
+            if (DividendCalculationFinished != null)
+            {
+                DividendCalculationFinished(this, null);
+            }
+        }
+
+        private void OnStockCalculationFinished()
+        {
+            if (StockCalculationFinished != null)
+            {
+                StockCalculationFinished(this, null);
+            }
         }
     }
 }

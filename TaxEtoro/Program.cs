@@ -23,13 +23,21 @@ namespace TaxEtoro
             await using ILifetimeScope scope = Container.BeginLifetimeScope();
             IExcelDataExtractor reader = scope.Resolve<IExcelDataExtractor>();
             ICalculator<CalculationResultDto> calculator = scope.Resolve<ICalculator<CalculationResultDto>>();
-            IDataCleaner dataCleaner = scope.Resolve<IDataCleaner>();   
+            ICalculationEvents events =  scope.Resolve<ICalculationEvents>();
+            IEventsSubscriber eventsSubscriber = scope.Resolve<IEventsSubscriber>();
+            IDataCleaner dataCleaner = scope.Resolve<IDataCleaner>();
+
+            events.CfdCalculationFinished += eventsSubscriber.AfterCfd;
+            events.DividendCalculationFinished += eventsSubscriber.AfterDividend;
+            events.CryptoCalculationFinished += eventsSubscriber.AfterCrypto;
+            events.StockCalculationFinished += eventsSubscriber.AfterStock;
 
             try
             {
                 await reader.ImportDataFromExcelIntoDbAsync();
                 var result = await calculator.Calculate<CalculationResultDto>();
 
+                Console.WriteLine();
                 Console.WriteLine("CFD:");
                 Console.WriteLine($"Zysk = {result.CdfDto.Gain} PLN");
                 Console.WriteLine($"Strata = {result.CdfDto.Loss} PLN");
@@ -62,7 +70,7 @@ namespace TaxEtoro
                 Console.WriteLine("Czyszczenie bazy danych");
                 await dataCleaner.CleanData();
             }
-        }
+        }      
 
         private static void RegisterContainer()
         {
@@ -70,11 +78,12 @@ namespace TaxEtoro
             builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();                  
             builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();           
             builder.RegisterType<DataCleaner>().As<IDataCleaner>();
-            builder.RegisterType<Calculator>().As<ICalculator<CalculationResultDto>>();
+            builder.RegisterType<Calculator>().As<ICalculator<CalculationResultDto>, ICalculationEvents>().InstancePerLifetimeScope();
             builder.RegisterType<CfdCalculator>().As<ICalculator<CfdCalculatorDto>>();
             builder.RegisterType<CryptoCalculator>().As<ICalculator<CryptoDto>>();
             builder.RegisterType<DividendCalculator>().As<ICalculator<DividendCalculatorDto>>();
             builder.RegisterType<StockCalculator>().As<ICalculator<StockCalculatorDto>>();
+            builder.RegisterType<EventsSubscriber>().As<IEventsSubscriber>();
             Container = builder.Build();
         }
     }
