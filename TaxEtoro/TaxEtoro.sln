@@ -9,12 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelReader", "..\EtoroExce
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "..\Database\Database.csproj", "{D4D6B65E-A365-478B-944B-286FB7110FDE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Calculations", "..\Calculations\Calculations.csproj", "{20CE04F1-E65E-4F77-A788-4912C31FB606}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C5E8676B-0704-440F-99C1-1CB0C6AAB207}"
-	ProjectSection(SolutionItems) = preProject
-		.editorconfig = .editorconfig
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculations", "..\Calculations\Calculations.csproj", "{20CE04F1-E65E-4F77-A788-4912C31FB606}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
