@@ -1,9 +1,11 @@
 ﻿using Calculations.Dto;
 using Calculations.Exceptions;
+using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database;
 using Database.Entities;
 using Newtonsoft.Json;
+using System.Net;
 
 namespace Calculations
 {
@@ -31,15 +33,22 @@ namespace Calculations
                 return entity;
             }
             catch (BankHolidayException)
-            {                
-                entity = await GetRateForPreviousDay(currencyCode, newDate);
-                return entity;
+            {
+                return await HandleBankHoliday(currencyCode, newDate);
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 return null;
             }
+        }
+
+        private async Task<ExchangeRateEntity> HandleBankHoliday(string currencyCode, DateTime holidayDate)
+        {
+            DateTime holidayDay = holidayDate;
+            ExchangeRateEntity entity = await GetRateForPreviousDay(currencyCode, holidayDate);
+            entity.Date = holidayDay;
+            return await entity.MakeCopyAndSaveToDb();
         }
 
         private async Task<ExchangeRateEntity> GetRateForDay(string currencyCode, DateTime date)
@@ -67,16 +76,21 @@ namespace Calculations
             {
                 string url = $"http://api.nbp.pl/api/exchangerates/rates/a/{currencyCode.ToLower()}/{date:yyyy-MM-dd}/";
                 var resp = await client.GetAsync(url);
+
+                if(resp.StatusCode == HttpStatusCode.NotFound)
+                {
+                    throw new BankHolidayException();
+                }
+
                 string result = await resp.Content.ReadAsStringAsync();
                 ExchangeRates exchangeRates = new ExchangeRates();
                 try
                 {
                     exchangeRates = JsonConvert.DeserializeObject<ExchangeRates>(result);
                 }
-                catch
+                catch (Exception ex)
                 {
-                    // There will be no rates when this day is bank holiday
-                    throw new BankHolidayException();
+                    throw;
                 }
 
                 ExchangeRateEntity entity = new ExchangeRateEntity();

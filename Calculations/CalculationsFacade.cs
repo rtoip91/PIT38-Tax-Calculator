@@ -13,7 +13,7 @@ namespace Calculations
 
         public CalculationsFacade(IEventsSubscriber eventsSubscriber)
         {
-            RegisterContainer();
+            _container = RegisterContainer();
             _eventsSubscriber = eventsSubscriber;
         }
 
@@ -33,7 +33,7 @@ namespace Calculations
         }
 
 
-        private void RegisterContainer()
+        private IContainer RegisterContainer()
         {
             ContainerBuilder builder = new ContainerBuilder();
             builder.RegisterType<ExchangeRatesGetter>().As<IExchangeRatesGetter>();
@@ -42,7 +42,7 @@ namespace Calculations
             builder.RegisterType<CryptoCalculator>().As<ICalculator<CryptoDto>>();
             builder.RegisterType<DividendCalculator>().As<ICalculator<DividendCalculatorDto>>();
             builder.RegisterType<StockCalculator>().As<ICalculator<StockCalculatorDto>>();                
-            _container = builder.Build();
+            return builder.Build();
         }
     }
 }
