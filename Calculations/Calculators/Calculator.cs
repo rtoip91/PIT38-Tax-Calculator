@@ -1,16 +1,14 @@
-﻿using System;
-using System.Threading.Tasks;
-using TaxEtoro.BussinessLogic.Dto;
-using TaxEtoro.Interfaces;
+﻿using Calculations.Dto;
+using Calculations.Interfaces;
 
-namespace TaxEtoro.BussinessLogic
+namespace Calculations.Calculators
 {
     internal class Calculator : ICalculator<CalculationResultDto>, ICalculationEvents
     {       
-        public event EventHandler CfdCalculationFinished;
-        public event EventHandler CryptoCalculationFinished;
-        public event EventHandler DividendCalculationFinished;
-        public event EventHandler StockCalculationFinished;
+        public event EventHandler? CfdCalculationFinished;
+        public event EventHandler? CryptoCalculationFinished;
+        public event EventHandler? DividendCalculationFinished;
+        public event EventHandler? StockCalculationFinished;
 
         private readonly ICalculator<CfdCalculatorDto> _cfdCalculator;
         private readonly ICalculator<CryptoDto> _cryptoCalculator;
@@ -39,15 +37,12 @@ namespace TaxEtoro.BussinessLogic
             OnDividendCalculationFinished();
             calculationResultDto.StockDto = await _stockCalculator.Calculate<StockCalculatorDto>();
             OnStockCalculationFinished();
-            return calculationResultDto as T;
+            return (T)calculationResultDto;
         }
 
         private void OnCfdCalculationFinished()
         {
-            if(CfdCalculationFinished != null)
-            {
-                CfdCalculationFinished(this, null);
-            }
+            CfdCalculationFinished?.Invoke(this, null);
         }
 
         private void OnCryptoCalculationFinished()

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace EtoroExcelReader.Dictionaries
+﻿namespace Calculations.Dictionaries
 {
     public static class Dictionaries
     {

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace TaxEtoro.BussinessLogic.Dto
+namespace Calculations.Dto
 {
     public class CfdCalculatorDto
     {

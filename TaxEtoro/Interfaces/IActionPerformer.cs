@@ -2,8 +2,8 @@
 
 namespace TaxEtoro.Interfaces
 {
-    interface ICalculator <in A> 
+    internal interface IActionPerformer
     {
-        Task<T> Calculate<T>() where T : A;
+        Task DoWork();
     }
 }

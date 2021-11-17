@@ -1,8 +1,7 @@
-﻿using System;
-
-namespace TaxEtoro.Interfaces
+﻿
+namespace Calculations.Interfaces
 {
-    internal interface IEventsSubscriber
+    public interface IEventsSubscriber
     {
         void AfterCfd(object sender, EventArgs e);
         void AfterCrypto(object sender, EventArgs e);

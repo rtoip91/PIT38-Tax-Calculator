@@ -1,12 +1,9 @@
-﻿using Database;
+﻿using Calculations.Dto;
+using Calculations.Interfaces;
+using Database;
 using Database.Entities;
-using System;
-using System.Linq;
-using System.Threading.Tasks;
-using TaxEtoro.BussinessLogic.Dto;
-using TaxEtoro.Interfaces;
 
-namespace TaxEtoro.BussinessLogic
+namespace Calculations.Calculators
 {
     public class DividendCalculator : ICalculator<DividendCalculatorDto>
     {

@@ -1,14 +1,11 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using Calculations.Dto;
+using Calculations.Exceptions;
+using Calculations.Interfaces;
 using Database;
 using Database.Entities;
 using Newtonsoft.Json;
-using TaxEtoro.BussinessLogic.Dto;
-using TaxEtoro.Interfaces;
 
-namespace TaxEtoro.BussinessLogic
+namespace Calculations
 {
     public class ExchangeRatesGetter : IExchangeRatesGetter
     {

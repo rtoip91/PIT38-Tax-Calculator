@@ -1,14 +1,10 @@
-﻿using Database;
+﻿using Calculations.Dto;
+using Calculations.Interfaces;
+using Database;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using TaxEtoro.BussinessLogic.Dto;
-using TaxEtoro.Interfaces;
 
-namespace TaxEtoro.BussinessLogic
+namespace Calculations.Calculators
 {
     class StockCalculator : ICalculator<StockCalculatorDto>
     {

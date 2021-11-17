@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace TaxEtoro.BussinessLogic
+﻿namespace Calculations.Exceptions
 {
     internal class BankHolidayException : Exception
     {
