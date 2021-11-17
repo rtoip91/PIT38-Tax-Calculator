@@ -2,7 +2,7 @@
 
 namespace TaxEtoro.Interfaces
 {
-    public interface IDataCleaner
+    internal interface IDataCleaner
     {
         Task CleanData();
     }

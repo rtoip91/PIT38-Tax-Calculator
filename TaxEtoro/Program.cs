@@ -23,8 +23,7 @@ namespace TaxEtoro
         {
             await using ILifetimeScope scope = Container.BeginLifetimeScope();
             IActionPerformer actionPerformer = scope.Resolve<IActionPerformer>();
-            await actionPerformer.DoWork();
-           
+            await actionPerformer.PerformCalculations();           
         }      
 
         private static void RegisterContainer()

@@ -4,6 +4,6 @@ namespace TaxEtoro.Interfaces
 {
     internal interface IActionPerformer
     {
-        Task DoWork();
+        Task PerformCalculations();
     }
 }

@@ -13,16 +13,14 @@ namespace TaxEtoro.BussinessLogic
         private ICalculationsFacade _calculationsFacade;
         private IDataCleaner _dataCleaner;
 
-        public ActionPerformer(IExcelDataExtractor reader,
-           ICalculationsFacade calculationsFacade,
-           IDataCleaner dataCleaner)
+        public ActionPerformer(IExcelDataExtractor reader, ICalculationsFacade calculationsFacade, IDataCleaner dataCleaner)
         {
             _reader = reader;
             _calculationsFacade = calculationsFacade;
             _dataCleaner = dataCleaner;
         }
 
-        public async Task DoWork()
+        public async Task PerformCalculations()
         {
             try
             {
