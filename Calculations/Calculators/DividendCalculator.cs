@@ -34,7 +34,7 @@ namespace Calculations.Calculators
 
                 sum = Math.Round(sum, 2);
 
-                return new DividendCalculatorDto { Dividend = sum } as T;               
+                return (T)new DividendCalculatorDto { Dividend = sum };               
             }
         }
     }

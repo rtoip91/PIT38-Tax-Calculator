@@ -80,7 +80,7 @@ namespace Calculations.Calculators
                         UnsoldCryptos = unsoldCryptos,
                     };
 
-                    return cryptoDto as T;                  
+                    return (T)cryptoDto;                
                    
                 }
                 catch (Exception)

@@ -92,7 +92,7 @@ namespace Calculations.Calculators
                         Income = totalGain + totalLoss
                     };
 
-                    return cfdCalculatorDto as T;
+                    return (T)cfdCalculatorDto;
                     
                 }
                 catch (Exception)

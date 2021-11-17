@@ -8,6 +8,7 @@ using AutoMapper;
 using Database;
 using Database.Entities;
 using EtoroExcelReader.Dto;
+using ExcelReader.Dictionatries;
 using ExcelReader.Interfaces;
 using ExcelReader.MappingProfiles;
 using OfficeOpenXml;
@@ -16,10 +17,7 @@ using OfficeOpenXml.Export.ToDataTable;
 namespace ExcelReader
 {
     public class ExcelDataExtractor : IExcelDataExtractor
-    {
-        private const int ClosedPositions = 1;
-        private const int TransactionReports = 2;
-        
+    {        
         public async Task<bool> ImportDataFromExcelIntoDbAsync()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -34,8 +32,8 @@ namespace ExcelReader
             {
                 await package.LoadAsync(fileInfo);
 
-                DataTable closedPositionsDataTable = await CreateDataTableAsync(package, ClosedPositions);
-                DataTable transactionReportsDataTable = await CreateDataTableAsync(package, TransactionReports);
+                DataTable closedPositionsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
+                DataTable transactionReportsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
 
                 IList<Task> extractingTasks = new List<Task>
                 {

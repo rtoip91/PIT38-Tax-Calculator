@@ -73,7 +73,7 @@ namespace Calculations.Calculators
                         Income = totalGain - totalLoss
                     };
 
-                    return stockCalculatorDto as T;                            
+                    return (T)stockCalculatorDto;                            
                 }
                 catch (Exception e)
                 {
