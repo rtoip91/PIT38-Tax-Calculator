@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Calculations.Dto;
+using Calculations.Interfaces;
 using Database;
 using Database.Entities;
-using EtoroExcelReader.Dictionaries;
 using Microsoft.EntityFrameworkCore;
-using TaxEtoro.BussinessLogic.Dto;
-using TaxEtoro.Interfaces;
 
-namespace TaxEtoro.BussinessLogic
+namespace Calculations.Calculators
 {
     public class CryptoCalculator : ICalculator<CryptoDto>
     {
@@ -25,7 +20,7 @@ namespace TaxEtoro.BussinessLogic
             using (var context = new ApplicationDbContext())
             {
                 IList<CryptoEntity> cryptoEntities = new List<CryptoEntity>();
-                IList<string> cryptoList = Dictionaries.CryptoCurrenciesDictionary.Values.ToList();
+                IList<string> cryptoList = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.Values.ToList();
 
                 foreach (var crypto in cryptoList)
                 {
@@ -101,7 +96,7 @@ namespace TaxEtoro.BussinessLogic
             using (var context = new ApplicationDbContext())
             {
 
-                IList<string> cryptoList = Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
+                IList<string> cryptoList = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
                 decimal sum = 0;
                 foreach (var crypto in cryptoList)
                 {

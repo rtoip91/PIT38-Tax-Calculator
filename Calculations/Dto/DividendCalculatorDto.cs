@@ -1,4 +1,4 @@
-﻿namespace TaxEtoro.BussinessLogic.Dto
+﻿namespace Calculations.Dto
 {
     public class DividendCalculatorDto
     {

@@ -5,7 +5,6 @@ namespace ExcelReader
 {
     internal static class FileInputUtil
     {
-
         /// <summary>
         /// Returns a fileinfo with the full path of the requested file
         /// </summary>

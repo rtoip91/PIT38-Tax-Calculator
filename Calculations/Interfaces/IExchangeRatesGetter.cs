@@ -1,8 +1,6 @@
 ﻿using Database.Entities;
-using System;
-using System.Threading.Tasks;
 
-namespace TaxEtoro.Interfaces
+namespace Calculations.Interfaces
 {
     public interface IExchangeRatesGetter
     {

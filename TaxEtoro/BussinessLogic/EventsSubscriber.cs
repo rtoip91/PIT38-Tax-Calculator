@@ -1,5 +1,5 @@
-﻿using System;
-using TaxEtoro.Interfaces;
+﻿using Calculations.Interfaces;
+using System;
 
 namespace TaxEtoro.BussinessLogic
 {
