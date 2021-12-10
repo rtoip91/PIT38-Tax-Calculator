@@ -7,6 +7,7 @@ using Calculations.Interfaces;
 using ExcelReader;
 using ExcelReader.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Serilog;
 using TaxEtoro.BussinessLogic;
 using TaxEtoro.Interfaces;
@@ -29,8 +30,16 @@ namespace TaxEtoro
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(builder.Build())
                 .Enrich.FromLogContext()
+                .WriteTo.File("log.txt", fileSizeLimitBytes: 300000, rollOnFileSizeLimit: true)
                 .CreateLogger();
 
+            var host = Host.CreateDefaultBuilder()
+                .ConfigureServices((context, services) =>
+                {
+
+                })
+                .UseSerilog()
+                .Build();
 
             await using ILifetimeScope scope = Container.BeginLifetimeScope();
             IActionPerformer actionPerformer = scope.Resolve<IActionPerformer>();
