@@ -1,10 +1,13 @@
 ﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Autofac;
 using Calculations;
 using Calculations.Interfaces;
 using ExcelReader;
 using ExcelReader.Interfaces;
+using Microsoft.Extensions.Configuration;
+using Serilog;
 using TaxEtoro.BussinessLogic;
 using TaxEtoro.Interfaces;
 
@@ -21,10 +24,26 @@ namespace TaxEtoro
         
         static async Task Main(string[] args)
         {
+            var builder = new ConfigurationBuilder();
+            BuildConfig(builder);
+            Log.Logger = new LoggerConfiguration()
+                .ReadFrom.Configuration(builder.Build())
+                .Enrich.FromLogContext()
+                .CreateLogger();
+
+
             await using ILifetimeScope scope = Container.BeginLifetimeScope();
             IActionPerformer actionPerformer = scope.Resolve<IActionPerformer>();
             await actionPerformer.PerformCalculations();           
-        }      
+        }
+
+        private static void BuildConfig(IConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIROMENT") ?? "Production"}.json", optional: true)
+                .AddEnvironmentVariables();
+        }
 
         private static void RegisterContainer()
         {
