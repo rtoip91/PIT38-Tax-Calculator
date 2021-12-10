@@ -9,8 +9,14 @@ using System.Net;
 
 namespace Calculations
 {
-    public class ExchangeRatesGetter : IExchangeRatesGetter
+    internal class ExchangeRatesGetter : IExchangeRatesGetter
     {
+        private readonly IHttpClientFactory _httpClientFactory;
+
+        public ExchangeRatesGetter(IHttpClientFactory httpClientFactory)
+        {
+            _httpClientFactory = httpClientFactory;
+        }
 
         public async Task<ExchangeRateEntity> GetRateForPreviousDay(string currencyCode, DateTime date)
         {
@@ -72,11 +78,9 @@ namespace Calculations
 
         private async Task<ExchangeRateEntity> GetRatesFromApi(string currencyCode, DateTime date)
         {
-            using (HttpClient client = new HttpClient())
-            {
-                string url = $"http://api.nbp.pl/api/exchangerates/rates/a/{currencyCode.ToLower()}/{date:yyyy-MM-dd}/";
-                var resp = await client.GetAsync(url);
-
+            var httpClient = _httpClientFactory.CreateClient("ExchangeRates");
+            using (var resp = await httpClient.GetAsync($"{currencyCode.ToLower()}/{date:yyyy-MM-dd}/", HttpCompletionOption.ResponseHeadersRead))
+            { 
                 if(resp.StatusCode == HttpStatusCode.NotFound)
                 {
                     throw new BankHolidayException();

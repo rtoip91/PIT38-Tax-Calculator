@@ -20,6 +20,12 @@ namespace Calculations.Statics
                     services.AddTransient<ICalculator<CryptoDto>, CryptoCalculator>();
                     services.AddTransient<ICalculator<DividendCalculatorDto>, DividendCalculator>();
                     services.AddTransient<ICalculator<StockCalculatorDto>, StockCalculator>();
+                    services.AddHttpClient("ExchangeRates", config =>
+                    {
+                        config.BaseAddress = new Uri( $"http://api.nbp.pl/api/exchangerates/rates/a/");
+                        config.Timeout = new TimeSpan(0, 0, 30);
+                        config.DefaultRequestHeaders.Clear();
+                    });
                 })
                 .Build();
             return host.Services;
