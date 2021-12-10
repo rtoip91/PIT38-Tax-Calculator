@@ -2,7 +2,7 @@
 
 namespace Calculations.Interfaces
 {
-    public interface ICalculationsFacade
+    public interface ITaxCalculations
     {
         public Task<CalculationResultDto> CalculateTaxes();
     }
