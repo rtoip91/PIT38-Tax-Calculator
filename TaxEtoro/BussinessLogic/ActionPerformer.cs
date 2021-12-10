@@ -10,13 +10,13 @@ namespace TaxEtoro.BussinessLogic
     internal class ActionPerformer : IActionPerformer
     {
         private IExcelDataExtractor _reader;
-        private ICalculationsFacade _calculationsFacade;
+        private ITaxCalculations _taxCalculations;
         private IDataCleaner _dataCleaner;
 
-        public ActionPerformer(IExcelDataExtractor reader, ICalculationsFacade calculationsFacade, IDataCleaner dataCleaner)
+        public ActionPerformer(IExcelDataExtractor reader, ITaxCalculations taxCalculations, IDataCleaner dataCleaner)
         {
             _reader = reader;
-            _calculationsFacade = calculationsFacade;
+            _taxCalculations = taxCalculations;
             _dataCleaner = dataCleaner;
         }
 
@@ -25,7 +25,7 @@ namespace TaxEtoro.BussinessLogic
             try
             {
                 await _reader.ImportDataFromExcelIntoDbAsync();
-                var result = await _calculationsFacade.CalculateTaxes();
+                var result = await _taxCalculations.CalculateTaxes();
                 PresentRessults(result);
             }
             catch (Exception e)
