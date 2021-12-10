@@ -7,6 +7,7 @@ using Calculations.Interfaces;
 using ExcelReader;
 using ExcelReader.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using TaxEtoro.BussinessLogic;
@@ -16,14 +17,29 @@ namespace TaxEtoro
 {
     class Program
     {
-        private static IContainer Container { get; set; }
+        private static IServiceProvider Services   { get; set; }
 
         static Program()
         {
-            RegisterContainer();
+            RegisterServices();
         }
         
         static async Task Main(string[] args)
+        {
+            await using var scope = Services.CreateAsyncScope();
+            var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();            
+            await actionPerformer.PerformCalculations();            
+        }
+
+        private static void BuildConfig(IConfigurationBuilder configurationBuilder)
+        {
+            configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIROMENT") ?? "Production"}.json", optional: true)
+                .AddEnvironmentVariables();
+        }
+
+        private static void RegisterServices()
         {
             var builder = new ConfigurationBuilder();
             BuildConfig(builder);
@@ -36,33 +52,16 @@ namespace TaxEtoro
             var host = Host.CreateDefaultBuilder()
                 .ConfigureServices((context, services) =>
                 {
-
+                    services.AddTransient<IExcelDataExtractor, ExcelDataExtractor>();
+                    services.AddTransient<IDataCleaner, DataCleaner>();
+                    services.AddTransient<IEventsSubscriber, EventsSubscriber>();
+                    services.AddTransient<ICalculationsFacade, CalculationsFacade>();
+                    services.AddTransient<IActionPerformer, ActionPerformer>();
                 })
                 .UseSerilog()
                 .Build();
 
-            await using ILifetimeScope scope = Container.BeginLifetimeScope();
-            IActionPerformer actionPerformer = scope.Resolve<IActionPerformer>();
-            await actionPerformer.PerformCalculations();           
-        }
-
-        private static void BuildConfig(IConfigurationBuilder configurationBuilder)
-        {
-            configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIROMENT") ?? "Production"}.json", optional: true)
-                .AddEnvironmentVariables();
-        }
-
-        private static void RegisterContainer()
-        {
-            ContainerBuilder builder = new ContainerBuilder();
-            builder.RegisterType<ExcelDataExtractor>().As<IExcelDataExtractor>();                     
-            builder.RegisterType<DataCleaner>().As<IDataCleaner>();           
-            builder.RegisterType<EventsSubscriber>().As<IEventsSubscriber>();
-            builder.RegisterType<CalculationsFacade>().As<ICalculationsFacade>();
-            builder.RegisterType<ActionPerformer>().As<IActionPerformer>();
-            Container = builder.Build();
+            Services = host.Services;
         }
     }
 }
