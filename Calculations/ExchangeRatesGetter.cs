@@ -45,7 +45,7 @@ namespace Calculations
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
+                throw;
             }
         }
 
@@ -85,6 +85,10 @@ namespace Calculations
                 {
                     throw new BankHolidayException();
                 }
+                if (resp.StatusCode == HttpStatusCode.ServiceUnavailable)
+                {
+                    throw new Exception("Serwer NBP nie odpowiada");
+                }
 
                 string result = await resp.Content.ReadAsStringAsync();
                 ExchangeRates exchangeRates = new ExchangeRates();
@@ -92,7 +96,7 @@ namespace Calculations
                 {
                     exchangeRates = JsonConvert.DeserializeObject<ExchangeRates>(result);
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     throw;
                 }
