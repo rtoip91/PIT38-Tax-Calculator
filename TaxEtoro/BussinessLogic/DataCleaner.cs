@@ -15,6 +15,7 @@ namespace TaxEtoro.BussinessLogic
                 context.RemoveRange(context.CfdCalculations);
                 context.RemoveRange(context.CryptoCalculations);
                 context.RemoveRange(context.StockCalculations);
+                //context.RemoveRange(context.ExchangeRates);
                 await context.SaveChangesAsync();                
             }
         }
