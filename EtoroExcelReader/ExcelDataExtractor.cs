@@ -94,7 +94,6 @@ namespace ExcelReader
                     Console.WriteLine(e);
                     return false;
                 }
-
             }
 
             return true;
