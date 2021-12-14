@@ -1,41 +1,41 @@
 ﻿using Calculations.Dto;
 using Calculations.Interfaces;
 using Database;
+using Database.DataAccess.Interfaces;
 using Database.Entities;
 
 namespace Calculations.Calculators
 {
     public class DividendCalculator : ICalculator<DividendCalculatorDto>
     {
-        private readonly IExchangeRatesGetter _exchangeRatesGetter;
+        private readonly IExchangeRates _exchangeRates;
+        private readonly ITransactionReportsDataAccess _transactionReportsDataAccess;
 
-        public DividendCalculator(IExchangeRatesGetter exchangeRatesGetter)
+        public DividendCalculator(IExchangeRates exchangeRates,
+            ITransactionReportsDataAccess transactionReportsDataAccess)
         {
-            _exchangeRatesGetter = exchangeRatesGetter;
+            _exchangeRates = exchangeRates;
+            _transactionReportsDataAccess = transactionReportsDataAccess;
         }
 
         public async Task<T> Calculate<T>() where T : DividendCalculatorDto
         {
-            using (var context = new ApplicationDbContext())
+            decimal sum = 0;
+            decimal originalSum = 0;
+            var transReports = await _transactionReportsDataAccess.GetDividendTransactions();
+
+            foreach (var transaction in transReports)
             {
-                decimal sum = 0;
-                decimal originalSum = 0;
-                var transReports = context.TransactionReports.Where(c => c.Details.ToLower().Contains("Payment caused by dividend".ToLower()) 
-                                                                    || c.Details.ToLower().Contains("Płatność w wyniku dywidendy".ToLower()));
-                int temp = transReports.Count();
-
-                foreach (var transaction in transReports)
-                {
-                    ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay("USD", transaction.Date);
-                    decimal value = transaction.Amount * exchangeRateEntity.Rate;
-                    sum += value;
-                    originalSum += transaction.Amount;
-                }
-
-                sum = Math.Round(sum, 2);
-
-                return (T)new DividendCalculatorDto { Dividend = sum };               
+                ExchangeRateEntity exchangeRateEntity =
+                    await _exchangeRates.GetRateForPreviousDay("USD", transaction.Date);
+                decimal value = transaction.Amount * exchangeRateEntity.Rate;
+                sum += value;
+                originalSum += transaction.Amount;
             }
+
+            sum = Math.Round(sum, 2);
+
+            return (T)new DividendCalculatorDto { Dividend = sum };
         }
     }
 }

@@ -9,11 +9,11 @@ namespace Calculations.Calculators
     class StockCalculator : ICalculator<StockCalculatorDto>
     {
 
-        private readonly IExchangeRatesGetter _exchangeRatesGetter;
+        private readonly IExchangeRates _exchangeRates;
 
-        public StockCalculator(IExchangeRatesGetter exchangeRatesGetter)
+        public StockCalculator(IExchangeRates exchangeRates)
         {
-            _exchangeRatesGetter = exchangeRatesGetter;
+            _exchangeRates = exchangeRates;
         }
 
         public async Task<T> Calculate<T>() where T : StockCalculatorDto
@@ -38,10 +38,10 @@ namespace Calculations.Calculators
                     stockEntity.ClosingValue = stockClosedPosition.ClosingRate * stockClosedPosition.Units ?? 0;
                     stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;                    
 
-                    ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
+                    ExchangeRateEntity exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
                     stockEntity.ClosingExchangeRate = exchangeRateEntity.Rate;
 
-                    exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
+                    exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
                     stockEntity.OpeningExchangeRate = exchangeRateEntity.Rate;
 
                     stockEntity.LossExchangedValue = Math.Round(stockEntity.OpeningValue * stockEntity.OpeningExchangeRate, 2);
