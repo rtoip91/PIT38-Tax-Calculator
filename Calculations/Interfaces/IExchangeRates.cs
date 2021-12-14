@@ -2,7 +2,7 @@
 
 namespace Calculations.Interfaces
 {
-    public interface IExchangeRatesGetter
+    public interface IExchangeRates
     {
         Task<ExchangeRateEntity> GetRateForPreviousDay(string currencyCode, DateTime date);
     }

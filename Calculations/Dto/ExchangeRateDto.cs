@@ -1,9 +1,8 @@
-﻿using System;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 
 namespace Calculations.Dto
 {
-    internal  class ExchangeRate
+    internal  class ExchangeRateDto
     {
         [JsonProperty(PropertyName = "number")]
         public string Number { get; set; }

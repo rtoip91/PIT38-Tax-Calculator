@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Database
 {
-    public class ApplicationDbContext : DbContext
+    internal class ApplicationDbContext : DbContext
     {
         public DbSet<ClosedPositionEntity> ClosedPositions { get; set; }
         public DbSet<TransactionReportEntity> TransactionReports { get; set; }

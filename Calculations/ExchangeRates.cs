@@ -2,20 +2,22 @@
 using Calculations.Exceptions;
 using Calculations.Extensions;
 using Calculations.Interfaces;
-using Database;
 using Database.Entities;
 using Newtonsoft.Json;
 using System.Net;
+using Database.DataAccess.Interfaces;
 
 namespace Calculations
 {
-    internal class ExchangeRatesGetter : IExchangeRatesGetter
+    internal class ExchangeRates : IExchangeRates
     {
         private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IExchangeRatesDataAccess _exchangeRatesDataAccess;
 
-        public ExchangeRatesGetter(IHttpClientFactory httpClientFactory)
+        public ExchangeRates(IHttpClientFactory httpClientFactory, IExchangeRatesDataAccess exchangeRatesDataAccess)
         {
             _httpClientFactory = httpClientFactory;
+            _exchangeRatesDataAccess = exchangeRatesDataAccess;
         }
 
         public async Task<ExchangeRateEntity> GetRateForPreviousDay(string currencyCode, DateTime date)
@@ -59,9 +61,8 @@ namespace Calculations
 
         private async Task<ExchangeRateEntity> GetRateForDay(string currencyCode, DateTime date)
         {
-            using (var context = new ApplicationDbContext())
-            {
-                ExchangeRateEntity exchangeRate = context.ExchangeRates.FirstOrDefault(rate => rate.Code == currencyCode && rate.Date.Date == date.Date);
+
+            ExchangeRateEntity exchangeRate = await _exchangeRatesDataAccess.GetRate(currencyCode, date);
 
                 if (exchangeRate != null)
                 {
@@ -69,53 +70,41 @@ namespace Calculations
                 }
 
                 exchangeRate = await GetRatesFromApi(currencyCode, date);
-                await context.AddAsync(exchangeRate);
-                await context.SaveChangesAsync();              
-
+                await _exchangeRatesDataAccess.SaveRate(exchangeRate);
                 return exchangeRate;
-            }
         }      
 
         private async Task<ExchangeRateEntity> GetRatesFromApi(string currencyCode, DateTime date)
         {
             var httpClient = _httpClientFactory.CreateClient("ExchangeRates");
-            using (var resp = await httpClient.GetAsync($"{currencyCode.ToLower()}/{date:yyyy-MM-dd}/", HttpCompletionOption.ResponseHeadersRead))
-            { 
-                if(resp.StatusCode == HttpStatusCode.NotFound)
-                {
-                    throw new BankHolidayException();
-                }
-                if (resp.StatusCode == HttpStatusCode.ServiceUnavailable)
-                {
-                    throw new Exception("Serwer NBP nie odpowiada");
-                }
+            using var resp = await httpClient.GetAsync($"{currencyCode.ToLower()}/{date:yyyy-MM-dd}/", HttpCompletionOption.ResponseHeadersRead);
+            if(resp.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new BankHolidayException();
+            }
+            if (resp.StatusCode == HttpStatusCode.ServiceUnavailable)
+            {
+                throw new Exception("Serwer NBP nie odpowiada");
+            }
 
-                string result = await resp.Content.ReadAsStringAsync();
-                ExchangeRates exchangeRates = new ExchangeRates();
-                try
-                {
-                    exchangeRates = JsonConvert.DeserializeObject<ExchangeRates>(result);
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+            string result = await resp.Content.ReadAsStringAsync();
+            ExchangeRatesDto? exchangeRates;
+            exchangeRates = JsonConvert.DeserializeObject<ExchangeRatesDto>(result);
+            ExchangeRateEntity entity = new ExchangeRateEntity();
 
-                ExchangeRateEntity entity = new ExchangeRateEntity();
-
-                entity.Code = currencyCode;
+            entity.Code = currencyCode;
+            if (exchangeRates != null)
+            {
                 entity.Currency = exchangeRates.Currency;
-
                 var tempRate = exchangeRates.Rates.FirstOrDefault();
-
                 if (tempRate != null)
                 {
                     entity.Date = tempRate.Date;
                     entity.Rate = tempRate.Rate;
                 }
+            }           
 
-                return entity;
-            }
+            return entity;
         }
 
         

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Database;
+using Database.DataAccess.Interfaces;
 using Database.Entities;
 using EtoroExcelReader.Dto;
 using ExcelReader.Dictionatries;
@@ -17,7 +18,16 @@ using OfficeOpenXml.Export.ToDataTable;
 namespace ExcelReader
 {
     public class ExcelDataExtractor : IExcelDataExtractor
-    {        
+    {
+        private readonly IClosedPositionsDataAccess _closedPositionsDataAccess;
+        private readonly ITransactionReportsDataAccess _transactionReportsDataAccess;
+
+        public ExcelDataExtractor(IClosedPositionsDataAccess closedPositionsDataAccess, ITransactionReportsDataAccess transactionReportsDataAccess)
+        {
+            _closedPositionsDataAccess = closedPositionsDataAccess;
+            _transactionReportsDataAccess = transactionReportsDataAccess;
+        }
+
         public async Task<bool> ImportDataFromExcelIntoDbAsync()
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
@@ -50,8 +60,7 @@ namespace ExcelReader
 
         private async Task<bool> IntoTheDatabaseAsync(IList<ClosedPositionExcelDto> closedPositionDtos, IList<TransactionReportExcelDto> transactionReportDtos)
         {
-            using (var context = new ApplicationDbContext())
-            {
+           
                 var config = new MapperConfiguration(cfg => {
                     cfg.AddProfile<ClosedPositionProfile>();
                     cfg.AddProfile<TransactionReportProfile>();
@@ -80,23 +89,21 @@ namespace ExcelReader
                     TransactionReportEntity transactionReportEntity = mapper.Map<TransactionReportEntity>(transactionReport);
                     transactionReportEntity.PositionId = null;
                     transactionReportEntities.Add(transactionReportEntity);
-                }              
-              
-                await context.AddRangeAsync(closedPositionEntities);
-                await context.AddRangeAsync(transactionReportEntities);
-                
+                }
+
                 try
                 {
-                    await context.SaveChangesAsync();                   
+                    await _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
+                    await _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+
                 }
                 catch (Exception e)
                 {
                     Console.WriteLine(e);
                     return false;
                 }
-            }
 
-            return true;
+                return true;
         }
 
         private async Task<DataTable> CreateDataTableAsync(ExcelPackage package, int worksheetId)

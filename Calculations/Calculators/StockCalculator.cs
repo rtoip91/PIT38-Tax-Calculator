@@ -1,6 +1,7 @@
 ﻿using Calculations.Dto;
 using Calculations.Interfaces;
 using Database;
+using Database.DataAccess.Interfaces;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,19 +10,23 @@ namespace Calculations.Calculators
     class StockCalculator : ICalculator<StockCalculatorDto>
     {
 
-        private readonly IExchangeRatesGetter _exchangeRatesGetter;
+        private readonly IExchangeRates _exchangeRates;
+        private readonly IClosedPositionsDataAccess _closedPositionDataAccess;
+        private readonly IStockEntityDataAccess _stockEntityDataAccess;
 
-        public StockCalculator(IExchangeRatesGetter exchangeRatesGetter)
+        public StockCalculator(IExchangeRates exchangeRates,
+            IClosedPositionsDataAccess closedPositionsDataAccess,
+            IStockEntityDataAccess stockEntityDataAccess)
         {
-            _exchangeRatesGetter = exchangeRatesGetter;
+            _exchangeRates = exchangeRates;
+            _closedPositionDataAccess = closedPositionsDataAccess;
+            _stockEntityDataAccess = stockEntityDataAccess;
         }
 
         public async Task<T> Calculate<T>() where T : StockCalculatorDto
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                IList<StockEntity> stockEntities = new List<StockEntity>();
-                var stockClosedPositions = context.ClosedPositions.Include(c => c.TransactionReports);
+        {          
+            IList<StockEntity> stockEntities = new List<StockEntity>();
+            var stockClosedPositions = await _closedPositionDataAccess.GetStockPositions();
 
                 foreach (var stockClosedPosition in stockClosedPositions)
                 {
@@ -38,10 +43,10 @@ namespace Calculations.Calculators
                     stockEntity.ClosingValue = stockClosedPosition.ClosingRate * stockClosedPosition.Units ?? 0;
                     stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;                    
 
-                    ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
+                    ExchangeRateEntity exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
                     stockEntity.ClosingExchangeRate = exchangeRateEntity.Rate;
 
-                    exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
+                    exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
                     stockEntity.OpeningExchangeRate = exchangeRateEntity.Rate;
 
                     stockEntity.LossExchangedValue = Math.Round(stockEntity.OpeningValue * stockEntity.OpeningExchangeRate, 2);
@@ -50,19 +55,11 @@ namespace Calculations.Calculators
 
                     stockEntities.Add(stockEntity);
 
-                    if (stockClosedPosition.TransactionReports != null)
-                    {
-                        context.RemoveRange(stockClosedPosition.TransactionReports);
-                    }
-
-                    context.Remove(stockClosedPosition);
+                    await _closedPositionDataAccess.RemovePosition(stockClosedPosition);
                 }
-
-                await context.AddRangeAsync(stockEntities);
-
                 try
                 {
-                    await context.SaveChangesAsync();
+                    await _stockEntityDataAccess.AddEntities(stockEntities);
                     decimal totalLoss = stockEntities.Sum(c => c.LossExchangedValue);
                     decimal totalGain = stockEntities.Sum(c => c.GainExchangedValue);
 
@@ -85,4 +82,3 @@ namespace Calculations.Calculators
 
         }        
     }
-}

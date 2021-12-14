@@ -1,6 +1,7 @@
 ﻿using Calculations.Dto;
 using Calculations.Interfaces;
 using Database;
+using Database.DataAccess.Interfaces;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,24 +10,28 @@ namespace Calculations.Calculators
     public class CfdCalculator : ICalculator<CfdCalculatorDto>
     {
 
-        private readonly IExchangeRatesGetter _exchangeRatesGetter;
+        private readonly IExchangeRates _exchangeRates;
+        private readonly IClosedPositionsDataAccess _closedPositionsDataAccess;
+        private readonly ICfdEntityDataAccess _cfdEntityDataAccess;
 
-        public CfdCalculator (IExchangeRatesGetter exchangeRatesGetter)
+        public CfdCalculator (IExchangeRates exchangeRatesGetter,
+            IClosedPositionsDataAccess closedPositionsDataAccess,
+            ICfdEntityDataAccess cfdEntityDataAccess)
         {
-            _exchangeRatesGetter = exchangeRatesGetter;
+            _exchangeRates = exchangeRatesGetter;
+            _closedPositionsDataAccess = closedPositionsDataAccess;
+            _cfdEntityDataAccess = cfdEntityDataAccess;
         }
 
         public async Task<T> Calculate<T>() where T : CfdCalculatorDto
         {
-            using (var context = new ApplicationDbContext())
-            {
-                var cfdClosedPositions = context.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).Include(c => c.TransactionReports);
-                IList<CfdEntity> cfdEntities = new List<CfdEntity>();
+            var cfdClosedPositions = await _closedPositionsDataAccess.GetCfdPositions();
+            IList<CfdEntity> cfdEntities = new List<CfdEntity>();
 
-                foreach (var cfdClosedPosition in cfdClosedPositions)
+            foreach (var cfdClosedPosition in cfdClosedPositions)
+            {
+                CfdEntity cfdEntity = new CfdEntity
                 {
-                    CfdEntity cfdEntity = new CfdEntity
-                    {
                         Name = cfdClosedPosition.Operation,
                         PurchaseDate = cfdClosedPosition.OpeningDate,
                         OpeningRate = cfdClosedPosition.OpeningRate ?? 0,
@@ -38,7 +43,7 @@ namespace Calculations.Calculators
                     };
 
 
-                    ExchangeRateEntity exchangeRateEntity = await _exchangeRatesGetter.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
+                    ExchangeRateEntity exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
                     cfdEntity.ExchangeRate = exchangeRateEntity.Rate;
 
@@ -56,7 +61,6 @@ namespace Calculations.Calculators
                     }
 
                     decimal exchangedValue = Math.Round(cfdEntity.GainValue * cfdEntity.ExchangeRate, 2);
-
                     if (exchangedValue > 0)
                     {
                         cfdEntity.GainExchangedValue = exchangedValue;
@@ -66,21 +70,12 @@ namespace Calculations.Calculators
                         cfdEntity.LossExchangedValue = exchangedValue;
                     }
 
-                    cfdEntities.Add(cfdEntity);                    
-
-                    if (cfdClosedPosition.TransactionReports != null)
-                    {
-                        context.RemoveRange(cfdClosedPosition.TransactionReports);
-                    }
-
-                    context.Remove(cfdClosedPosition);
-                }
-
-                await context.AddRangeAsync(cfdEntities);
-
-                try
-                {
-                    await context.SaveChangesAsync();
+                    cfdEntities.Add(cfdEntity);
+                    await _closedPositionsDataAccess.RemovePosition(cfdClosedPosition);
+            }
+            try
+            {
+                    await _cfdEntityDataAccess.AddEntities(cfdEntities);
 
                     decimal totalLoss = cfdEntities.Sum(c => c.LossExchangedValue);
                     decimal totalGain = cfdEntities.Sum(c => c.GainExchangedValue);
@@ -94,12 +89,11 @@ namespace Calculations.Calculators
 
                     return (T)cfdCalculatorDto;
                     
-                }
-                catch (Exception)
-                {
-                    return null;             
-                }
-            }            
+            }
+            catch (Exception) 
+            {
+                return null;             
+            }
         }
     }
 }

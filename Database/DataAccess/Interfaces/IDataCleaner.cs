@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace TaxEtoro.Interfaces
+namespace Database.DataAccess.Interfaces
 {
-    internal interface IDataCleaner
+    public interface IDataCleaner
     {
         Task CleanData();
     }
