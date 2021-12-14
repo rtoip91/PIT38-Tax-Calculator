@@ -1,6 +1,7 @@
 ﻿using Calculations.Dto;
 using Calculations.Interfaces;
 using Database;
+using Database.DataAccess.Interfaces;
 using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,18 +11,22 @@ namespace Calculations.Calculators
     {
 
         private readonly IExchangeRates _exchangeRates;
+        private readonly IClosedPositionsDataAccess _closedPositionDataAccess;
+        private readonly IStockEntityDataAccess _stockEntityDataAccess;
 
-        public StockCalculator(IExchangeRates exchangeRates)
+        public StockCalculator(IExchangeRates exchangeRates,
+            IClosedPositionsDataAccess closedPositionsDataAccess,
+            IStockEntityDataAccess stockEntityDataAccess)
         {
             _exchangeRates = exchangeRates;
+            _closedPositionDataAccess = closedPositionsDataAccess;
+            _stockEntityDataAccess = stockEntityDataAccess;
         }
 
         public async Task<T> Calculate<T>() where T : StockCalculatorDto
-        {
-            using (var context = new ApplicationDbContext())
-            {
-                IList<StockEntity> stockEntities = new List<StockEntity>();
-                var stockClosedPositions = context.ClosedPositions.Include(c => c.TransactionReports);
+        {          
+            IList<StockEntity> stockEntities = new List<StockEntity>();
+            var stockClosedPositions = await _closedPositionDataAccess.GetStockPositions();
 
                 foreach (var stockClosedPosition in stockClosedPositions)
                 {
@@ -50,19 +55,11 @@ namespace Calculations.Calculators
 
                     stockEntities.Add(stockEntity);
 
-                    if (stockClosedPosition.TransactionReports != null)
-                    {
-                        context.RemoveRange(stockClosedPosition.TransactionReports);
-                    }
-
-                    context.Remove(stockClosedPosition);
+                    await _closedPositionDataAccess.RemovePosition(stockClosedPosition);
                 }
-
-                await context.AddRangeAsync(stockEntities);
-
                 try
                 {
-                    await context.SaveChangesAsync();
+                    await _stockEntityDataAccess.AddEntities(stockEntities);
                     decimal totalLoss = stockEntities.Sum(c => c.LossExchangedValue);
                     decimal totalGain = stockEntities.Sum(c => c.GainExchangedValue);
 
@@ -85,4 +82,3 @@ namespace Calculations.Calculators
 
         }        
     }
-}

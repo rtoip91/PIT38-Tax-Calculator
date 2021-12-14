@@ -1,8 +1,8 @@
 ﻿using Database;
+using Database.DataAccess.Interfaces;
 using System.Threading.Tasks;
-using TaxEtoro.Interfaces;
 
-namespace TaxEtoro.BussinessLogic
+namespace Database.DataAccess
 {
     public class DataCleaner : IDataCleaner
     {

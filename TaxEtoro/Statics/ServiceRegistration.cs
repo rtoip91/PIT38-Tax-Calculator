@@ -1,5 +1,7 @@
 ﻿using Calculations;
 using Calculations.Interfaces;
+using Database.DataAccess;
+using Database.DataAccess.Interfaces;
 using ExcelReader;
 using ExcelReader.Interfaces;
 using Microsoft.Extensions.Configuration;
@@ -41,6 +43,8 @@ namespace TaxEtoro.Statics
                     services.AddTransient<IEventsSubscriber, EventsSubscriber>();
                     services.AddTransient<ITaxCalculations, TaxCalculations>();
                     services.AddTransient<IActionPerformer, ActionPerformer>();
+                    services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
+                    services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
                 })
                 .UseSerilog()
                 .Build();

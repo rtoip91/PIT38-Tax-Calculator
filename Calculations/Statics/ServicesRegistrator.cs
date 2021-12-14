@@ -23,6 +23,11 @@ namespace Calculations.Statics
                     services.AddTransient<ICalculator<DividendCalculatorDto>, DividendCalculator>();
                     services.AddTransient<ICalculator<StockCalculatorDto>, StockCalculator>();
                     services.AddScoped<IExchangeRatesDataAccess, ExchangeRatesDataAccess>();
+                    services.AddScoped<ICfdEntityDataAccess, CfdEntityDataAccess>();                    
+                    services.AddScoped<ICryptoEntityDataAccess, CryptoEntityDataAccess>();
+                    services.AddScoped<IStockEntityDataAccess, StockEntityDataAccess>();
+                    services.AddScoped<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
+                    services.AddScoped<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
 
                     services.AddHttpClient("ExchangeRates", config =>
                     {
