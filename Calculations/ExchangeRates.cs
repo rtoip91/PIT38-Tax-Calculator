@@ -2,7 +2,6 @@
 using Calculations.Exceptions;
 using Calculations.Extensions;
 using Calculations.Interfaces;
-using Database;
 using Database.Entities;
 using Newtonsoft.Json;
 using System.Net;
@@ -89,20 +88,21 @@ namespace Calculations
             }
 
             string result = await resp.Content.ReadAsStringAsync();
-            ExchangeRatesDto exchangeRates = new ExchangeRatesDto();
+            ExchangeRatesDto? exchangeRates;
             exchangeRates = JsonConvert.DeserializeObject<ExchangeRatesDto>(result);
             ExchangeRateEntity entity = new ExchangeRateEntity();
 
             entity.Code = currencyCode;
-            entity.Currency = exchangeRates.Currency;
-
-            var tempRate = exchangeRates.Rates.FirstOrDefault();
-
-            if (tempRate != null)
+            if (exchangeRates != null)
             {
-                entity.Date = tempRate.Date;
-                entity.Rate = tempRate.Rate;
-            }
+                entity.Currency = exchangeRates.Currency;
+                var tempRate = exchangeRates.Rates.FirstOrDefault();
+                if (tempRate != null)
+                {
+                    entity.Date = tempRate.Date;
+                    entity.Rate = tempRate.Rate;
+                }
+            }           
 
             return entity;
         }
