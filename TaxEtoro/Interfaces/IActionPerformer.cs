@@ -1,8 +1,9 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace TaxEtoro.Interfaces
 {
-    internal interface IActionPerformer
+    internal interface IActionPerformer : IAsyncDisposable
     {
         Task PerformCalculations();
     }

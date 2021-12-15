@@ -13,12 +13,25 @@ namespace TaxEtoro.BussinessLogic
         private IExcelDataExtractor _reader;
         private ITaxCalculations _taxCalculations;
         private IDataCleaner _dataCleaner;
+        private bool _isDisposed;
+
 
         public ActionPerformer(IExcelDataExtractor reader, ITaxCalculations taxCalculations, IDataCleaner dataCleaner)
         {
             _reader = reader;
             _taxCalculations = taxCalculations;
             _dataCleaner = dataCleaner;
+            _isDisposed = false;
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (!_isDisposed)
+            {
+                Console.WriteLine("Czyszczenie bazy danych");
+                await _dataCleaner.CleanData();
+                _isDisposed = true;               
+            }
         }
 
         public async Task PerformCalculations()
@@ -32,12 +45,7 @@ namespace TaxEtoro.BussinessLogic
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
-            }
-            finally
-            {
-                Console.WriteLine("Czyszczenie bazy danych");
-                await _dataCleaner.CleanData();
-            }
+            }           
         }
 
         private void PresentRessults(CalculationResultDto result)

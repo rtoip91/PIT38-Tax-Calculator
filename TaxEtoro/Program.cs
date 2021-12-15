@@ -21,7 +21,7 @@ namespace TaxEtoro
             var timer = new Stopwatch();
             timer.Start();
             await using var scope = Services.CreateAsyncScope();
-            var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
+            await using var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
             await actionPerformer.PerformCalculations();
             timer.Stop();
             TimeSpan timeTaken = timer.Elapsed;
