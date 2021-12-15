@@ -41,11 +41,7 @@ namespace Calculations.Calculators
                     PositionId = cfdClosedPosition.PositionId ?? 0
                 };
 
-
-                ExchangeRateEntity exchangeRateEntity =
-                    await _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
-
-                cfdEntity.ExchangeRate = exchangeRateEntity.Rate;
+                Task<ExchangeRateEntity> exchangeRateTask = _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);               
 
                 var openingValue = cfdClosedPosition.OpeningRate * cfdClosedPosition.Units ?? 0;
                 var closingValue = cfdClosedPosition.ClosingRate * cfdClosedPosition.Units ?? 0;
@@ -60,6 +56,9 @@ namespace Calculations.Calculators
                     cfdEntity.GainValue = Math.Round(openingValue - closingValue, 2);
                 }
 
+
+                await Task.WhenAll(exchangeRateTask);
+                cfdEntity.ExchangeRate = exchangeRateTask.Result.Rate;
                 decimal exchangedValue = Math.Round(cfdEntity.GainValue * cfdEntity.ExchangeRate, 2);
                 if (exchangedValue > 0)
                 {

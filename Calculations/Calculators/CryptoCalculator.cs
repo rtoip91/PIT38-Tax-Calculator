@@ -42,16 +42,16 @@ namespace Calculations.Calculators
                         Profit = cryptoClosedPosition.Profit ?? 0
                     };
 
+                    Task<ExchangeRateEntity> closingRateTask = _exchangeRates.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.SellDate);
+                    Task<ExchangeRateEntity> openingRateTask = _exchangeRates.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.PurchaseDate);
+
 
                     cryptoEntity.ClosingValue = cryptoEntity.OpeningValue + cryptoEntity.Profit;
 
-                    ExchangeRateEntity exchangeRateEntity =
-                        await _exchangeRates.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.SellDate);
-                    cryptoEntity.ClosingExchangeRate = exchangeRateEntity.Rate;
-                    exchangeRateEntity =
-                        await _exchangeRates.GetRateForPreviousDay(cryptoEntity.CurrencySymbol,
-                            cryptoEntity.PurchaseDate);
-                    cryptoEntity.OpeningExchangeRate = exchangeRateEntity.Rate;
+
+                    await Task.WhenAll(closingRateTask, openingRateTask);
+                    cryptoEntity.ClosingExchangeRate = closingRateTask.Result.Rate;
+                    cryptoEntity.OpeningExchangeRate = openingRateTask.Result.Rate;               
 
                     cryptoEntity.LossExchangedValue =
                         Math.Round(cryptoEntity.OpeningValue * cryptoEntity.OpeningExchangeRate, 2);
