@@ -25,12 +25,22 @@ namespace Database.DataAccess
                 .ToListAsync();
         }
 
-        public async Task<IList<ClosedPositionEntity>> GetCryptoPositions(string cryptoName)
+        public async Task<IList<ClosedPositionEntity>> GetCryptoPositions(IList<string> cryptoNames)
         {
             await using var context = new ApplicationDbContext();
-            return await context.ClosedPositions.Where(c =>
-                    c.Operation.ToLower().Contains($" {cryptoName.ToLower()}") && !c.IsReal.Contains("CFD"))
-                .Include(c => c.TransactionReports).ToListAsync();
+            IList<ClosedPositionEntity> list = new List<ClosedPositionEntity>();
+            foreach (string cryptoName in cryptoNames)
+            {
+                var temp = context.ClosedPositions.Where(c =>
+                       c.Operation.ToLower().Contains($" {cryptoName.ToLower()}") && !c.IsReal.Contains("CFD"))
+                    .Include(c => c.TransactionReports).ToList();
+                if (temp.Any())
+                {
+                    list = list.Concat(temp).ToList();
+                }
+            }
+
+            return list;
         }
 
         public async Task<IList<ClosedPositionEntity>> GetStockPositions()
