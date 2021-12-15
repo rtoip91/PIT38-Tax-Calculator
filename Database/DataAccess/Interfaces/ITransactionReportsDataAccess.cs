@@ -7,7 +7,7 @@ using Database.Entities;
 
 namespace Database.DataAccess.Interfaces
 {
-    public  interface ITransactionReportsDataAccess
+    public interface ITransactionReportsDataAccess
     {
         Task<int> AddTransactionReports(IList<TransactionReportEntity> transactionReports);
         Task<IList<TransactionReportEntity>> GetUnsoldCryptoTransactions(string cryptoName);

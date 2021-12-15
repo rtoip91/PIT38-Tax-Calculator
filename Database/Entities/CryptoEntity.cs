@@ -7,8 +7,7 @@ namespace Database.Entities
     [Table("CryptoCalculations")]
     public class CryptoEntity
     {
-        [Key]
-        public int Id { get; set; }
+        [Key] public int Id { get; set; }
 
         public long PositionId { get; set; }
 

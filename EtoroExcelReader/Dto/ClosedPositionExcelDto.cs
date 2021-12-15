@@ -8,25 +8,25 @@ namespace EtoroExcelReader.Dto
     public class ClosedPositionExcelDto
     {
         public ClosedPositionExcelDto(DataRow row)
-        {            
+        {
             PositionId = row[ClosedPositionsColumns.PositionId].ToInt();
 
             Operation = row[ClosedPositionsColumns.Operation].ToString();
 
             CopiedInvestor = row[ClosedPositionsColumns.CopiedInvestor].ToString();
 
-            Amount =row[ClosedPositionsColumns.Amount].ToDecimal();             
+            Amount = row[ClosedPositionsColumns.Amount].ToDecimal();
 
             OpeningRate = row[ClosedPositionsColumns.OpeningRate].ToDecimal();
 
             ClosingRate = row[ClosedPositionsColumns.ClosingRate].ToDecimal();
 
             Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
-            
+
             Units = Math.Round((decimal)(Amount * Leverage / OpeningRate), 6);
 
             Spread = row[ClosedPositionsColumns.Spread].ToDecimal();
-             
+
             Profit = row[ClosedPositionsColumns.Profit].ToDecimal();
 
             OpeningDate = row[ClosedPositionsColumns.OpeningDate].ToDate();

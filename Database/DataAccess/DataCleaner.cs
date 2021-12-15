@@ -1,5 +1,4 @@
-﻿using Database;
-using Database.DataAccess.Interfaces;
+﻿using Database.DataAccess.Interfaces;
 using System.Threading.Tasks;
 
 namespace Database.DataAccess
@@ -16,7 +15,7 @@ namespace Database.DataAccess
                 context.RemoveRange(context.CryptoCalculations);
                 context.RemoveRange(context.StockCalculations);
                 //context.RemoveRange(context.ExchangeRates);
-                await context.SaveChangesAsync();                
+                await context.SaveChangesAsync();
             }
         }
     }

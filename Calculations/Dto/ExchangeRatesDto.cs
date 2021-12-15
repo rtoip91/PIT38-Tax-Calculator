@@ -6,11 +6,9 @@ namespace Calculations.Dto
     {
         [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }
-        
-        [JsonProperty(PropertyName = "code")]
-        public string Code { get; set; }
 
-        [JsonProperty(PropertyName = "rates")]
-        public IList<ExchangeRateDto> Rates { get; set; }
+        [JsonProperty(PropertyName = "code")] public string Code { get; set; }
+
+        [JsonProperty(PropertyName = "rates")] public IList<ExchangeRateDto> Rates { get; set; }
     }
 }

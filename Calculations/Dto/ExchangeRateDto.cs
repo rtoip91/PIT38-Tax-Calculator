@@ -2,7 +2,7 @@
 
 namespace Calculations.Dto
 {
-    internal  class ExchangeRateDto
+    internal class ExchangeRateDto
     {
         [JsonProperty(PropertyName = "number")]
         public string Number { get; set; }
@@ -10,7 +10,6 @@ namespace Calculations.Dto
         [JsonProperty(PropertyName = "effectiveDate")]
         public DateTime Date { get; set; }
 
-        [JsonProperty(PropertyName = "mid")]
-        public decimal Rate { get; set; }
+        [JsonProperty(PropertyName = "mid")] public decimal Rate { get; set; }
     }
 }

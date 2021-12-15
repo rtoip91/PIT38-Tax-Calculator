@@ -19,7 +19,7 @@ namespace ExcelReader.ExtensionMethods
         internal static int ToInt(this object item)
         {
             string value = item.ToString();
-            if(string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(value))
             {
                 return 0;
             }
@@ -34,7 +34,7 @@ namespace ExcelReader.ExtensionMethods
         }
 
         private static CultureInfo ChooseProvider(string value)
-        {           
+        {
             if (value.Contains('.'))
             {
                 return CultureInfo.InvariantCulture;
@@ -42,7 +42,7 @@ namespace ExcelReader.ExtensionMethods
             else
             {
                 return new CultureInfo("pl-PL");
-            }            
+            }
         }
     }
 }

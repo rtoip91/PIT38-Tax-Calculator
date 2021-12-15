@@ -4,7 +4,7 @@ using Database.Entities;
 
 namespace Calculations.Extensions
 {
-    internal static  class ExchangeRateExtension
+    internal static class ExchangeRateExtension
     {
         private static readonly IExchangeRatesDataAccess _exchangeRatesDataAccess;
 
@@ -15,7 +15,7 @@ namespace Calculations.Extensions
 
         internal static async Task<ExchangeRateEntity> MakeCopyAndSaveToDb(this ExchangeRateEntity item)
         {
-            ExchangeRateEntity newEntity = new ExchangeRateEntity 
+            ExchangeRateEntity newEntity = new ExchangeRateEntity
             {
                 Code = item.Code,
                 Currency = item.Currency,

@@ -13,18 +13,17 @@ namespace Database
         public DbSet<StockEntity> StockCalculations { get; set; }
 
 
-
         public ApplicationDbContext()
-        {            
+        {
             Database.EnsureCreated();
         }
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) 
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
-        {            
+        {
             Database.EnsureCreated();
         }
-            
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlite("DataSource=TaxCalculator.db;");

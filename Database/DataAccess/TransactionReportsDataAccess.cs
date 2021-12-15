@@ -19,8 +19,8 @@ namespace Database.DataAccess
 
         public async Task<int> AddTransactionReports(IList<TransactionReportEntity> transactionReports)
         {
-           await _dbContext.AddRangeAsync(transactionReports);
-           return await _dbContext.SaveChangesAsync();
+            await _dbContext.AddRangeAsync(transactionReports);
+            return await _dbContext.SaveChangesAsync();
         }
 
         public void Dispose()

@@ -21,13 +21,15 @@ namespace Database.DataAccess
         public async Task<IList<ClosedPositionEntity>> GetCfdPositions()
         {
             await using var context = new ApplicationDbContext();
-            return context.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).Include(c => c.TransactionReports).ToList();
+            return context.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).Include(c => c.TransactionReports)
+                .ToList();
         }
 
         public async Task<IList<ClosedPositionEntity>> GetCryptoPositions(string cryptoName)
         {
             await using var context = new ApplicationDbContext();
-            return await context.ClosedPositions.Where(c => c.Operation.ToLower().Contains($" {cryptoName.ToLower()}") && !c.IsReal.Contains("CFD"))
+            return await context.ClosedPositions.Where(c =>
+                    c.Operation.ToLower().Contains($" {cryptoName.ToLower()}") && !c.IsReal.Contains("CFD"))
                 .Include(c => c.TransactionReports).ToListAsync();
         }
 

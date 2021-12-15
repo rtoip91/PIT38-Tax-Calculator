@@ -21,7 +21,6 @@ namespace Calculations.Calculators
         public async Task<T> Calculate<T>() where T : DividendCalculatorDto
         {
             decimal sum = 0;
-            decimal originalSum = 0;
             var transReports = await _transactionReportsDataAccess.GetDividendTransactions();
 
             foreach (var transaction in transReports)
@@ -30,7 +29,6 @@ namespace Calculations.Calculators
                     await _exchangeRates.GetRateForPreviousDay("USD", transaction.Date);
                 decimal value = transaction.Amount * exchangeRateEntity.Rate;
                 sum += value;
-                originalSum += transaction.Amount;
             }
 
             sum = Math.Round(sum, 2);

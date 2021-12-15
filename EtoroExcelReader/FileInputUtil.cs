@@ -24,6 +24,7 @@ namespace ExcelReader
             {
                 currentDir = Directory.GetParent(currentDir).FullName.TrimEnd('\\');
             }
+
             return new DirectoryInfo(currentDir).Parent;
         }
 

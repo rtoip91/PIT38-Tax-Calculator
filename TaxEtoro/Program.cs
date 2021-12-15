@@ -8,18 +8,18 @@ namespace TaxEtoro
 {
     class Program
     {
-        private static IServiceProvider Services   { get; set; }
+        private static IServiceProvider Services { get; set; }
 
         static Program()
         {
             Services = ServiceRegistration.Register();
         }
-        
+
         static async Task Main(string[] args)
         {
             await using var scope = Services.CreateAsyncScope();
-            var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();            
-            await actionPerformer.PerformCalculations();            
-        }       
+            var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
+            await actionPerformer.PerformCalculations();
+        }
     }
 }

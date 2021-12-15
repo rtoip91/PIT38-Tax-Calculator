@@ -7,8 +7,7 @@ namespace Database.Entities
     [Table("StockCalculations")]
     public class StockEntity
     {
-        [Key]
-        public int Id { get; set; }
+        [Key] public int Id { get; set; }
 
         public long PositionId { get; set; }
 
@@ -16,7 +15,7 @@ namespace Database.Entities
 
         public DateTime PurchaseDate { get; set; }
 
-        public DateTime SellDate { get; set; }        
+        public DateTime SellDate { get; set; }
 
         public string CurrencySymbol { get; set; }
 

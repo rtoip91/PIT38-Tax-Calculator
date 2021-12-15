@@ -1,5 +1,4 @@
-﻿
-namespace Calculations.Interfaces
+﻿namespace Calculations.Interfaces
 {
     public interface IEventsSubscriber
     {

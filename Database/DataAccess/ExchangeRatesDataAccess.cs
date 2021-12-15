@@ -11,7 +11,8 @@ namespace Database.DataAccess
         public async Task<ExchangeRateEntity> GetRate(string currencyCode, DateTime date)
         {
             await using var context = new ApplicationDbContext();
-            var exchangeRate = context.ExchangeRates.FirstOrDefault(rate => rate.Code == currencyCode && rate.Date.Date == date.Date);
+            var exchangeRate =
+                context.ExchangeRates.FirstOrDefault(rate => rate.Code == currencyCode && rate.Date.Date == date.Date);
             return exchangeRate;
         }
 

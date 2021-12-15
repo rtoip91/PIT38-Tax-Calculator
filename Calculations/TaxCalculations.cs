@@ -19,8 +19,9 @@ namespace Calculations
 
         public async Task<CalculationResultDto> CalculateTaxes()
         {
-            await using var scope = _services.CreateAsyncScope();            
-            ICalculator<CalculationResultDto> calculator = scope.ServiceProvider.GetService<ICalculator<CalculationResultDto>>();
+            await using var scope = _services.CreateAsyncScope();
+            ICalculator<CalculationResultDto> calculator =
+                scope.ServiceProvider.GetService<ICalculator<CalculationResultDto>>();
             ICalculationEvents events = scope.ServiceProvider.GetService<ICalculationEvents>();
 
             if (events != null)
@@ -33,6 +34,6 @@ namespace Calculations
 
             var result = await calculator.Calculate<CalculationResultDto>();
             return result;
-        }      
+        }
     }
 }

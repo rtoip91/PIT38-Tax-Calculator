@@ -4,7 +4,7 @@ using Calculations.Interfaces;
 namespace Calculations.Calculators
 {
     internal class Calculator : ICalculator<CalculationResultDto>, ICalculationEvents
-    {       
+    {
         public event EventHandler? CfdCalculationFinished;
         public event EventHandler? CryptoCalculationFinished;
         public event EventHandler? DividendCalculationFinished;
@@ -13,13 +13,13 @@ namespace Calculations.Calculators
         private readonly ICalculator<CfdCalculatorDto> _cfdCalculator;
         private readonly ICalculator<CryptoDto> _cryptoCalculator;
         private readonly ICalculator<StockCalculatorDto> _stockCalculator;
-        private readonly ICalculator<DividendCalculatorDto> _dividendCalculator;       
+        private readonly ICalculator<DividendCalculatorDto> _dividendCalculator;
 
         public Calculator(ICalculator<CfdCalculatorDto> cfdCalculator,
             ICalculator<CryptoDto> cryptoCalculator,
             ICalculator<StockCalculatorDto> stockCalculator,
             ICalculator<DividendCalculatorDto> dividendCalculator)
-        {           
+        {
             _cfdCalculator = cfdCalculator;
             _cryptoCalculator = cryptoCalculator;
             _stockCalculator = stockCalculator;

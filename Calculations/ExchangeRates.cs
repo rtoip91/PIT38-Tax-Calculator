@@ -23,12 +23,13 @@ namespace Calculations
         public async Task<ExchangeRateEntity> GetRateForPreviousDay(string currencyCode, DateTime date)
         {
             double subtractDays = -1;
-            
-            if(date.DayOfWeek == DayOfWeek.Sunday)
+
+            if (date.DayOfWeek == DayOfWeek.Sunday)
             {
                 subtractDays = -2;
             }
-            if(date.DayOfWeek == DayOfWeek.Monday)
+
+            if (date.DayOfWeek == DayOfWeek.Monday)
             {
                 subtractDays = -3;
             }
@@ -44,7 +45,7 @@ namespace Calculations
             {
                 return await HandleBankHoliday(currencyCode, newDate);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 throw;
@@ -61,27 +62,28 @@ namespace Calculations
 
         private async Task<ExchangeRateEntity> GetRateForDay(string currencyCode, DateTime date)
         {
-
             ExchangeRateEntity exchangeRate = await _exchangeRatesDataAccess.GetRate(currencyCode, date);
 
-                if (exchangeRate != null)
-                {
-                    return exchangeRate;
-                }
-
-                exchangeRate = await GetRatesFromApi(currencyCode, date);
-                await _exchangeRatesDataAccess.SaveRate(exchangeRate);
+            if (exchangeRate != null)
+            {
                 return exchangeRate;
-        }      
+            }
+
+            exchangeRate = await GetRatesFromApi(currencyCode, date);
+            await _exchangeRatesDataAccess.SaveRate(exchangeRate);
+            return exchangeRate;
+        }
 
         private async Task<ExchangeRateEntity> GetRatesFromApi(string currencyCode, DateTime date)
         {
             var httpClient = _httpClientFactory.CreateClient("ExchangeRates");
-            using var resp = await httpClient.GetAsync($"{currencyCode.ToLower()}/{date:yyyy-MM-dd}/", HttpCompletionOption.ResponseHeadersRead);
-            if(resp.StatusCode == HttpStatusCode.NotFound)
+            using var resp = await httpClient.GetAsync($"{currencyCode.ToLower()}/{date:yyyy-MM-dd}/",
+                HttpCompletionOption.ResponseHeadersRead);
+            if (resp.StatusCode == HttpStatusCode.NotFound)
             {
                 throw new BankHolidayException();
             }
+
             if (resp.StatusCode == HttpStatusCode.ServiceUnavailable)
             {
                 throw new Exception("Serwer NBP nie odpowiada");
@@ -102,11 +104,9 @@ namespace Calculations
                     entity.Date = tempRate.Date;
                     entity.Rate = tempRate.Rate;
                 }
-            }           
+            }
 
             return entity;
         }
-
-        
     }
 }

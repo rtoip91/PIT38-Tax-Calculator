@@ -65,7 +65,6 @@ namespace Calculations.Calculators
 
                     await _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
                 }
-
             }
 
             try
@@ -84,14 +83,11 @@ namespace Calculations.Calculators
                 };
 
                 return (T)cryptoDto;
-
             }
             catch (Exception)
             {
                 return null;
             }
-
-
         }
 
         private async Task<decimal> UnsoldCryptos()
@@ -112,7 +108,6 @@ namespace Calculations.Calculators
 
             sum = Math.Round(sum, 2, MidpointRounding.AwayFromZero);
             return sum;
-
         }
     }
 }

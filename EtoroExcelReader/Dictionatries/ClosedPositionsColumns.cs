@@ -3,7 +3,7 @@
     internal static class ClosedPositionsColumns
     {
         internal const int PositionId = 0;
-        internal const int Operation = 1; 
+        internal const int Operation = 1;
         internal const int Amount = 2;
         internal const int Units = 3;
         internal const int OpeningDate = 4;

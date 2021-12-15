@@ -7,17 +7,16 @@ namespace EtoroExcelReader.Dto
 {
     public class TransactionReportExcelDto
     {
-
         public TransactionReportExcelDto(DataRow row)
-        {           
+        {
             Date = DateTime.Parse(row[TransactionReportsColumns.Date].ToString());
-            
+
             AccountBalance = row[TransactionReportsColumns.AccountBalance].ToDecimal();
 
             Type = row[TransactionReportsColumns.Type].ToString();
 
             Details = row[TransactionReportsColumns.Details].ToString();
-           
+
             PositionId = row[TransactionReportsColumns.PositionId].ToInt();
 
             Amount = row[TransactionReportsColumns.Amount].ToDecimal();
@@ -28,8 +27,8 @@ namespace EtoroExcelReader.Dto
 
             NWA = row[TransactionReportsColumns.NWA].ToInt();
         }
-        
-        public DateTime Date { get;}
+
+        public DateTime Date { get; }
 
         public decimal AccountBalance { get; }
 
@@ -40,11 +39,11 @@ namespace EtoroExcelReader.Dto
         public int PositionId { get; }
 
         public decimal Amount { get; }
-        
+
         public decimal RealizedEquityChange { get; }
-        
+
         public decimal RealizedEquity { get; }
-        
+
         public int NWA { get; }
     }
 }

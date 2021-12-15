@@ -22,7 +22,8 @@ namespace ExcelReader
         private readonly IClosedPositionsDataAccess _closedPositionsDataAccess;
         private readonly ITransactionReportsDataAccess _transactionReportsDataAccess;
 
-        public ExcelDataExtractor(IClosedPositionsDataAccess closedPositionsDataAccess, ITransactionReportsDataAccess transactionReportsDataAccess)
+        public ExcelDataExtractor(IClosedPositionsDataAccess closedPositionsDataAccess,
+            ITransactionReportsDataAccess transactionReportsDataAccess)
         {
             _closedPositionsDataAccess = closedPositionsDataAccess;
             _transactionReportsDataAccess = transactionReportsDataAccess;
@@ -37,13 +38,15 @@ namespace ExcelReader
             IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();
             IList<TransactionReportExcelDto> transactionReportDtos = new List<TransactionReportExcelDto>();
 
-          
+
             using (ExcelPackage package = new ExcelPackage())
             {
                 await package.LoadAsync(fileInfo);
 
-                DataTable closedPositionsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
-                DataTable transactionReportsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
+                DataTable closedPositionsDataTable =
+                    await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
+                DataTable transactionReportsDataTable =
+                    await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
 
                 IList<Task> extractingTasks = new List<Task>
                 {
@@ -54,56 +57,58 @@ namespace ExcelReader
 
                 await Task.WhenAll(extractingTasks);
 
-               return await IntoTheDatabaseAsync(closedPositionDtos, transactionReportDtos);
+                return await IntoTheDatabaseAsync(closedPositionDtos, transactionReportDtos);
             }
         }
 
-        private async Task<bool> IntoTheDatabaseAsync(IList<ClosedPositionExcelDto> closedPositionDtos, IList<TransactionReportExcelDto> transactionReportDtos)
+        private async Task<bool> IntoTheDatabaseAsync(IList<ClosedPositionExcelDto> closedPositionDtos,
+            IList<TransactionReportExcelDto> transactionReportDtos)
         {
-           
-                var config = new MapperConfiguration(cfg => {
-                    cfg.AddProfile<ClosedPositionProfile>();
-                    cfg.AddProfile<TransactionReportProfile>();
-                });
+            var config = new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<ClosedPositionProfile>();
+                cfg.AddProfile<TransactionReportProfile>();
+            });
 
-                var mapper = new Mapper(config);
-                IList<TransactionReportEntity> transactionReportEntities = new List<TransactionReportEntity>();
-                IList<ClosedPositionEntity> closedPositionEntities = new List<ClosedPositionEntity>();
+            var mapper = new Mapper(config);
+            IList<TransactionReportEntity> transactionReportEntities = new List<TransactionReportEntity>();
+            IList<ClosedPositionEntity> closedPositionEntities = new List<ClosedPositionEntity>();
 
-                foreach (ClosedPositionExcelDto closedPosition in closedPositionDtos)
+            foreach (ClosedPositionExcelDto closedPosition in closedPositionDtos)
+            {
+                ClosedPositionEntity closedPositionEntity = mapper.Map<ClosedPositionEntity>(closedPosition);
+                closedPositionEntity.TransactionReports = new List<TransactionReportEntity>();
+
+                foreach (TransactionReportExcelDto transactionReport in transactionReportDtos
+                             .Where(t => t.PositionId == closedPosition.PositionId).ToList())
                 {
-                    ClosedPositionEntity closedPositionEntity = mapper.Map<ClosedPositionEntity>(closedPosition);
-                    closedPositionEntity.TransactionReports = new List<TransactionReportEntity>();
-                    
-                    foreach (TransactionReportExcelDto transactionReport in transactionReportDtos.Where(t=>t.PositionId == closedPosition.PositionId).ToList())
-                    {
-                        closedPositionEntity.TransactionReports.Add(mapper.Map<TransactionReportEntity>(transactionReport));
-                        transactionReportDtos.Remove(transactionReport);
-                    }
-
-                    closedPositionEntities.Add(closedPositionEntity);
+                    closedPositionEntity.TransactionReports.Add(mapper.Map<TransactionReportEntity>(transactionReport));
+                    transactionReportDtos.Remove(transactionReport);
                 }
 
-                foreach (TransactionReportExcelDto transactionReport in transactionReportDtos)
-                {
-                    TransactionReportEntity transactionReportEntity = mapper.Map<TransactionReportEntity>(transactionReport);
-                    transactionReportEntity.PositionId = null;
-                    transactionReportEntities.Add(transactionReportEntity);
-                }
+                closedPositionEntities.Add(closedPositionEntity);
+            }
 
-                try
-                {
-                    await _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
-                    await _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+            foreach (TransactionReportExcelDto transactionReport in transactionReportDtos)
+            {
+                TransactionReportEntity transactionReportEntity =
+                    mapper.Map<TransactionReportEntity>(transactionReport);
+                transactionReportEntity.PositionId = null;
+                transactionReportEntities.Add(transactionReportEntity);
+            }
 
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e);
-                    return false;
-                }
+            try
+            {
+                await _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
+                await _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                return false;
+            }
 
-                return true;
+            return true;
         }
 
         private async Task<DataTable> CreateDataTableAsync(ExcelPackage package, int worksheetId)
@@ -128,7 +133,8 @@ namespace ExcelReader
             }));
         }
 
-        private async Task ExtractClosedPositionsAsync(DataTable dataTable, IList<ClosedPositionExcelDto> closedPositionDtos)
+        private async Task ExtractClosedPositionsAsync(DataTable dataTable,
+            IList<ClosedPositionExcelDto> closedPositionDtos)
         {
             await Task.Run(() =>
             {
