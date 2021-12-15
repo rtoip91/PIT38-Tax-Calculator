@@ -29,6 +29,7 @@ namespace Calculations.Calculators
         public async Task<T> Calculate<T>() where T : CalculationResultDto
         {
             var calculationResultDto = new CalculationResultDto();
+
             calculationResultDto.CdfDto = await _cfdCalculator.Calculate<CfdCalculatorDto>();
             OnCfdCalculationFinished();
             calculationResultDto.CryptoDto = await _cryptoCalculator.Calculate<CryptoDto>();

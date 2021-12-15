@@ -24,7 +24,7 @@ namespace Calculations.Calculators
 
         public async Task<T> Calculate<T>() where T : StockCalculatorDto
         {
-            IList<StockEntity> stockEntities = new List<StockEntity>();
+            IList<StockEntity> stockEntities = new List<StockEntity>();            
             var stockClosedPositions = await _closedPositionDataAccess.GetStockPositions();
 
             foreach (var stockClosedPosition in stockClosedPositions)
@@ -38,23 +38,21 @@ namespace Calculations.Calculators
                     PositionId = stockClosedPosition.PositionId ?? 0
                 };
 
+                Task<ExchangeRateEntity> closingRateTask = _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
+                Task<ExchangeRateEntity> openingRateTask = _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
+
                 stockEntity.OpeningValue = stockClosedPosition.OpeningRate * stockClosedPosition.Units ?? 0;
                 stockEntity.ClosingValue = stockClosedPosition.ClosingRate * stockClosedPosition.Units ?? 0;
                 stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;
 
-                ExchangeRateEntity exchangeRateEntity =
-                    await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
-                stockEntity.ClosingExchangeRate = exchangeRateEntity.Rate;
-
-                exchangeRateEntity =
-                    await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
-                stockEntity.OpeningExchangeRate = exchangeRateEntity.Rate;
+                await Task.WhenAll(closingRateTask, openingRateTask);
+                stockEntity.ClosingExchangeRate = closingRateTask.Result.Rate;
+                stockEntity.OpeningExchangeRate = openingRateTask.Result.Rate;
 
                 stockEntity.LossExchangedValue =
                     Math.Round(stockEntity.OpeningValue * stockEntity.OpeningExchangeRate, 2);
                 stockEntity.GainExchangedValue =
                     Math.Round(stockEntity.ClosingValue * stockEntity.ClosingExchangeRate, 2);
-
 
                 stockEntities.Add(stockEntity);
 
@@ -74,13 +72,13 @@ namespace Calculations.Calculators
                     Income = totalGain - totalLoss
                 };
 
-                return (T)stockCalculatorDto;
+                return (T) stockCalculatorDto;
             }
             catch (Exception e)
             {
                 Console.WriteLine(e);
                 return null;
             }
-        }
+        }        
     }
 }
