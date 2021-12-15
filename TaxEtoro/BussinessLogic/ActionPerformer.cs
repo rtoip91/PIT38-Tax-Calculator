@@ -34,6 +34,11 @@ namespace TaxEtoro.BussinessLogic
             }
         }
 
+        public void OnAppClose(object sender, EventArgs e)
+        {
+            _ = DisposeAsync();
+        }
+
         public async Task PerformCalculations()
         {
             try

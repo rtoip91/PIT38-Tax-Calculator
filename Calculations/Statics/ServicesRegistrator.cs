@@ -4,6 +4,7 @@ using Calculations.Interfaces;
 using Database.DataAccess;
 using Database.DataAccess.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Hosting;
 
 namespace Calculations.Statics
@@ -36,6 +37,14 @@ namespace Calculations.Statics
                         config.Timeout = new TimeSpan(0, 0, 10);
                         config.DefaultRequestHeaders.Clear();
                     });
+                })
+                .ConfigureLogging((context, logging) =>
+                {
+                    // clear all previously registered providers
+                    logging.ClearProviders();
+                    logging.AddDebug();
+                    // now register everything you *really* want
+                    // …
                 })
                 .Build();
             return host.Services;
