@@ -27,9 +27,7 @@ namespace Calculations.Calculators
         {
             IList<CryptoEntity> cryptoEntities = new List<CryptoEntity>();
             IList<string> cryptoList = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.Values.ToList();
-
-           
-                var cryptoClosedPositions = await _closedPositionsDataAccess.GetCryptoPositions(cryptoList);
+            var cryptoClosedPositions = await _closedPositionsDataAccess.GetCryptoPositions(cryptoList);
 
                 foreach (var cryptoClosedPosition in cryptoClosedPositions)
                 {
