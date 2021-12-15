@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using TaxEtoro.Interfaces;
@@ -17,9 +18,14 @@ namespace TaxEtoro
 
         static async Task Main(string[] args)
         {
+            var timer = new Stopwatch();
+            timer.Start();
             await using var scope = Services.CreateAsyncScope();
             var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
             await actionPerformer.PerformCalculations();
+            timer.Stop();
+            TimeSpan timeTaken = timer.Elapsed;
+            Console.WriteLine( $"Time taken: {timeTaken:m\\:ss\\.fff}");
         }
     }
 }
