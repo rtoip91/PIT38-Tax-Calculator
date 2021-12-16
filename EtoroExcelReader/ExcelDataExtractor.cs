@@ -43,25 +43,21 @@ namespace ExcelReader
             {
                 await package.LoadAsync(fileInfo);
 
-                DataTable closedPositionsDataTable =
-                    await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
-                DataTable transactionReportsDataTable =
-                    await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
+                DataTable closedPositionsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
+                DataTable transactionReportsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
 
-                IList<Task> extractingTasks = new List<Task>
-                {
-                    ExtractClosedPositionsAsync(closedPositionsDataTable, closedPositionDtos),
-                    ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos)
-                };
+                Task extractClosedPositions = ExtractClosedPositionsAsync(closedPositionsDataTable, closedPositionDtos);
+                Task extractTransactionReports = ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos);
 
+                await Task.WhenAll(extractClosedPositions, extractTransactionReports);
 
-                await Task.WhenAll(extractingTasks);
+                var t =  await IntoTheDatabase(closedPositionDtos, transactionReportDtos);
 
-                return await IntoTheDatabaseAsync(closedPositionDtos, transactionReportDtos);
+                return t;
             }
         }
 
-        private async Task<bool> IntoTheDatabaseAsync(IList<ClosedPositionExcelDto> closedPositionDtos,
+        private async Task<bool> IntoTheDatabase(IList<ClosedPositionExcelDto> closedPositionDtos,
             IList<TransactionReportExcelDto> transactionReportDtos)
         {
             var config = new MapperConfiguration(cfg =>
@@ -99,8 +95,10 @@ namespace ExcelReader
 
             try
             {
-                await _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
-                await _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+                Task<int> addClosePositions =  _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
+                Task<int> addTransactionReports = _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+
+                await Task.WhenAll(addClosePositions, addTransactionReports);
             }
             catch (Exception e)
             {
