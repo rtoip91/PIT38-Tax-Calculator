@@ -1,6 +1,6 @@
 ﻿using Calculations.Dto;
 using Calculations.Exceptions;
-using Calculations.Extensions;
+
 using Calculations.Interfaces;
 using Database.Entities;
 using Newtonsoft.Json;
@@ -57,7 +57,7 @@ namespace Calculations
             DateTime holidayDay = holidayDate;
             ExchangeRateEntity entity = await GetRateForPreviousDay(currencyCode, holidayDate);
             entity.Date = holidayDay;
-            return await entity.MakeCopyAndSaveToDb();
+            return await _exchangeRatesDataAccess.MakeCopyAndSaveToDb(entity);
         }
 
         private async Task<ExchangeRateEntity> GetRateForDay(string currencyCode, DateTime date)

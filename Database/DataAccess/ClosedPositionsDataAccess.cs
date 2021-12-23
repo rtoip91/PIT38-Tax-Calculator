@@ -24,7 +24,6 @@ namespace Database.DataAccess
             return await context.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).Include(c => c.TransactionReports)
                 .ToListAsync();
         }
-
         public async Task<IList<ClosedPositionEntity>> GetCryptoPositions(IList<string> cryptoNames)
         {
             await using var context = new ApplicationDbContext();

@@ -8,5 +8,6 @@ namespace Database.DataAccess.Interfaces
     {
         Task<ExchangeRateEntity> GetRate(string currencyCode, DateTime date);
         Task<int> SaveRate(ExchangeRateEntity exchangeRate);
+        Task<ExchangeRateEntity> MakeCopyAndSaveToDb(ExchangeRateEntity item);
     }
 }
