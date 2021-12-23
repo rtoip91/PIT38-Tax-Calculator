@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
@@ -24,18 +22,23 @@ namespace Database.DataAccess
             return await context.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).Include(c => c.TransactionReports)
                 .ToListAsync();
         }
+
         public async Task<IList<ClosedPositionEntity>> GetCryptoPositions(IList<string> cryptoNames)
         {
             await using var context = new ApplicationDbContext();
             IList<ClosedPositionEntity> list = new List<ClosedPositionEntity>();
+
+            var temp =  await context.ClosedPositions.Where(c => !c.IsReal.Contains("CFD"))
+                .Include(c => c.TransactionReports).ToListAsync();
+
+
             foreach (string cryptoName in cryptoNames)
             {
-                var temp = context.ClosedPositions.Where(c =>
-                       c.Operation.ToLower().Contains($" {cryptoName.ToLower()}") && !c.IsReal.Contains("CFD"))
-                    .Include(c => c.TransactionReports).ToList();
-                if (temp.Any())
+                var cryptoList = temp.Where(c => c.Operation.ToLower().Contains($" {cryptoName.ToLower()}")).ToList();
+
+                if (cryptoList.Any())
                 {
-                    list = list.Concat(temp).ToList();
+                    list = list.Concat(cryptoList).ToList();
                 }
             }
 
