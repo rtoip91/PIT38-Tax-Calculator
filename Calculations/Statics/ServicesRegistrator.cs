@@ -30,6 +30,7 @@ namespace Calculations.Statics
                     services.AddScoped<IStockEntityDataAccess, StockEntityDataAccess>();
                     services.AddScoped<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
                     services.AddScoped<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
+                    services.AddMemoryCache();
 
                     services.AddHttpClient("ExchangeRates", config =>
                     {
