@@ -1,39 +1,30 @@
 ﻿using Calculations.Dto;
 using Calculations.Interfaces;
-using Calculations.Statics;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace Calculations
+namespace Calculations;
+
+public class TaxCalculations : ITaxCalculations
 {
-    public class TaxCalculations : ITaxCalculations
+    private readonly IEventsSubscriber _eventsSubscriber;
+    private readonly ICalculator<CalculationResultDto> _calculator;
+    private readonly ICalculationEvents _events;
+
+    public TaxCalculations(IEventsSubscriber eventsSubscriber, ICalculator<CalculationResultDto> calculator,
+        ICalculationEvents events)
     {
-        private IServiceProvider _services;
-        private IEventsSubscriber _eventsSubscriber;
+        _eventsSubscriber = eventsSubscriber;
+        _calculator = calculator;
+        _events = events;
+    }
 
+    public async Task<CalculationResultDto> CalculateTaxes()
+    {
+        _events.CfdCalculationFinished += _eventsSubscriber.AfterCfd;
+        _events.DividendCalculationFinished += _eventsSubscriber.AfterDividend;
+        _events.CryptoCalculationFinished += _eventsSubscriber.AfterCrypto;
+        _events.StockCalculationFinished += _eventsSubscriber.AfterStock;
 
-        public TaxCalculations(IEventsSubscriber eventsSubscriber)
-        {
-            _services = ServicesRegistrator.Services();
-            _eventsSubscriber = eventsSubscriber;
-        }
-
-        public async Task<CalculationResultDto> CalculateTaxes()
-        {
-            await using var scope = _services.CreateAsyncScope();
-            ICalculator<CalculationResultDto> calculator =
-                scope.ServiceProvider.GetService<ICalculator<CalculationResultDto>>();
-            ICalculationEvents events = scope.ServiceProvider.GetService<ICalculationEvents>();
-
-            if (events != null)
-            {
-                events.CfdCalculationFinished += _eventsSubscriber.AfterCfd;
-                events.DividendCalculationFinished += _eventsSubscriber.AfterDividend;
-                events.CryptoCalculationFinished += _eventsSubscriber.AfterCrypto;
-                events.StockCalculationFinished += _eventsSubscriber.AfterStock;
-            }
-
-            var result = await calculator.Calculate<CalculationResultDto>();
-            return result;
-        }
+        var result = await _calculator.Calculate<CalculationResultDto>();
+        return result;
     }
 }
