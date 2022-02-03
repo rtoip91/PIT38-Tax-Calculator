@@ -52,7 +52,24 @@
             { "FLR", "Spark" },
             { "MATIC", "Polygon" },
             { "BAT", "Basic Assertion Token" },
-            { "ENJ", "Enjin" }
+            { "ENJ", "Enjin" },
+            { "AAVE", "Aave" },
+            { "ALGO", "Algorand" },
+            { "ANKR", "Ankr" },
+            { "ATOM", "Cosmos" },
+            { "DOGE", "Dogecoin" },
+            { "COMP", "Compound" },
+            { "DOT", "Polkadot" },
+            { "DYDX", "dYdX" },
+            { "FET", "Fetch.ai" },
+            { "FIL", "Filecoin" },
+            { "MANA", "Decentraland" },
+            { "MKR", "Maker" },
+            { "REN", "REN" },
+            { "SAND", "The Sandbox" },
+            { "SNX", "Synthetix" },
+            { "YFI", "Yearn.finance" },
+            { "ZRX", "0x" }
         };
     }
 }
