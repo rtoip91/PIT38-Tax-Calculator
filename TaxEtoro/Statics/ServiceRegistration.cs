@@ -14,6 +14,8 @@ using Calculations.Statics;
 using Microsoft.Extensions.Logging;
 using TaxEtoro.BussinessLogic;
 using TaxEtoro.Interfaces;
+using ResultPresenter.Interfaces;
+using ResultPresenter;
 
 namespace TaxEtoro.Statics;
 
@@ -64,5 +66,6 @@ internal static class ServiceRegistration
         services.AddTransient<IActionPerformer, ActionPerformer>();
         services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
+        services.AddTransient<IFileWriter, FileWriter>();
     }
 }

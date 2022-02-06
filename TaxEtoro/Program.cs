@@ -27,6 +27,9 @@ namespace TaxEtoro
             timer.Stop();
             TimeSpan timeTaken = timer.Elapsed;
             Console.WriteLine( $"Time taken: {timeTaken:m\\:ss\\.fff}");
+            Console.WriteLine("Wciśnij dowolny klawisz aby zaprezentowac wyniki");
+            _=Console.ReadKey();
+            await actionPerformer.PresentCalcucaltionResults();
         }
     }
 }

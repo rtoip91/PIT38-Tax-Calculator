@@ -7,5 +7,6 @@ namespace Database.DataAccess.Interfaces
     public interface ICryptoEntityDataAccess
     {
         Task<int> AddEntities(IList<CryptoEntity> cryptoEntities);
+        Task<IList<CryptoEntity>> GetCryptoEntities();
     }
 }

@@ -6,6 +6,8 @@ namespace TaxEtoro.Interfaces
     internal interface IActionPerformer : IAsyncDisposable
     {
         Task PerformCalculations();
+        Task PresentCalcucaltionResults();
+
         void OnAppClose(object sender, EventArgs e);
     }
 }

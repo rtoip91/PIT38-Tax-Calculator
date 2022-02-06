@@ -10,5 +10,6 @@ namespace Database.DataAccess.Interfaces
     public interface ICfdEntityDataAccess
     {
         Task<int> AddEntities(IList<CfdEntity> cfdEntities);
+        Task<IList<CfdEntity>> GetCfdEntities();
     }
 }
