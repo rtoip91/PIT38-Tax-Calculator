@@ -1,4 +1,5 @@
-﻿using Database.DataAccess.Interfaces;
+﻿using Calculations.Dto;
+using Database.DataAccess.Interfaces;
 using Database.Entities;
 using ResultPresenter.Interfaces;
 
@@ -17,14 +18,25 @@ public class FileWriter : IFileWriter
         _cfdEntityDataAccess = cfdEntityDataAccess;
     }
 
-    public async Task PresentData()
+    public async Task PresentData(CalculationResultDto calculationResultDto)
     {
         IList<CfdEntity> cfdEntities = await _cfdEntityDataAccess.GetCfdEntities();
+        FileStream fs = new FileStream("result.txt", FileMode.Truncate, FileAccess.Write);
 
+        await using StreamWriter sw = new StreamWriter(fs);
+        await WriteCfdToFile(calculationResultDto, cfdEntities, sw);
+    }
+
+    private async Task WriteCfdToFile(CalculationResultDto calculationResultDto, IList<CfdEntity> cfdEntities, StreamWriter sw)
+    {
+        await sw.WriteLineAsync("--------CFD--------");
+        await sw.WriteLineAsync($"Zysk = {calculationResultDto.CdfDto.Gain} PLN");
+        await sw.WriteLineAsync($"Strata = {calculationResultDto.CdfDto.Loss} PLN");
+        await sw.WriteLineAsync($"Dochód = {calculationResultDto.CdfDto.Income} PLN");
+        await sw.WriteLineAsync();
         foreach (CfdEntity cfdEntity in cfdEntities)
         {
-            Console.WriteLine(cfdEntity.ToString());
+            await sw.WriteLineAsync(cfdEntity.ToString());
         }
-
     }
 }

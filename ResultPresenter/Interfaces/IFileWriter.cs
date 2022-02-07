@@ -1,8 +1,10 @@
 ﻿
+using Calculations.Dto;
+
 namespace ResultPresenter.Interfaces
 {
     public interface IFileWriter
-    {
-        Task PresentData();
+    { 
+        Task PresentData(CalculationResultDto calculationResultDto);
     }
 }

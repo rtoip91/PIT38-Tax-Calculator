@@ -23,13 +23,12 @@ namespace TaxEtoro
             await using var scope = Services.CreateAsyncScope();
             var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
             AppDomain.CurrentDomain.ProcessExit += new EventHandler(actionPerformer.OnAppClose);
-            await actionPerformer.PerformCalculations();
+            var result = await actionPerformer.PerformCalculations();
             timer.Stop();
             TimeSpan timeTaken = timer.Elapsed;
             Console.WriteLine( $"Time taken: {timeTaken:m\\:ss\\.fff}");
-            Console.WriteLine("Wciśnij dowolny klawisz aby zaprezentowac wyniki");
-            _=Console.ReadKey();
-            await actionPerformer.PresentCalcucaltionResults();
+            
+            await actionPerformer.PresentCalcucaltionResults(result);
         }
     }
 }
