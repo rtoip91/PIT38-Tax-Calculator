@@ -35,18 +35,8 @@ namespace Database.Entities
 
         public override string ToString()
         {
-            decimal exchangedGain;
-
-            if(GainExchangedValue != 0)
-            {
-                exchangedGain = GainExchangedValue;
-            }
-            else
-            {
-                exchangedGain = LossExchangedValue;
-            }
-
-            return $"{Name} | Ilość jednostek:{Units} | Data zakupu:{PurchaseDate.ToShortDateString()} Cena:{OpeningRate}USD | Data sprzedaży:{SellDate.ToShortDateString()} Cena:{ClosingRate} USD | Wynik w dniu sprzedaży:{GainValue}USD | Kurs NBP z dnia poprzedniego: {ExchangeRate} | Wynik w PLN {exchangedGain}";
+            var exchangedGain = GainExchangedValue != 0 ? GainExchangedValue : LossExchangedValue;
+            return $"{Name} | Ilość jednostek:{Units} |\nData zakupu:{PurchaseDate.ToShortDateString()} Cena:{OpeningRate}USD | Data sprzedaży:{SellDate.ToShortDateString()} Cena:{ClosingRate} USD | Wynik w dniu sprzedaży:{GainValue}USD | Kurs NBP z dnia poprzedniego: {ExchangeRate} | Wynik w PLN {exchangedGain} \n";
         }
     }
 }

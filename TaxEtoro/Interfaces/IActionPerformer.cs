@@ -7,7 +7,6 @@ namespace TaxEtoro.Interfaces
     {
         Task PerformCalculations();
         Task PresentCalcucaltionResults();
-
         void OnAppClose(object sender, EventArgs e);
     }
 }

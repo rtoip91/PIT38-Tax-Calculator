@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "..\Database\Dat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculations", "..\Calculations\Calculations.csproj", "{20CE04F1-E65E-4F77-A788-4912C31FB606}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ResultPresenter", "..\ResultPresenter\ResultPresenter.csproj", "{D089CB16-8E19-4EB4-BC0B-9AFE623D362F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResultsPresenter", "..\ResultPresenter\ResultsPresenter.csproj", "{D089CB16-8E19-4EB4-BC0B-9AFE623D362F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

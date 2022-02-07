@@ -31,7 +31,7 @@ public class ExcelDataExtractor : IExcelDataExtractor
     public async Task<bool> ImportDataFromExcelIntoDbAsync()
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var filePath = FileInputUtil.GetFileInfo(@"..\\TestFile", "TestFile2021.xlsx").FullName;
+        var filePath = FileInputUtil.GetFileInfo(@"..\\TestFile", "TestFile2022.xlsx").FullName;
         FileInfo fileInfo = new FileInfo(filePath);
 
         IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();

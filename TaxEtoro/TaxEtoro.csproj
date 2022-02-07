@@ -9,7 +9,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Calculations\Calculations.csproj" />
     <ProjectReference Include="..\EtoroExcelReader\ExcelReader.csproj" />
-    <ProjectReference Include="..\ResultPresenter\ResultPresenter.csproj" />
+    <ProjectReference Include="..\ResultPresenter\ResultsPresenter.csproj" />
   </ItemGroup>
 
   <ItemGroup>
