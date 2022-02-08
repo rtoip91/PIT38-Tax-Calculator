@@ -25,12 +25,14 @@ namespace Database.Entities
 
         public decimal Profit { get; set; }
 
+        public decimal ExchangedProfit { get; set; }
+
         public decimal OpeningExchangeRate { get; set; }
 
         public decimal ClosingExchangeRate { get; set; }
 
-        public decimal GainExchangedValue { get; set; }
+        public decimal ClosingExchangedValue { get; set; }
 
-        public decimal LossExchangedValue { get; set; }
+        public decimal OpeningExchangedValue { get; set; }
     }
 }
