@@ -2,6 +2,7 @@
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using ExcelReader.Interfaces;
+using ResultPresenter.Interfaces;
 using System;
 using System.Threading.Tasks;
 using TaxEtoro.Interfaces;
@@ -13,14 +14,19 @@ namespace TaxEtoro.BussinessLogic
         private IExcelDataExtractor _reader;
         private ITaxCalculations _taxCalculations;
         private IDataCleaner _dataCleaner;
+        private IFileWriter _fileWriter;
         private bool _isDisposed;
 
 
-        public ActionPerformer(IExcelDataExtractor reader, ITaxCalculations taxCalculations, IDataCleaner dataCleaner)
+        public ActionPerformer(IExcelDataExtractor reader,
+            ITaxCalculations taxCalculations,
+            IDataCleaner dataCleaner,
+            IFileWriter fileWriter)
         {
             _reader = reader;
             _taxCalculations = taxCalculations;
             _dataCleaner = dataCleaner;
+            _fileWriter = fileWriter;
             _isDisposed = false;
         }
 
@@ -39,18 +45,24 @@ namespace TaxEtoro.BussinessLogic
             _ = DisposeAsync();
         }
 
-        public async Task PerformCalculations()
+        public async Task<CalculationResultDto> PerformCalculations()
         {
             try
             {
                 await _reader.ImportDataFromExcelIntoDbAsync();
                 var result = await _taxCalculations.CalculateTaxes();
                 PresentRessults(result);
+                return result;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                throw;
             }           
+        }
+
+        public async Task PresentCalcucaltionResults(CalculationResultDto result)
+        {
+            await _fileWriter.PresentData(result);
         }
 
         private void PresentRessults(CalculationResultDto result)

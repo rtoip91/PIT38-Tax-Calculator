@@ -42,6 +42,6 @@ namespace Database.Entities
 
         public string Comments { get; set; }
 
-        public IList<TransactionReportEntity> TransactionReports { get; set; }
+        public IList<TransactionReportEntity> TransactionReports { get; set; }       
     }
 }

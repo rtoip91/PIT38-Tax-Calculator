@@ -15,18 +15,18 @@ namespace Database
 
         public ApplicationDbContext()
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
+            Database.Migrate();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("DataSource=TaxCalculator.db;");
+            optionsBuilder.UseSqlite("DataSource=EtoroTaxCalculator.db;");
         }
     }
 }

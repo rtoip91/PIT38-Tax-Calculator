@@ -7,5 +7,6 @@ namespace Database.DataAccess.Interfaces
     public interface IStockEntityDataAccess
     {
         Task<int> AddEntities(IList<StockEntity> stockEntities);
+        Task<IList<StockEntity>> GetEntities();
     }
 }

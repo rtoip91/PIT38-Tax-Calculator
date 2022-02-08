@@ -1,9 +1,7 @@
 ﻿using Calculations.Dto;
 using Calculations.Interfaces;
-using Database;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Calculations.Calculators
 {

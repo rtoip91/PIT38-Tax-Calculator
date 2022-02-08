@@ -32,5 +32,16 @@ namespace Database.Entities
         public decimal GainExchangedValue { get; set; }
 
         public decimal LossExchangedValue { get; set; }
+
+        public override string ToString()
+        {
+            var exchangedGain = GainExchangedValue != 0 ? GainExchangedValue : LossExchangedValue;
+            return $"Operacja: {Name} | ID: {PositionId} |" +
+                   $"\nIlość jednostek: {Units} |" +
+                   $"\nData otwarcia: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {OpeningRate} {CurrencySymbol} |" +
+                   $"\nData zamknięcia: {SellDate.ToShortDateString()} | Cena za jednostkę: {ClosingRate} {CurrencySymbol} |" +
+                   $"\nWynik w dniu zamknięcia: {GainValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {ExchangeRate} PLN |" +
+                   $"\nWynik po przeliczeniu: {exchangedGain} PLN\n";
+        }
     }
 }

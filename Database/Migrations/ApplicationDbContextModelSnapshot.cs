@@ -5,6 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
@@ -13,8 +15,7 @@ namespace Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.4");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
 
             modelBuilder.Entity("Database.Entities.CfdEntity", b =>
                 {
@@ -201,22 +202,31 @@ namespace Database.Migrations
                     b.Property<decimal>("ClosingExchangeRate")
                         .HasColumnType("TEXT");
 
+                    b.Property<decimal>("ClosingExchangedValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ClosingUnitValue")
+                        .HasColumnType("TEXT");
+
                     b.Property<decimal>("ClosingValue")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("CurrencySymbol")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("GainExchangedValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("LossExchangedValue")
+                    b.Property<decimal>("ExchangedProfit")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("OpeningExchangeRate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("OpeningExchangedValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("OpeningUnitValue")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("OpeningValue")
@@ -232,6 +242,9 @@ namespace Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("SellDate")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("Units")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

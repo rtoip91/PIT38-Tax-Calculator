@@ -31,8 +31,13 @@ public class ExcelDataExtractor : IExcelDataExtractor
     public async Task<bool> ImportDataFromExcelIntoDbAsync()
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var filePath = FileInputUtil.GetFileInfo(@"..\\TestFile", "TestFile2020.xlsx").FullName;
+        var filePath = FileInputUtil.GetFileInfo(@"..\\TestFile", "TestFile2021.xlsx").FullName;
         FileInfo fileInfo = new FileInfo(filePath);
+
+        if (fileInfo.Extension != ".xlsx")
+        {
+            throw new Exception("Zły typ pliku.");
+        }
 
         IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();
         IList<TransactionReportExcelDto> transactionReportDtos = new List<TransactionReportExcelDto>();

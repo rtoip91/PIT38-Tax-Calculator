@@ -6,17 +6,18 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
+#nullable disable
+
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210426192459_USDValues")]
-    partial class USDValues
+    [Migration("20220208221009_NewColumnsToStockEntity")]
+    partial class NewColumnsToStockEntity
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder
-                .HasAnnotation("ProductVersion", "5.0.4");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
 
             modelBuilder.Entity("Database.Entities.CfdEntity", b =>
                 {
@@ -133,9 +134,6 @@ namespace Database.Migrations
                     b.Property<decimal>("ClosingExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("ClosingRate")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("ClosingValue")
                         .HasColumnType("TEXT");
 
@@ -154,9 +152,6 @@ namespace Database.Migrations
                     b.Property<decimal>("OpeningExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("OpeningRate")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("OpeningValue")
                         .HasColumnType("TEXT");
 
@@ -170,9 +165,6 @@ namespace Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("SellDate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("Units")
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
@@ -212,7 +204,10 @@ namespace Database.Migrations
                     b.Property<decimal>("ClosingExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("ClosingRate")
+                    b.Property<decimal>("ClosingExchangedValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("ClosingUnitValue")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("ClosingValue")
@@ -221,10 +216,7 @@ namespace Database.Migrations
                     b.Property<string>("CurrencySymbol")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("GainExchangedValue")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("LossExchangedValue")
+                    b.Property<decimal>("ExchangedProfit")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
@@ -233,7 +225,10 @@ namespace Database.Migrations
                     b.Property<decimal>("OpeningExchangeRate")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("OpeningRate")
+                    b.Property<decimal>("OpeningExchangedValue")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("OpeningUnitValue")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal>("OpeningValue")
