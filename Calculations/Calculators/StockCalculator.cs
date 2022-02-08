@@ -41,6 +41,10 @@ namespace Calculations.Calculators
                 Task<ExchangeRateEntity> openingRateTask =
                     _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
 
+                stockEntity.OpeningUnitValue = stockClosedPosition.OpeningRate ?? 0;
+                stockEntity.ClosingUnitValue = stockClosedPosition.ClosingRate ?? 0;
+                stockEntity.Units = stockClosedPosition.Units ?? 0;
+
                 stockEntity.OpeningValue = stockClosedPosition.OpeningRate * stockClosedPosition.Units ?? 0;
                 stockEntity.ClosingValue = stockClosedPosition.ClosingRate * stockClosedPosition.Units ?? 0;
                 stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;
