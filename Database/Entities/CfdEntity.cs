@@ -40,7 +40,7 @@ namespace Database.Entities
                    $"\nIlość jednostek: {Units} |" +
                    $"\nData otwarcia: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {OpeningRate} {CurrencySymbol} |" +
                    $"\nData zamknięcia: {SellDate.ToShortDateString()} | Cena za jednostkę: {ClosingRate} {CurrencySymbol} |" +
-                   $"\nWynik w dniu sprzedaży: {GainValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {ExchangeRate} PLN |" +
+                   $"\nWynik w dniu zamknięcia: {GainValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {ExchangeRate} PLN |" +
                    $"\nWynik po przeliczeniu: {exchangedGain} PLN\n";
         }
     }
