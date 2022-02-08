@@ -21,8 +21,7 @@ public class FileWriter : IFileWriter
     public async Task PresentData(CalculationResultDto calculationResultDto)
     {
         IList<CfdEntity> cfdEntities = await _cfdEntityDataAccess.GetCfdEntities();
-        FileStream fs = new FileStream("result.txt", FileMode.Truncate, FileAccess.Write);
-
+        FileStream fs = new FileStream("result.txt", FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
         await WriteCfdToFile(calculationResultDto, cfdEntities, sw);
     }
@@ -33,7 +32,7 @@ public class FileWriter : IFileWriter
         await sw.WriteLineAsync($"Zysk = {calculationResultDto.CdfDto.Gain} PLN");
         await sw.WriteLineAsync($"Strata = {calculationResultDto.CdfDto.Loss} PLN");
         await sw.WriteLineAsync($"Dochód = {calculationResultDto.CdfDto.Income} PLN");
-        await sw.WriteLineAsync();
+        await sw.WriteLineAsync($"\nIlość operacji: {cfdEntities.Count}\n");
         foreach (CfdEntity cfdEntity in cfdEntities)
         {
             await sw.WriteLineAsync(cfdEntity.ToString());
