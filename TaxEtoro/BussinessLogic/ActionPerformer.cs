@@ -45,23 +45,24 @@ namespace TaxEtoro.BussinessLogic
             _ = DisposeAsync();
         }
 
-        public async Task PerformCalculations()
+        public async Task<CalculationResultDto> PerformCalculations()
         {
             try
             {
                 await _reader.ImportDataFromExcelIntoDbAsync();
                 var result = await _taxCalculations.CalculateTaxes();
                 PresentRessults(result);
+                return result;
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.Message);
+                throw;
             }           
         }
 
-        public async Task PresentCalcucaltionResults()
+        public async Task PresentCalcucaltionResults(CalculationResultDto result)
         {
-            await _fileWriter.PresentData();
+            await _fileWriter.PresentData(result);
         }
 
         private void PresentRessults(CalculationResultDto result)
