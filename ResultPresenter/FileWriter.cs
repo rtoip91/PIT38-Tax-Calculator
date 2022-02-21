@@ -1,13 +1,12 @@
 ﻿using Calculations.Dto;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
-using ResultPresenter.Interfaces;
+using ResultsPresenter.Interfaces;
 
-namespace ResultPresenter;
+namespace ResultsPresenter;
 
 public class FileWriter : IFileWriter
 {
-
     private readonly ICryptoEntityDataAccess _cryptoEntityDataAccess;
     private readonly ICfdEntityDataAccess _cfdEntityDataAccess;
     private readonly IStockEntityDataAccess _stockEntityDataAccess;
@@ -22,7 +21,7 @@ public class FileWriter : IFileWriter
     }
 
     public async Task PresentData(CalculationResultDto calculationResultDto)
-    {        
+    {
         await WriteCfdResultsToFile(calculationResultDto.CdfDto);
         await WriteStockResultsToFile(calculationResultDto.StockDto);
     }
@@ -35,7 +34,7 @@ public class FileWriter : IFileWriter
         IList<StockEntity> stockEntities = await _stockEntityDataAccess.GetEntities();
 
         await sw.WriteLineAsync("--------Akcje--------");
-        await sw.WriteLineAsync($"Koszt zakupu = {stockCalculatorDto.Cost} PLN");
+        await sw.WriteLineAsync($"Koszt = {stockCalculatorDto.Cost} PLN");
         await sw.WriteLineAsync($"Przychód = {stockCalculatorDto.Revenue} PLN");
         await sw.WriteLineAsync($"Dochód = {stockCalculatorDto.Income} PLN");
         await sw.WriteLineAsync($"\nIlość operacji: {stockEntities.Count}\n");
@@ -44,7 +43,6 @@ public class FileWriter : IFileWriter
         {
             await sw.WriteLineAsync(stockEntity.ToString());
         }
-
     }
 
     private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
