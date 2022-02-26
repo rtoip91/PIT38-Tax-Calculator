@@ -12,7 +12,6 @@ namespace Database
         public DbSet<CryptoEntity> CryptoCalculations { get; set; }
         public DbSet<StockEntity> StockCalculations { get; set; }
 
-
         public ApplicationDbContext()
         {
             Database.Migrate();

@@ -3,7 +3,7 @@ using Database.DataAccess.Interfaces;
 using Database.Entities;
 using ResultPresenter.Interfaces;
 
-namespace ResultPresenter;
+namespace ResultsPresenter;
 
 public class FileWriter : IFileWriter
 {
@@ -22,14 +22,24 @@ public class FileWriter : IFileWriter
     }
 
     public async Task PresentData(CalculationResultDto calculationResultDto)
-    {        
+    {
+        CreateDirectory();
         await WriteCfdResultsToFile(calculationResultDto.CdfDto);
         await WriteStockResultsToFile(calculationResultDto.StockDto);
     }
 
+    private void CreateDirectory()
+    {
+        if (!Directory.Exists(Constants.Constants.FilePath))
+        {
+            Directory.CreateDirectory(Constants.Constants.FilePath);
+        }
+    }
+
     private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto)
     {
-        FileStream fs = new FileStream("STOCK_result.txt", FileMode.Create, FileAccess.Write);
+       
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.StockCalculationsFileName}", FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
         IList<StockEntity> stockEntities = await _stockEntityDataAccess.GetEntities();
@@ -50,7 +60,7 @@ public class FileWriter : IFileWriter
     private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
     {
         IList<CfdEntity> cfdEntities = await _cfdEntityDataAccess.GetCfdEntities();
-        FileStream fs = new FileStream("CFD_result.txt", FileMode.Create, FileAccess.Write);
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CfdCalculationsFileName}", FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
         await sw.WriteLineAsync("--------CFD--------");
