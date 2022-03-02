@@ -9,7 +9,7 @@ namespace Database.DataAccess.Interfaces
         Task<int> AddClosePositions(IList<ClosedPositionEntity> closedPositions);
         Task<IList<ClosedPositionEntity>> GetCfdPositions();
         Task<IList<ClosedPositionEntity>> GetStockPositions();
-        Task<IList<ClosedPositionEntity>> GetCryptoPositions(IList<string> cryptoNames);
+        Task<IList<ClosedPositionEntity>> GetCryptoPositions();
         Task<int> RemovePosition(ClosedPositionEntity closedPosition);
     }
 }

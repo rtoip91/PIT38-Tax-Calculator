@@ -26,8 +26,7 @@ namespace Calculations.Calculators
         public async Task<T> Calculate<T>() where T : CryptoDto
         {
             IList<CryptoEntity> cryptoEntities = new List<CryptoEntity>();
-            IList<string> cryptoList = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.Values.ToList();
-            var cryptoClosedPositions = await _closedPositionsDataAccess.GetCryptoPositions(cryptoList);
+            var cryptoClosedPositions = await _closedPositionsDataAccess.GetCryptoPositions();
 
                 foreach (var cryptoClosedPosition in cryptoClosedPositions)
                 {
@@ -43,6 +42,7 @@ namespace Calculations.Calculators
                     };
 
                     Task<ExchangeRateEntity> closingRateTask = _exchangeRates.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.SellDate);
+
                     Task<ExchangeRateEntity> openingRateTask = _exchangeRates.GetRateForPreviousDay(cryptoEntity.CurrencySymbol, cryptoEntity.PurchaseDate);
 
 
