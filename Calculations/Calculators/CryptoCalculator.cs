@@ -43,7 +43,8 @@ namespace Calculations.Calculators
 
                     await _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
                 }
-            
+
+                await AddUnsoldCryptos(purchasedCryptoEntities);            
 
             try
             {
@@ -51,14 +52,12 @@ namespace Calculations.Calculators
                 await _soldCryptoEntityDataAccess.AddEntities(soldCryptoEntities);
                 decimal totalLoss = purchasedCryptoEntities.Where(c=>c.PurchaseDate.Year == c.PurchaseDate.Year).Sum(c => c.TotalExchangedValue);
                 decimal totalGain = soldCryptoEntities.Sum(c => c.TotalExchangedValue);
-                decimal unsoldCryptos = await UnsoldCryptos();
 
                 var cryptoDto = new CryptoDto
                 {
                     Cost = totalLoss,
                     Revenue = totalGain,
-                    Income = totalGain - totalLoss,
-                    UnsoldCryptos = unsoldCryptos,
+                    Income = totalGain - totalLoss
                 };
 
                 return (T)cryptoDto;
@@ -111,24 +110,32 @@ namespace Calculations.Calculators
             return purchasedCryptoEntity;
         }
 
-        private async Task<decimal> UnsoldCryptos()
+        private async Task AddUnsoldCryptos(IList<PurchasedCryptoEntity> purchasedCryptoEntities)
         {
             IList<string> cryptoList = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
-            decimal sum = 0;
+           
             foreach (var crypto in cryptoList)
             {
                 var transReports = await _transactionReportsDataAccess.GetUnsoldCryptoTransactions(crypto);
                 foreach (var transaction in transReports)
                 {
-                    ExchangeRateEntity exchangeRateEntity =
-                        await _exchangeRates.GetRateForPreviousDay("USD", transaction.Date);
-                    decimal value = transaction.Amount * exchangeRateEntity.Rate;
-                    sum += value;
+                    PurchasedCryptoEntity purchasedCryptoEntity = new PurchasedCryptoEntity
+                    {
+                        Name = $"Buy {crypto}",
+                        CurrencySymbol = "USD",
+                        PurchaseDate = transaction.Date,
+                        PositionId = transaction.PositionId ?? 0,
+                        TotalValue = transaction.Amount
+                    };
+                    ExchangeRateEntity purchasedExchangeRate =
+                        await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol,
+                            purchasedCryptoEntity.PurchaseDate);
+                    purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
+                    purchasedCryptoEntity.TotalExchangedValue =
+                        Math.Round(purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate, 2);
+                    purchasedCryptoEntities.Add(purchasedCryptoEntity);
                 }
             }
-
-            sum = Math.Round(sum, 2, MidpointRounding.AwayFromZero);
-            return sum;
         }
     }
 }
