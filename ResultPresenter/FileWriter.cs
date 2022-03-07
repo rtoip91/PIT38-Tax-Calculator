@@ -8,15 +8,13 @@ namespace ResultsPresenter;
 public class FileWriter : IFileWriter
 {
 
-    private readonly ICryptoEntityDataAccess _cryptoEntityDataAccess;
+   
     private readonly ICfdEntityDataAccess _cfdEntityDataAccess;
     private readonly IStockEntityDataAccess _stockEntityDataAccess;
 
-    public FileWriter(ICryptoEntityDataAccess cryptoEntityDataAccess,
-        ICfdEntityDataAccess cfdEntityDataAccess,
+    public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
         IStockEntityDataAccess stockEntityDataAccess)
     {
-        _cryptoEntityDataAccess = cryptoEntityDataAccess;
         _cfdEntityDataAccess = cfdEntityDataAccess;
         _stockEntityDataAccess = stockEntityDataAccess;
     }
