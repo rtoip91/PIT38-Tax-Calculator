@@ -17,5 +17,14 @@ namespace Database.Entities
         public string CurrencySymbol { get; set; }
         public decimal ExchangeRate { get; set; }
         public decimal TotalExchangedValue { get; set; }
+
+        public override string ToString()
+        {
+            return $"Operacja: {Name} | ID: {PositionId} |" +
+                   $"\nIlość jednostek: {Units} |" +
+                   $"\nData sprzedaży: {SellDate.ToShortDateString()} | Cena za jednostkę: {ValuePerUnit} {CurrencySymbol} |" +
+                   $"\nWartość jednostek w dniu sprzedaży: {TotalValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {ExchangeRate} PLN |" +
+                   $"\nPo przeliczeniu: {TotalExchangedValue} PLN\n";
+        }
     }
 }
