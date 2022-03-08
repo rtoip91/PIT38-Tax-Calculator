@@ -30,8 +30,8 @@ namespace Calculations.Calculators
                 StockEntity stockEntity = new StockEntity
                 {
                     Name = stockClosedPosition.Operation,
-                    PurchaseDate = stockClosedPosition.OpeningDate,
-                    SellDate = stockClosedPosition.ClosingDate,
+                    PurchaseDate = stockClosedPosition.OpeningDate.AddDays(2),
+                    SellDate = stockClosedPosition.ClosingDate.AddDays(2),
                     CurrencySymbol = "USD",
                     PositionId = stockClosedPosition.PositionId ?? 0
                 };

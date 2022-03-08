@@ -56,7 +56,7 @@ namespace Calculations.Calculators
 
 
                 await Task.WhenAll(exchangeRateTask);
-                cfdEntity.ExchangeRate = exchangeRateTask.Result.Rate;
+                cfdEntity.ExchangeRate = Math.Round(exchangeRateTask.Result.Rate,2);
                 decimal exchangedValue = Math.Round(cfdEntity.GainValue * cfdEntity.ExchangeRate, 2);
                 if (exchangedValue > 0)
                 {

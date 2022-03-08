@@ -3,33 +3,47 @@ using Database.DataAccess.Interfaces;
 using Database.Entities;
 using ResultPresenter.Interfaces;
 
-namespace ResultPresenter;
+namespace ResultsPresenter;
 
 public class FileWriter : IFileWriter
 {
-
-    private readonly ICryptoEntityDataAccess _cryptoEntityDataAccess;
     private readonly ICfdEntityDataAccess _cfdEntityDataAccess;
     private readonly IStockEntityDataAccess _stockEntityDataAccess;
+    private readonly ISoldCryptoEntityDataAccess _soldCryptoEntityDataAccess;
+    private readonly IPurchasedCryptoEntityDataAccess _purchasedCryptoEntityDataAccess;
 
-    public FileWriter(ICryptoEntityDataAccess cryptoEntityDataAccess,
-        ICfdEntityDataAccess cfdEntityDataAccess,
-        IStockEntityDataAccess stockEntityDataAccess)
+    public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
+        IStockEntityDataAccess stockEntityDataAccess,
+        ISoldCryptoEntityDataAccess soldCryptoEntityDataAccess,
+        IPurchasedCryptoEntityDataAccess purchasedCryptoEntityDataAccess
+        )
     {
-        _cryptoEntityDataAccess = cryptoEntityDataAccess;
         _cfdEntityDataAccess = cfdEntityDataAccess;
         _stockEntityDataAccess = stockEntityDataAccess;
+        _soldCryptoEntityDataAccess = soldCryptoEntityDataAccess;
+        _purchasedCryptoEntityDataAccess = purchasedCryptoEntityDataAccess;
     }
 
     public async Task PresentData(CalculationResultDto calculationResultDto)
-    {        
+    {
+        CreateDirectory();
         await WriteCfdResultsToFile(calculationResultDto.CdfDto);
         await WriteStockResultsToFile(calculationResultDto.StockDto);
+        await WriteCryptoResultsToFile(calculationResultDto.CryptoDto);
+    }
+
+    private void CreateDirectory()
+    {
+        if (!Directory.Exists(Constants.Constants.FilePath))
+        {
+            Directory.CreateDirectory(Constants.Constants.FilePath);
+        }
     }
 
     private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto)
     {
-        FileStream fs = new FileStream("STOCK_result.txt", FileMode.Create, FileAccess.Write);
+       
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.StockCalculationsFileName}", FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
         IList<StockEntity> stockEntities = await _stockEntityDataAccess.GetEntities();
@@ -44,13 +58,43 @@ public class FileWriter : IFileWriter
         {
             await sw.WriteLineAsync(stockEntity.ToString());
         }
-
     }
+    private async Task WriteCryptoResultsToFile(CryptoDto cryptoDto)
+    {
+
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CryptoCalculationsFileName}", FileMode.Create, FileAccess.Write);
+        await using StreamWriter sw = new StreamWriter(fs);
+
+        IList<PurchasedCryptoEntity> purchasedCryptoEntities = await _purchasedCryptoEntityDataAccess.GetPurchasedCryptoEntities();
+        IList<SoldCryptoEntity> soldCryptoEntities = await _soldCryptoEntityDataAccess.GetSoldCryptoEntities();
+
+        int operationNumber = purchasedCryptoEntities.Count + soldCryptoEntities.Count;
+
+        await sw.WriteLineAsync("--------Kryptowaluty--------");
+        await sw.WriteLineAsync($"Koszt zakupu = {cryptoDto.Cost} PLN");
+        await sw.WriteLineAsync($"Przychód = {cryptoDto.Revenue} PLN");
+        await sw.WriteLineAsync($"Dochód = {cryptoDto.Income} PLN");
+        await sw.WriteLineAsync($"\nIlość operacji: {operationNumber}\n");
+        await sw.WriteLineAsync("\n--------KUPIONE--------\n");
+
+        foreach (PurchasedCryptoEntity purchasedCryptoEntity in purchasedCryptoEntities)
+        {
+            await sw.WriteLineAsync(purchasedCryptoEntity.ToString());
+        }
+
+        await sw.WriteLineAsync("\n--------SPRZEDANE--------\n");
+
+        foreach (SoldCryptoEntity soldCryptoEntity in soldCryptoEntities)
+        {
+            await sw.WriteLineAsync(soldCryptoEntity.ToString());
+        }
+    }
+
 
     private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
     {
         IList<CfdEntity> cfdEntities = await _cfdEntityDataAccess.GetCfdEntities();
-        FileStream fs = new FileStream("CFD_result.txt", FileMode.Create, FileAccess.Write);
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CfdCalculationsFileName}", FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
         await sw.WriteLineAsync("--------CFD--------");

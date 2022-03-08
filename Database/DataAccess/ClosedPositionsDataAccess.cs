@@ -23,7 +23,7 @@ namespace Database.DataAccess
                 .ToListAsync();
         }
 
-        public async Task<IList<ClosedPositionEntity>> GetCryptoPositions(IList<string> cryptoNames)
+        public async Task<IList<ClosedPositionEntity>> GetCryptoPositions()
         {
             await using var context = new ApplicationDbContext();
             return await context.ClosedPositions.Where(c => c.IsReal.Contains("Kryptoaktywa")).Include(c => c.TransactionReports)
