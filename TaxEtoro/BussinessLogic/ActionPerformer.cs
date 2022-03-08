@@ -78,7 +78,6 @@ namespace TaxEtoro.BussinessLogic
             Console.WriteLine($"Koszt zakupu = {result.CryptoDto.Cost} PLN");
             Console.WriteLine($"Przychód = {result.CryptoDto.Revenue} PLN");
             Console.WriteLine($"Dochód = {result.CryptoDto.Income} PLN");
-            Console.WriteLine($"Niesprzedane kryptowaluty = {result.CryptoDto.UnsoldCryptos} PLN");
             Console.WriteLine();
 
             Console.WriteLine("Dywidendy:");
