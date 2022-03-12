@@ -13,8 +13,7 @@ public static class CalculationsServicesRegistration
     {
         services.AddTransient<IExchangeRates, ExchangeRates>();
         services.AddScoped<ICalculator<CalculationResultDto>, Calculator>();
-        services.AddScoped<ICalculationEvents>(x =>
-            (Calculator)x.GetService<ICalculator<CalculationResultDto>>());
+        services.AddScoped<ICalculationEvents>(x => (Calculator)x.GetService<ICalculator<CalculationResultDto>>());
         services.AddTransient<ICalculator<CfdCalculatorDto>, CfdCalculator>();
         services.AddTransient<ICalculator<CryptoDto>, CryptoCalculator>();
         services.AddTransient<ICalculator<DividendCalculatorDto>, DividendCalculator>();
@@ -26,6 +25,7 @@ public static class CalculationsServicesRegistration
         services.AddScoped<IStockEntityDataAccess, StockEntityDataAccess>();
         services.AddScoped<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddScoped<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
+        services.AddScoped<IDividendsDataAccess, DividendsDataAccess>();
         services.AddMemoryCache();
 
         services.AddHttpClient("ExchangeRates", config =>

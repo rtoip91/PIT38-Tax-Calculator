@@ -14,6 +14,7 @@ namespace Database.DataAccess;
             context.RemoveRange(context.PurchasedCryptoCalculations);
             context.RemoveRange(context.SoldCryptoCalculations);
             context.RemoveRange(context.StockCalculations);
+            context.RemoveRange(context.Dividends);
             //context.RemoveRange(context.ExchangeRates);
             await context.SaveChangesAsync();
         }

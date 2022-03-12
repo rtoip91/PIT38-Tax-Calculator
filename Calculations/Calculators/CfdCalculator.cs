@@ -34,13 +34,12 @@ namespace Calculations.Calculators
                     OpeningRate = cfdClosedPosition.OpeningRate ?? 0,
                     ClosingRate = cfdClosedPosition.ClosingRate ?? 0,
                     SellDate = cfdClosedPosition.ClosingDate,
+                    Units = cfdClosedPosition.Units ?? 0,
                     CurrencySymbol = "USD",
-                    PositionId = cfdClosedPosition.PositionId ?? 0
+                    PositionId = cfdClosedPosition.PositionId ?? 0,
+                    Leverage = cfdClosedPosition.Leverage
                 };
-
-
-                cfdEntity.Units =  Math.Round((decimal)(cfdClosedPosition.Amount * cfdClosedPosition.Leverage / cfdClosedPosition.OpeningRate), 6);
-
+                
                 Task<ExchangeRateEntity> exchangeRateTask = _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
                 var openingValue = cfdEntity.OpeningRate * cfdEntity.Units;

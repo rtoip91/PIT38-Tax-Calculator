@@ -13,6 +13,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using ExcelReader.Dto;
 
 namespace ExcelReader;
 
@@ -20,18 +21,21 @@ public class ExcelDataExtractor : IExcelDataExtractor
 {
     private readonly IClosedPositionsDataAccess _closedPositionsDataAccess;
     private readonly ITransactionReportsDataAccess _transactionReportsDataAccess;
+    private readonly IDividendsDataAccess _dividendsDataAccess;
 
     public ExcelDataExtractor(IClosedPositionsDataAccess closedPositionsDataAccess,
-        ITransactionReportsDataAccess transactionReportsDataAccess)
+        ITransactionReportsDataAccess transactionReportsDataAccess,
+        IDividendsDataAccess dividendsDataAccess)
     {
         _closedPositionsDataAccess = closedPositionsDataAccess;
         _transactionReportsDataAccess = transactionReportsDataAccess;
+        _dividendsDataAccess = dividendsDataAccess;
     }
 
     public async Task<bool> ImportDataFromExcelIntoDbAsync()
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var filePath = FileInputUtil.GetFileInfo(@"..\\TestFile", "TestFile2020.xlsx").FullName;
+        var filePath = FileInputUtil.GetFileInfo(@"..\\TestFile", "TestFile2021.xlsx").FullName;
         FileInfo fileInfo = new FileInfo(filePath);
 
         if (fileInfo.Extension != ".xlsx")
@@ -41,42 +45,46 @@ public class ExcelDataExtractor : IExcelDataExtractor
 
         IList<ClosedPositionExcelDto> closedPositionDtos = new List<ClosedPositionExcelDto>();
         IList<TransactionReportExcelDto> transactionReportDtos = new List<TransactionReportExcelDto>();
+        IList<DividendDto> dividendDtos = new List<DividendDto>();
 
         using ExcelPackage package = new ExcelPackage();
         await package.LoadAsync(fileInfo);
 
         DataTable closedPositionsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
-        DataTable transactionReportsDataTable =
-            await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
+        DataTable transactionReportsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
+        DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.Dividends);
 
         Task extractClosedPositions = ExtractClosedPositionsAsync(closedPositionsDataTable, closedPositionDtos);
-        Task extractTransactionReports =
-            ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos);
+        Task extractTransactionReports = ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos);
+        Task extractDividends = ExtractDividendsAsync(dividendsDataTable, dividendDtos);
 
-        await Task.WhenAll(extractClosedPositions, extractTransactionReports);
+        await Task.WhenAll(extractClosedPositions, extractTransactionReports, extractDividends);
 
-        var result = await SaveIntoTheDatabaseAsync(closedPositionDtos, transactionReportDtos);
+        var result = await SaveIntoTheDatabaseAsync(closedPositionDtos, transactionReportDtos, dividendDtos);
 
         return result;
     }
 
     private async Task<bool> SaveIntoTheDatabaseAsync(IList<ClosedPositionExcelDto> closedPositionDtos,
-        IList<TransactionReportExcelDto> transactionReportDtos)
+        IList<TransactionReportExcelDto> transactionReportDtos, IList<DividendDto> dividendDtos)
     {
         var config = new MapperConfiguration(cfg =>
         {
             cfg.AddProfile<ClosedPositionProfile>();
             cfg.AddProfile<TransactionReportProfile>();
+            cfg.AddProfile<DividendProfile>();
         });
 
         var mapper = new Mapper(config);
         IList<TransactionReportEntity> transactionReportEntities = new List<TransactionReportEntity>();
         IList<ClosedPositionEntity> closedPositionEntities = new List<ClosedPositionEntity>();
+        IList<DividendEntity> dividendEntities = new List<DividendEntity>();
 
         foreach (ClosedPositionExcelDto closedPosition in closedPositionDtos)
         {
             ClosedPositionEntity closedPositionEntity = mapper.Map<ClosedPositionEntity>(closedPosition);
             closedPositionEntity.TransactionReports = new List<TransactionReportEntity>();
+            
 
             foreach (TransactionReportExcelDto transactionReport in transactionReportDtos
                          .Where(t => t.PositionId == closedPosition.PositionId).ToList())
@@ -96,11 +104,16 @@ public class ExcelDataExtractor : IExcelDataExtractor
             transactionReportEntities.Add(transactionReportEntity);
         }
 
+        foreach (var dividendDto in dividendDtos)
+        {
+            dividendEntities.Add(mapper.Map<DividendEntity>(dividendDto));
+        }
+
         try
         {
             Task<int> addClosePositions = _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
-            Task<int> addTransactionReports =
-                _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+            Task<int> addTransactionReports = _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+            Task<int> addDividends = _dividendsDataAccess.AddDividends(dividendEntities);
 
             await Task.WhenAll(addClosePositions, addTransactionReports);
         }
@@ -147,6 +160,20 @@ public class ExcelDataExtractor : IExcelDataExtractor
             }
         });
     }
+
+    private async Task ExtractDividendsAsync(DataTable dataTable,
+        IList<DividendDto> dividendDtos)
+    {
+        await Task.Run(() =>
+        {
+            foreach (DataRow row in dataTable.Rows)
+            {
+                DividendDto closedPosition = new DividendDto(row);
+                dividendDtos.Add(closedPosition);
+            }
+        });
+    }
+
 
     private async Task ExtractTransactionReportsAsync(DataTable dataTable,
         IList<TransactionReportExcelDto> transactionReportDtos)

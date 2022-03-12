@@ -8,25 +8,25 @@ namespace Calculations.Calculators
     public class DividendCalculator : ICalculator<DividendCalculatorDto>
     {
         private readonly IExchangeRates _exchangeRates;
-        private readonly ITransactionReportsDataAccess _transactionReportsDataAccess;
+        private readonly IDividendsDataAccess _dividendsDataAccess;
 
         public DividendCalculator(IExchangeRates exchangeRates,
-            ITransactionReportsDataAccess transactionReportsDataAccess)
+            IDividendsDataAccess dividendsDataAccess)
         {
             _exchangeRates = exchangeRates;
-            _transactionReportsDataAccess = transactionReportsDataAccess;
+            _dividendsDataAccess = dividendsDataAccess;
         }
 
         public async Task<T> Calculate<T>() where T : DividendCalculatorDto
         {
             decimal sum = 0;
-            var transReports = await _transactionReportsDataAccess.GetDividendTransactions();
+            var dividends = await _dividendsDataAccess.GetDividends();
 
-            foreach (var transaction in transReports)
+            foreach (var dividend in dividends)
             {
                 ExchangeRateEntity exchangeRateEntity =
-                    await _exchangeRates.GetRateForPreviousDay("USD", transaction.Date);
-                decimal value = transaction.Amount * exchangeRateEntity.Rate;
+                    await _exchangeRates.GetRateForPreviousDay("USD", dividend.DateOfPayment);
+                decimal value = dividend.NetDividendReceived * exchangeRateEntity.Rate;
                 sum += value;
             }
 

@@ -13,6 +13,8 @@ namespace ExcelReader.ExtensionMethods
                 return 0;
             }
 
+            value = value.TrimEnd('%');
+
             return decimal.Parse(value, ChooseProvider(value));
         }
 
