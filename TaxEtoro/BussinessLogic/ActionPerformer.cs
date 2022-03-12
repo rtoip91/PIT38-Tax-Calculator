@@ -82,6 +82,8 @@ namespace TaxEtoro.BussinessLogic
 
             Console.WriteLine("Dywidendy:");
             Console.WriteLine($"Suma dywidend = {result.DividendDto.Dividend} PLN");
+            Console.WriteLine($"Podatek zaplacony = {result.DividendDto.TaxPaid} PLN");
+            Console.WriteLine($"Podatek pozostały do zapłaty = {result.DividendDto.TaxToBePaid} PLN");
             Console.WriteLine();
 
             Console.WriteLine("Akcje:");

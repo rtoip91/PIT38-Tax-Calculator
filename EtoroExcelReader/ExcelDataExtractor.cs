@@ -115,7 +115,7 @@ public class ExcelDataExtractor : IExcelDataExtractor
             Task<int> addTransactionReports = _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
             Task<int> addDividends = _dividendsDataAccess.AddDividends(dividendEntities);
 
-            await Task.WhenAll(addClosePositions, addTransactionReports);
+            await Task.WhenAll(addClosePositions, addTransactionReports, addDividends);
         }
         catch (Exception e)
         {

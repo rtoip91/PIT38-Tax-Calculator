@@ -26,6 +26,7 @@ public static class CalculationsServicesRegistration
         services.AddScoped<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddScoped<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
         services.AddScoped<IDividendsDataAccess, DividendsDataAccess>();
+        services.AddScoped<IDividendCalculationsDataAccess, DividendCalculationsDataAccess>();
         services.AddMemoryCache();
 
         services.AddHttpClient("ExchangeRates", config =>
