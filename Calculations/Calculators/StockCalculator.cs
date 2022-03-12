@@ -45,8 +45,8 @@ namespace Calculations.Calculators
                 stockEntity.ClosingUnitValue = stockClosedPosition.ClosingRate ?? 0;
                 stockEntity.Units = stockClosedPosition.Units ?? 0;
 
-                stockEntity.OpeningValue = stockClosedPosition.OpeningRate * stockClosedPosition.Units ?? 0;
-                stockEntity.ClosingValue = stockClosedPosition.ClosingRate * stockClosedPosition.Units ?? 0;
+                stockEntity.OpeningValue = stockEntity.OpeningUnitValue * stockEntity.Units;
+                stockEntity.ClosingValue = stockEntity.ClosingUnitValue * stockEntity.Units;
                 stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;
 
                 await Task.WhenAll(closingRateTask, openingRateTask);

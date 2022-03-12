@@ -11,17 +11,19 @@ public class FileWriter : IFileWriter
     private readonly IStockEntityDataAccess _stockEntityDataAccess;
     private readonly ISoldCryptoEntityDataAccess _soldCryptoEntityDataAccess;
     private readonly IPurchasedCryptoEntityDataAccess _purchasedCryptoEntityDataAccess;
+    private readonly IDividendCalculationsDataAccess _dividendCalculationsDataAccess;
 
     public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
         IStockEntityDataAccess stockEntityDataAccess,
         ISoldCryptoEntityDataAccess soldCryptoEntityDataAccess,
-        IPurchasedCryptoEntityDataAccess purchasedCryptoEntityDataAccess
-        )
+        IPurchasedCryptoEntityDataAccess purchasedCryptoEntityDataAccess,
+        IDividendCalculationsDataAccess dividendCalculationsDataAccess)
     {
         _cfdEntityDataAccess = cfdEntityDataAccess;
         _stockEntityDataAccess = stockEntityDataAccess;
         _soldCryptoEntityDataAccess = soldCryptoEntityDataAccess;
         _purchasedCryptoEntityDataAccess = purchasedCryptoEntityDataAccess;
+        _dividendCalculationsDataAccess = dividendCalculationsDataAccess;
     }
 
     public async Task PresentData(CalculationResultDto calculationResultDto)
@@ -30,6 +32,7 @@ public class FileWriter : IFileWriter
         await WriteCfdResultsToFile(calculationResultDto.CdfDto);
         await WriteStockResultsToFile(calculationResultDto.StockDto);
         await WriteCryptoResultsToFile(calculationResultDto.CryptoDto);
+        await WriteDividendResultsToFile(calculationResultDto.DividendDto);
     }
 
     private void CreateDirectory()
@@ -90,6 +93,24 @@ public class FileWriter : IFileWriter
         }
     }
 
+    private async Task WriteDividendResultsToFile(DividendCalculatorDto dividendCalculatorDto)
+    {
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.DividendsCalculationsFileName}", FileMode.Create, FileAccess.Write);
+        await using StreamWriter sw = new StreamWriter(fs);
+
+        IList<DividendCalculationsEntity> dividendCalculations = await _dividendCalculationsDataAccess.GetEntities();
+
+        await sw.WriteLineAsync("--------Dywidendy--------");
+        await sw.WriteLineAsync($"Wartość dywidend = {dividendCalculatorDto.Dividend}");
+        await sw.WriteLineAsync($"Podatek zapłacony ={dividendCalculatorDto.TaxPaid} ");
+        await sw.WriteLineAsync($"Podatek pozostały do zaplaty ={dividendCalculatorDto.TaxToBePaid}");
+        await sw.WriteLineAsync($"\nIlość dywidend: {dividendCalculations.Count}\n");
+
+        foreach (var dividend in dividendCalculations)
+        {
+            await sw.WriteLineAsync(dividend.ToString());
+        }
+    }
 
     private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
     {
