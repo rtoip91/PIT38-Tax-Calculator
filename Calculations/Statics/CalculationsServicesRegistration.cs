@@ -21,7 +21,8 @@ public static class CalculationsServicesRegistration
         services.AddTransient<ICalculator<StockCalculatorDto>, StockCalculator>();
         services.AddScoped<IExchangeRatesDataAccess, ExchangeRatesDataAccess>();
         services.AddScoped<ICfdEntityDataAccess, CfdEntityDataAccess>();
-        services.AddScoped<ICryptoEntityDataAccess, CryptoEntityDataAccess>();
+        services.AddScoped<IPurchasedCryptoEntityDataAccess, PurchasedCryptoEntityDataAccess>();
+        services.AddScoped<ISoldCryptoEntityDataAccess, SoldCryptoEntityDataAccess>();
         services.AddScoped<IStockEntityDataAccess, StockEntityDataAccess>();
         services.AddScoped<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddScoped<ITransactionReportsDataAccess, TransactionReportsDataAccess>();

@@ -14,8 +14,8 @@ using Calculations.Statics;
 using Microsoft.Extensions.Logging;
 using TaxEtoro.BussinessLogic;
 using TaxEtoro.Interfaces;
+using ResultPresenter.Interfaces;
 using ResultsPresenter;
-using ResultsPresenter.Interfaces;
 
 namespace TaxEtoro.Statics;
 

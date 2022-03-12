@@ -9,9 +9,9 @@ namespace Database
         public DbSet<TransactionReportEntity> TransactionReports { get; set; }
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
         public DbSet<CfdEntity> CfdCalculations { get; set; }
-        public DbSet<CryptoEntity> CryptoCalculations { get; set; }
+        public DbSet<PurchasedCryptoEntity> PurchasedCryptoCalculations { get; set; }
+        public DbSet<SoldCryptoEntity> SoldCryptoCalculations { get; set; }
         public DbSet<StockEntity> StockCalculations { get; set; }
-
 
         public ApplicationDbContext()
         {
