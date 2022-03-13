@@ -52,15 +52,17 @@ namespace Calculations.Calculators
                 dividendCalculations.WithholdingTaxRate = dividend.ISIN.Substring(0, 2).Equals("US") ? 15 : dividend.WithholdingTaxRate;
 
                 dividendCalculations.WithholdingTaxPaid = Math.Round(dividendCalculations.DividendReceivedExchanged * dividendCalculations.WithholdingTaxRate / 100 , 2);
-                
-                decimal totalToBePaid = Math.Round(dividendCalculations.DividendReceivedExchanged * 0.19m, 2) - dividendCalculations.WithholdingTaxPaid;
+
+                decimal tax19percent = Math.Round(dividendCalculations.DividendReceivedExchanged * 0.19m, 2);
+
+                decimal totalToBePaid = tax19percent - dividendCalculations.WithholdingTaxPaid;
 
                 dividendCalculations.WithholdingTaxRemain = totalToBePaid > 0 ? totalToBePaid : 0;
 
-                
-
                 sum += dividendCalculations.DividendReceivedExchanged;
-                taxPaid += dividendCalculations.WithholdingTaxPaid;
+
+                taxPaid += TaxPaid(dividendCalculations, tax19percent);
+
                 taxToBePaid += dividendCalculations.WithholdingTaxRemain;
 
                 dividendCalculationsEntities.Add(dividendCalculations);
@@ -76,6 +78,21 @@ namespace Calculations.Calculators
                 TaxPaid = taxPaid,
                 TaxToBePaid = taxToBePaid
             };
+        }
+
+        private decimal TaxPaid(DividendCalculationsEntity dividendCalculations, decimal tax19percent)
+        {
+            decimal taxPaid;
+            if (dividendCalculations.WithholdingTaxPaid <= tax19percent)
+            {
+                taxPaid = dividendCalculations.WithholdingTaxPaid;
+            }
+            else
+            {
+                taxPaid = tax19percent;
+            }
+
+            return taxPaid;
         }
     }
 }
