@@ -37,7 +37,7 @@ namespace Calculations.Calculators
                     Currency = "USD",
                     DateOfPayment = dividend.DateOfPayment,
                     InstrumentName = dividend.InstrumentName,
-                    NetDividendReceived = dividend.NetDividendReceived,
+                    DividendReceived = dividend.NetDividendReceived + dividend.WithholdingTaxAmount,
                     PositionId = dividend.PositionId
                 };
                 RegionInfo regionInfo = new RegionInfo(dividend.ISIN.Substring(0, 2));
@@ -47,19 +47,19 @@ namespace Calculations.Calculators
                 ExchangeRateEntity exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(dividendCalculations.Currency, dividend.DateOfPayment);
                 dividendCalculations.ExchangeRate = exchangeRateEntity.Rate;
 
-                dividendCalculations.NetDividendReceivedExchanged = Math.Round(dividendCalculations.NetDividendReceived * dividendCalculations.ExchangeRate, 2); 
+                dividendCalculations.DividendReceivedExchanged = Math.Round(dividendCalculations.DividendReceived * dividendCalculations.ExchangeRate, 2); 
 
                 dividendCalculations.WithholdingTaxRate = dividend.ISIN.Substring(0, 2).Equals("US") ? 15 : dividend.WithholdingTaxRate;
 
-                dividendCalculations.WithholdingTaxPaid = Math.Round(dividendCalculations.NetDividendReceivedExchanged * dividendCalculations.WithholdingTaxRate / 100 , 2);
+                dividendCalculations.WithholdingTaxPaid = Math.Round(dividendCalculations.DividendReceivedExchanged * dividendCalculations.WithholdingTaxRate / 100 , 2);
                 
-                decimal totalToBePaid = Math.Round(dividendCalculations.NetDividendReceivedExchanged * 0.19m, 2) - dividendCalculations.WithholdingTaxPaid;
+                decimal totalToBePaid = Math.Round(dividendCalculations.DividendReceivedExchanged * 0.19m, 2) - dividendCalculations.WithholdingTaxPaid;
 
                 dividendCalculations.WithholdingTaxRemain = totalToBePaid > 0 ? totalToBePaid : 0;
 
                 
 
-                sum += dividendCalculations.NetDividendReceivedExchanged;
+                sum += dividendCalculations.DividendReceivedExchanged;
                 taxPaid += dividendCalculations.WithholdingTaxPaid;
                 taxToBePaid += dividendCalculations.WithholdingTaxRemain;
 

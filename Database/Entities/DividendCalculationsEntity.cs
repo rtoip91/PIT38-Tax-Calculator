@@ -18,9 +18,9 @@ namespace Database.Entities
 
         public decimal ExchangeRate { get; set; }
 
-        public decimal NetDividendReceived { get; set; }
+        public decimal DividendReceived { get; set; }
 
-        public decimal NetDividendReceivedExchanged { get; set; }
+        public decimal DividendReceivedExchanged { get; set; }
 
         public decimal WithholdingTaxRate { get; set; }
 
@@ -33,8 +33,8 @@ namespace Database.Entities
         public override string ToString()
         {
             return $"Dywidenda za: {InstrumentName} | ID: {PositionId} | Kraj: {Country} |" +
-                   $"\nData otrzymania: {DateOfPayment.ToShortDateString()} | Wartość : {NetDividendReceived} {Currency} |" +
-                   $"\nKurs {Currency} z dnia poprzedniego: {ExchangeRate} PLN | Po przeliczeniu: {NetDividendReceivedExchanged} |" +
+                   $"\nData otrzymania: {DateOfPayment.ToShortDateString()} | Wartość : {DividendReceived} {Currency} |" +
+                   $"\nKurs {Currency} z dnia poprzedniego: {ExchangeRate} PLN | Po przeliczeniu: {DividendReceivedExchanged} |" +
                    $"\nStawka podatku: {WithholdingTaxRate}% | Podatek zapłacony {WithholdingTaxPaid} PLN | Podatek do zapłaty {WithholdingTaxRemain} PLN |\n";
         }
     }

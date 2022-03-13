@@ -33,7 +33,7 @@ namespace Database.DataAccess
         public async Task<IList<ClosedPositionEntity>> GetStockPositions()
         {
             await using var context = new ApplicationDbContext();
-            return await context.ClosedPositions.Where(c => c.IsReal.Contains("Akcje")).Include(c => c.TransactionReports)
+            return await context.ClosedPositions.Where(c => c.IsReal.Contains("Akcje") || c.IsReal.Contains("Fundusze ETF")).Include(c => c.TransactionReports)
                 .ToListAsync();
         }
 
