@@ -51,7 +51,7 @@ public class FileWriter : IFileWriter
 
         IList<StockEntity> stockEntities = await _stockEntityDataAccess.GetEntities();
 
-        await sw.WriteLineAsync("--------Akcje--------");
+        await sw.WriteLineAsync("--------Akcje i ETFy--------");
         await sw.WriteLineAsync($"Koszt = {stockCalculatorDto.Cost} PLN");
         await sw.WriteLineAsync($"Przychód = {stockCalculatorDto.Revenue} PLN");
         await sw.WriteLineAsync($"Dochód = {stockCalculatorDto.Income} PLN");

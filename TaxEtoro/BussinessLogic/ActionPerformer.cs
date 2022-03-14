@@ -86,7 +86,7 @@ namespace TaxEtoro.BussinessLogic
             Console.WriteLine($"Podatek pozostały do zapłaty = {result.DividendDto.TaxToBePaid} PLN");
             Console.WriteLine();
 
-            Console.WriteLine("Akcje:");
+            Console.WriteLine("Akcje i ETFy:");
             Console.WriteLine($"Koszt zakupu = {result.StockDto.Cost} PLN");
             Console.WriteLine($"Przychód = {result.StockDto.Revenue} PLN");
             Console.WriteLine($"Dochód = {result.StockDto.Income} PLN");
