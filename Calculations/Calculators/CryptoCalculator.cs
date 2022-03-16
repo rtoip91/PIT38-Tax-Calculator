@@ -84,6 +84,7 @@ namespace Calculations.Calculators
             ExchangeRateEntity soldExchangeRate =
                 await _exchangeRates.GetRateForPreviousDay(soldCryptoEntity.CurrencySymbol, soldCryptoEntity.SellDate);
             soldCryptoEntity.ExchangeRate = soldExchangeRate.Rate;
+            soldCryptoEntity.ExchangeRateDate = soldExchangeRate.Date;
             soldCryptoEntity.TotalValue = (soldCryptoEntity.ValuePerUnit * soldCryptoEntity.Units).RoundDecimal();
             soldCryptoEntity.TotalExchangedValue = (soldCryptoEntity.TotalValue * soldCryptoEntity.ExchangeRate).RoundDecimal();
             return soldCryptoEntity;
@@ -105,6 +106,7 @@ namespace Calculations.Calculators
                 await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol,
                     purchasedCryptoEntity.PurchaseDate);
             purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
+            purchasedCryptoEntity.ExchangeRateDate = purchasedExchangeRate.Date;
             purchasedCryptoEntity.TotalValue = (purchasedCryptoEntity.ValuePerUnit * purchasedCryptoEntity.Units).RoundDecimal();
             purchasedCryptoEntity.TotalExchangedValue =(purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
             return purchasedCryptoEntity;

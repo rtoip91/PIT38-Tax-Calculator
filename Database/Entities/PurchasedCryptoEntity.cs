@@ -16,6 +16,7 @@ namespace Database.Entities
         public decimal TotalValue { get; set; }
         public string CurrencySymbol { get; set; }
         public decimal ExchangeRate { get; set; }
+        public DateTime ExchangeRateDate { get; set; }
         public decimal TotalExchangedValue { get; set; }
 
         public override string ToString()
@@ -23,7 +24,7 @@ namespace Database.Entities
             return $"Operacja: {Name} | ID: {PositionId} |" +
                    $"\nIlość jednostek: {Units} |" +
                    $"\nData zakupu: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {ValuePerUnit} {CurrencySymbol} |" +
-                   $"\nWartość jednostek w dniu zakupu: {TotalValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {ExchangeRate} PLN |" +
+                   $"\nWartość jednostek w dniu zakupu: {TotalValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {ExchangeRateDate.ToLongDateString()}: {ExchangeRate} PLN |" +
                    $"\nPo przeliczeniu: {TotalExchangedValue} PLN\n";
         }
     }

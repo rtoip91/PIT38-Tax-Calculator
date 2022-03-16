@@ -40,7 +40,7 @@ namespace Database.Entities
 
         public int Leverage { get; set; }
 
-        public string Comments { get; set; }
+        public string ISIN { get; set; }
 
         public IList<TransactionReportEntity> TransactionReports { get; set; }
     }

@@ -5,6 +5,8 @@ namespace ExcelReader.ExtensionMethods
 {
     internal static class DataRowExtensions
     {
+        private const string CyprusIsoCode = "CY";
+
         internal static decimal ToDecimal(this object item)
         {
             string value = item.ToString();
@@ -16,6 +18,16 @@ namespace ExcelReader.ExtensionMethods
             value = value.TrimEnd('%');
 
             return decimal.Parse(value, ChooseProvider(value));
+        }
+
+        internal static string ToIso3166Symbol(this object item)
+        {
+            string value = item.ToString();
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return CyprusIsoCode;
+            }
+            return value.Substring(0, 2);
         }
 
         internal static string OperationToString(this object item)

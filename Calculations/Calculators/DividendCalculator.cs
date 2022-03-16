@@ -40,16 +40,17 @@ namespace Calculations.Calculators
                     DividendReceived = dividend.NetDividendReceived + dividend.WithholdingTaxAmount,
                     PositionId = dividend.PositionId
                 };
-                RegionInfo regionInfo = new RegionInfo(dividend.ISIN.Substring(0, 2));
+                RegionInfo regionInfo = new RegionInfo(dividend.ISIN);
 
                 dividendCalculations.Country = regionInfo.EnglishName;
 
                 ExchangeRateEntity exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(dividendCalculations.Currency, dividend.DateOfPayment);
                 dividendCalculations.ExchangeRate = exchangeRateEntity.Rate;
+                dividendCalculations.ExchangeRateDate = exchangeRateEntity.Date;
 
                 dividendCalculations.DividendReceivedExchanged = Math.Round(dividendCalculations.DividendReceived * dividendCalculations.ExchangeRate, 2); 
 
-                dividendCalculations.WithholdingTaxRate = dividend.ISIN.Substring(0, 2).Equals("US") ? 15 : dividend.WithholdingTaxRate;
+                dividendCalculations.WithholdingTaxRate = dividend.ISIN.Equals("US") ? 15 : dividend.WithholdingTaxRate;
 
                 dividendCalculations.WithholdingTaxPaid = Math.Round(dividendCalculations.DividendReceivedExchanged * dividendCalculations.WithholdingTaxRate / 100 , 2);
 

@@ -1,4 +1,5 @@
-﻿using Calculations.Dto;
+﻿using System.Globalization;
+using Calculations.Dto;
 using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
@@ -41,6 +42,9 @@ namespace Calculations.Calculators
                     Leverage = cfdClosedPosition.Leverage
                 };
 
+                RegionInfo regionInfo = new RegionInfo(cfdClosedPosition.ISIN);
+                cfdEntity.Country = regionInfo.EnglishName;
+
                 Task<ExchangeRateEntity> exchangeRateTask =
                     _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
@@ -58,7 +62,10 @@ namespace Calculations.Calculators
                 }
 
                 await Task.WhenAll(exchangeRateTask);
+
                 cfdEntity.ExchangeRate = (exchangeRateTask.Result.Rate).RoundDecimal();
+                cfdEntity.ExchangeRateDate = exchangeRateTask.Result.Date;
+
                 decimal exchangedValue = (cfdEntity.GainValue * cfdEntity.ExchangeRate).RoundDecimal();
                 if (exchangedValue > 0)
                 {

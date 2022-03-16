@@ -16,7 +16,7 @@ namespace ExcelReader.Dto
             WithholdingTaxAmount = row[DividendsColumns.WithholdingTaxAmount].ToDecimal();
             PositionId = row[DividendsColumns.PositionId].ToInt();
             PositionType = row[DividendsColumns.PositionType].ToString();
-            ISIN = row[DividendsColumns.ISIN].ToString();
+            ISIN = row[DividendsColumns.ISIN].ToIso3166Symbol();
         }
 
         public DateTime DateOfPayment { get; }

@@ -1,4 +1,5 @@
-﻿using Calculations.Dto;
+﻿using System.Globalization;
+using Calculations.Dto;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
@@ -37,6 +38,9 @@ namespace Calculations.Calculators
                     PositionId = stockClosedPosition.PositionId ?? 0
                 };
 
+                RegionInfo regionInfo = new RegionInfo(stockClosedPosition.ISIN);
+                stockEntity.Country = regionInfo.EnglishName;
+
                 Task<ExchangeRateEntity> closingRateTask =
                     _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
                 Task<ExchangeRateEntity> openingRateTask =
@@ -52,7 +56,9 @@ namespace Calculations.Calculators
 
                 await Task.WhenAll(closingRateTask, openingRateTask);
                 stockEntity.ClosingExchangeRate = closingRateTask.Result.Rate;
+                stockEntity.ClosingExchangeRateDate = closingRateTask.Result.Date;
                 stockEntity.OpeningExchangeRate = openingRateTask.Result.Rate;
+                stockEntity.OpeningExchangeRateDate = openingRateTask.Result.Date;
 
                 stockEntity.OpeningExchangedValue = (stockEntity.OpeningValue * stockEntity.OpeningExchangeRate);
                 stockEntity.ClosingExchangedValue = (stockEntity.ClosingValue * stockEntity.ClosingExchangeRate);

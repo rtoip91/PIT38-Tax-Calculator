@@ -43,7 +43,7 @@ namespace EtoroExcelReader.Dto
 
             Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
 
-            Comments = row[ClosedPositionsColumns.Comments].ToString();
+            ISIN = row[ClosedPositionsColumns.ISIN].ToIso3166Symbol();
         }
 
         public int? PositionId { get; }
@@ -78,6 +78,6 @@ namespace EtoroExcelReader.Dto
 
         public int Leverage { get; }
 
-        public string Comments { get; }
+        public string ISIN { get; }
     }
 }
