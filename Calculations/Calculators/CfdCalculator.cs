@@ -4,6 +4,7 @@ using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
+using Database.Enums;
 
 namespace Calculations.Calculators
 {
@@ -39,7 +40,8 @@ namespace Calculations.Calculators
                     Units = cfdClosedPosition.Units ?? 0,
                     CurrencySymbol = "USD",
                     PositionId = cfdClosedPosition.PositionId ?? 0,
-                    Leverage = cfdClosedPosition.Leverage
+                    Leverage = cfdClosedPosition.Leverage,
+                    TransactionType = cfdClosedPosition.TransactionType
                 };
 
                 RegionInfo regionInfo = new RegionInfo(cfdClosedPosition.ISIN);
@@ -51,12 +53,12 @@ namespace Calculations.Calculators
                 var openingValue = cfdEntity.OpeningRate * cfdEntity.Units;
                 var closingValue = cfdEntity.ClosingRate * cfdEntity.Units;
 
-                if (cfdEntity.Name.Contains("Kupno"))
+                if (cfdEntity.TransactionType == TransactionType.Long)
                 {
                     cfdEntity.GainValue = closingValue - openingValue;
                 }
 
-                if (cfdEntity.Name.Contains("Sprzedaż"))
+                if (cfdEntity.TransactionType == TransactionType.Short)
                 {
                     cfdEntity.GainValue = openingValue - closingValue;
                 }

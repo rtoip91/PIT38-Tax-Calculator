@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Globalization;
+using Database.Enums;
 
 namespace ExcelReader.ExtensionMethods
 {
@@ -29,6 +30,18 @@ namespace ExcelReader.ExtensionMethods
             }
             return value.Substring(0, 2);
         }
+
+        internal static TransactionType ToTransactionType(this object item)
+        {
+            string value = item.ToString();
+            if (value != null && value.Substring(0, 4).Contains("Sell"))
+            {
+                return TransactionType.Short;
+            }
+
+            return TransactionType.Long;
+        }
+
 
         internal static string OperationToString(this object item)
         {

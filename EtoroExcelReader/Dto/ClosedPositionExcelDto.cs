@@ -2,6 +2,7 @@
 using ExcelReader.ExtensionMethods;
 using System;
 using System.Data;
+using Database.Enums;
 
 namespace EtoroExcelReader.Dto
 {
@@ -10,6 +11,8 @@ namespace EtoroExcelReader.Dto
         public ClosedPositionExcelDto(DataRow row)
         {
             PositionId = row[ClosedPositionsColumns.PositionId].ToInt();
+
+            TransactionType = row[ClosedPositionsColumns.Operation].ToTransactionType();
 
             Operation = row[ClosedPositionsColumns.Operation].OperationToString();
 
@@ -47,6 +50,8 @@ namespace EtoroExcelReader.Dto
         }
 
         public int? PositionId { get; }
+
+        public TransactionType TransactionType { get;}
 
         public string Operation { get; }
 
