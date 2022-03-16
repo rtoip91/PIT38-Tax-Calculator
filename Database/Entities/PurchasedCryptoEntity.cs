@@ -22,7 +22,7 @@ namespace Database.Entities
         {
             return $"Operacja: {Name} | ID: {PositionId} |" +
                    $"\nIlość jednostek: {Units} |" +
-                   $"\nData otwarcia: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {ValuePerUnit} {CurrencySymbol} |" +
+                   $"\nData zakupu: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {ValuePerUnit} {CurrencySymbol} |" +
                    $"\nWartość jednostek w dniu zakupu: {TotalValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {ExchangeRate} PLN |" +
                    $"\nPo przeliczeniu: {TotalExchangedValue} PLN\n";
         }
