@@ -53,17 +53,17 @@ namespace Calculations.Calculators
 
                 if (cfdEntity.Name.Contains("Kupno"))
                 {
-                    cfdEntity.GainValue = (closingValue - openingValue).RoundDecimal();
+                    cfdEntity.GainValue = closingValue - openingValue;
                 }
 
                 if (cfdEntity.Name.Contains("Sprzedaż"))
                 {
-                    cfdEntity.GainValue = (openingValue - closingValue).RoundDecimal();
+                    cfdEntity.GainValue = openingValue - closingValue;
                 }
 
                 await Task.WhenAll(exchangeRateTask);
 
-                cfdEntity.ExchangeRate = (exchangeRateTask.Result.Rate).RoundDecimal();
+                cfdEntity.ExchangeRate = exchangeRateTask.Result.Rate;
                 cfdEntity.ExchangeRateDate = exchangeRateTask.Result.Date;
 
                 decimal exchangedValue = (cfdEntity.GainValue * cfdEntity.ExchangeRate).RoundDecimal();
