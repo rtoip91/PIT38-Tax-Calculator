@@ -18,6 +18,6 @@
         internal const int FeesAndDividends = 13;
         internal const int CopiedInvestor = 14;
         internal const int IsReal = 15;
-        internal const int Comments = 16;
+        internal const int ISIN = 16;
     }
 }

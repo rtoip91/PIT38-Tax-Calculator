@@ -1,7 +1,10 @@
-﻿using Calculations.Dto;
+﻿using System.Globalization;
+using Calculations.Dto;
+using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
+using Database.Enums;
 
 namespace Calculations.Calculators
 {
@@ -37,28 +40,35 @@ namespace Calculations.Calculators
                     Units = cfdClosedPosition.Units ?? 0,
                     CurrencySymbol = "USD",
                     PositionId = cfdClosedPosition.PositionId ?? 0,
-                    Leverage = cfdClosedPosition.Leverage
+                    Leverage = cfdClosedPosition.Leverage,
+                    TransactionType = cfdClosedPosition.TransactionType
                 };
-                
-                Task<ExchangeRateEntity> exchangeRateTask = _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
+
+                RegionInfo regionInfo = new RegionInfo(cfdClosedPosition.ISIN);
+                cfdEntity.Country = regionInfo.EnglishName;
+
+                Task<ExchangeRateEntity> exchangeRateTask =
+                    _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
                 var openingValue = cfdEntity.OpeningRate * cfdEntity.Units;
                 var closingValue = cfdEntity.ClosingRate * cfdEntity.Units;
 
-                if (cfdEntity.Name.ToLower().Contains("buy"))
+                if (cfdEntity.TransactionType == TransactionType.Long)
                 {
-                    cfdEntity.GainValue = Math.Round(closingValue - openingValue, 2);
+                    cfdEntity.GainValue = closingValue - openingValue;
                 }
 
-                if (cfdEntity.Name.ToLower().Contains("sell"))
+                if (cfdEntity.TransactionType == TransactionType.Short)
                 {
-                    cfdEntity.GainValue = Math.Round(openingValue - closingValue, 2);
+                    cfdEntity.GainValue = openingValue - closingValue;
                 }
-
 
                 await Task.WhenAll(exchangeRateTask);
-                cfdEntity.ExchangeRate = Math.Round(exchangeRateTask.Result.Rate,2);
-                decimal exchangedValue = Math.Round(cfdEntity.GainValue * cfdEntity.ExchangeRate, 2);
+
+                cfdEntity.ExchangeRate = exchangeRateTask.Result.Rate;
+                cfdEntity.ExchangeRateDate = exchangeRateTask.Result.Date;
+
+                decimal exchangedValue = (cfdEntity.GainValue * cfdEntity.ExchangeRate).RoundDecimal();
                 if (exchangedValue > 0)
                 {
                     cfdEntity.GainExchangedValue = exchangedValue;

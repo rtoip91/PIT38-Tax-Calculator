@@ -35,20 +35,26 @@ namespace Database.Entities
 
         public decimal OpeningExchangeRate { get; set; }
 
+        public DateTime OpeningExchangeRateDate { get; set; }
+
         public decimal ClosingExchangeRate { get; set; }
+
+        public DateTime ClosingExchangeRateDate { get; set; }
 
         public decimal ClosingExchangedValue { get; set; }
 
         public decimal OpeningExchangedValue { get; set; }
 
+        public string Country { get; set; }
+
         public override string ToString()
         {            
-            return $"Operacja: {Name} | ID: {PositionId} |" +
+            return $"Operacja: {Name} | ID: {PositionId} | Kraj: {Country} |" +
                    $"\nIlość jednostek: {Units} |" +
-                   $"\nData otwarcia(D+2): {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {OpeningUnitValue} {CurrencySymbol} |" +
-                   $"\nData zamknięcia(D+2): {SellDate.ToShortDateString()} | Cena za jednostkę: {ClosingUnitValue} {CurrencySymbol} |" +
-                   $"\nWartość jednostek w dniu zakupu: {OpeningValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {OpeningExchangeRate} PLN | Po przeliczeniu: {OpeningExchangedValue} PLN" + 
-                   $"\nWartość jednostek w dniu sprzedaży: {ClosingValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia poprzedniego: {ClosingExchangeRate} PLN | Po przeliczeniu: {ClosingExchangedValue} PLN" +
+                   $"\nData otwarcia: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {OpeningUnitValue} {CurrencySymbol} |" +
+                   $"\nData zamknięcia: {SellDate.ToShortDateString()} | Cena za jednostkę: {ClosingUnitValue} {CurrencySymbol} |" +
+                   $"\nWartość jednostek w dniu zakupu: {OpeningValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {OpeningExchangeRateDate.ToShortDateString()}: {OpeningExchangeRate} PLN | Po przeliczeniu: {OpeningExchangedValue} PLN" + 
+                   $"\nWartość jednostek w dniu sprzedaży: {ClosingValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {ClosingExchangeRateDate.ToShortDateString()}: {ClosingExchangeRate} PLN | Po przeliczeniu: {ClosingExchangedValue} PLN" +
                    $"\nWynik po przeliczeniu: {ExchangedProfit} PLN\n";
         }
     }

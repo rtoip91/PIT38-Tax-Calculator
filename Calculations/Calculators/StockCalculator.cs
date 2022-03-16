@@ -1,7 +1,9 @@
-﻿using Calculations.Dto;
+﻿using System.Globalization;
+using Calculations.Dto;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
+using Calculations.Extensions;
 
 namespace Calculations.Calculators
 {
@@ -30,19 +32,22 @@ namespace Calculations.Calculators
                 StockEntity stockEntity = new StockEntity
                 {
                     Name = stockClosedPosition.Operation,
-                    PurchaseDate = stockClosedPosition.OpeningDate.AddDays(2),
-                    SellDate = stockClosedPosition.ClosingDate.AddDays(2),
+                    PurchaseDate = stockClosedPosition.OpeningDate,
+                    SellDate = stockClosedPosition.ClosingDate,
                     CurrencySymbol = "USD",
                     PositionId = stockClosedPosition.PositionId ?? 0
                 };
+
+                RegionInfo regionInfo = new RegionInfo(stockClosedPosition.ISIN);
+                stockEntity.Country = regionInfo.EnglishName;
 
                 Task<ExchangeRateEntity> closingRateTask =
                     _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
                 Task<ExchangeRateEntity> openingRateTask =
                     _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
 
-                stockEntity.OpeningUnitValue = stockClosedPosition.OpeningRate ?? 0;
-                stockEntity.ClosingUnitValue = stockClosedPosition.ClosingRate ?? 0;
+                stockEntity.OpeningUnitValue = (stockClosedPosition.OpeningRate ?? 0);
+                stockEntity.ClosingUnitValue = (stockClosedPosition.ClosingRate ?? 0);
                 stockEntity.Units = stockClosedPosition.Units ?? 0;
 
                 stockEntity.OpeningValue = stockEntity.OpeningUnitValue * stockEntity.Units;
@@ -51,14 +56,14 @@ namespace Calculations.Calculators
 
                 await Task.WhenAll(closingRateTask, openingRateTask);
                 stockEntity.ClosingExchangeRate = closingRateTask.Result.Rate;
+                stockEntity.ClosingExchangeRateDate = closingRateTask.Result.Date;
                 stockEntity.OpeningExchangeRate = openingRateTask.Result.Rate;
+                stockEntity.OpeningExchangeRateDate = openingRateTask.Result.Date;
 
-                stockEntity.OpeningExchangedValue =
-                    Math.Round(stockEntity.OpeningValue * stockEntity.OpeningExchangeRate, 2);
-                stockEntity.ClosingExchangedValue =
-                    Math.Round(stockEntity.ClosingValue * stockEntity.ClosingExchangeRate, 2);
+                stockEntity.OpeningExchangedValue = (stockEntity.OpeningValue * stockEntity.OpeningExchangeRate);
+                stockEntity.ClosingExchangedValue = (stockEntity.ClosingValue * stockEntity.ClosingExchangeRate);
 
-                stockEntity.ExchangedProfit = stockEntity.ClosingExchangedValue - stockEntity.OpeningExchangedValue;
+                stockEntity.ExchangedProfit = (stockEntity.ClosingExchangedValue - stockEntity.OpeningExchangedValue).RoundDecimal();
 
                 stockEntities.Add(stockEntity);
 
@@ -68,8 +73,8 @@ namespace Calculations.Calculators
             try
             {
                 await _stockEntityDataAccess.AddEntities(stockEntities);
-                var totalLoss = stockEntities.Sum(c => c.OpeningExchangedValue);
-                var totalGain = stockEntities.Sum(c => c.ClosingExchangedValue);
+                var totalLoss = stockEntities.Sum(c => c.OpeningExchangedValue).RoundDecimal();
+                var totalGain = stockEntities.Sum(c => c.ClosingExchangedValue).RoundDecimal();
 
                 var stockCalculatorDto = new StockCalculatorDto
                 {

@@ -2,6 +2,7 @@
 using ExcelReader.ExtensionMethods;
 using System;
 using System.Data;
+using Database.Enums;
 
 namespace EtoroExcelReader.Dto
 {
@@ -11,7 +12,9 @@ namespace EtoroExcelReader.Dto
         {
             PositionId = row[ClosedPositionsColumns.PositionId].ToInt();
 
-            Operation = row[ClosedPositionsColumns.Operation].ToString();
+            TransactionType = row[ClosedPositionsColumns.Operation].ToTransactionType();
+
+            Operation = row[ClosedPositionsColumns.Operation].OperationToString();
 
             CopiedInvestor = row[ClosedPositionsColumns.CopiedInvestor].ToString();
 
@@ -43,10 +46,12 @@ namespace EtoroExcelReader.Dto
 
             Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
 
-            Comments = row[ClosedPositionsColumns.Comments].ToString();
+            ISIN = row[ClosedPositionsColumns.ISIN].ToIso3166Symbol();
         }
 
         public int? PositionId { get; }
+
+        public TransactionType TransactionType { get;}
 
         public string Operation { get; }
 
@@ -78,6 +83,6 @@ namespace EtoroExcelReader.Dto
 
         public int Leverage { get; }
 
-        public string Comments { get; }
+        public string ISIN { get; }
     }
 }

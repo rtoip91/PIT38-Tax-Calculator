@@ -18,6 +18,8 @@ namespace Database.Entities
 
         public decimal ExchangeRate { get; set; }
 
+        public DateTime ExchangeRateDate { get; set; }
+
         public decimal DividendReceived { get; set; }
 
         public decimal DividendReceivedExchanged { get; set; }
@@ -34,7 +36,7 @@ namespace Database.Entities
         {
             return $"Dywidenda za: {InstrumentName} | ID: {PositionId} | Kraj: {Country} |" +
                    $"\nData otrzymania: {DateOfPayment.ToShortDateString()} | Wartość : {DividendReceived} {Currency} |" +
-                   $"\nKurs {Currency} z dnia poprzedniego: {ExchangeRate} PLN | Po przeliczeniu: {DividendReceivedExchanged} |" +
+                   $"\nKurs {Currency} z dnia {ExchangeRateDate.ToShortDateString()}: {ExchangeRate} PLN | Po przeliczeniu: {DividendReceivedExchanged} |" +
                    $"\nStawka podatku: {WithholdingTaxRate}% | Podatek zapłacony {WithholdingTaxPaid} PLN | Podatek do zapłaty {WithholdingTaxRemain} PLN |\n";
         }
     }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Database.Enums;
 
 namespace Database.Entities
 {
@@ -11,6 +12,8 @@ namespace Database.Entities
         [Key] public int? PositionId { get; set; }
 
         public string Operation { get; set; }
+
+        public TransactionType TransactionType { get; set; }
 
         public string CopiedInvestor { get; set; }
 
@@ -40,7 +43,7 @@ namespace Database.Entities
 
         public int Leverage { get; set; }
 
-        public string Comments { get; set; }
+        public string ISIN { get; set; }
 
         public IList<TransactionReportEntity> TransactionReports { get; set; }
     }
