@@ -3,6 +3,7 @@ using System;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220312193403_DividendsHandling")]
+    partial class DividendsHandling
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -124,50 +126,6 @@ namespace Database.Migrations
                     b.HasKey("PositionId");
 
                     b.ToTable("ClosedPositions");
-                });
-
-            modelBuilder.Entity("Database.Entities.DividendCalculationsEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Country")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("Currency")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("DateOfPayment")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("DividendReceived")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("DividendReceivedExchanged")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("ExchangeRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("InstrumentName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("PositionId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<decimal>("WithholdingTaxPaid")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("WithholdingTaxRate")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("WithholdingTaxRemain")
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("DividendCalculations");
                 });
 
             modelBuilder.Entity("Database.Entities.DividendEntity", b =>

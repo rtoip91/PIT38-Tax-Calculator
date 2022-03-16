@@ -2,9 +2,9 @@
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using ExcelReader.Interfaces;
-using ResultPresenter.Interfaces;
 using System;
 using System.Threading.Tasks;
+using ResultsPresenter.Interfaces;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
@@ -82,9 +82,11 @@ namespace TaxEtoro.BussinessLogic
 
             Console.WriteLine("Dywidendy:");
             Console.WriteLine($"Suma dywidend = {result.DividendDto.Dividend} PLN");
+            Console.WriteLine($"Podatek zaplacony = {result.DividendDto.TaxPaid} PLN");
+            Console.WriteLine($"Podatek pozostały do zapłaty = {result.DividendDto.TaxToBePaid} PLN");
             Console.WriteLine();
 
-            Console.WriteLine("Akcje:");
+            Console.WriteLine("Akcje i ETFy:");
             Console.WriteLine($"Koszt zakupu = {result.StockDto.Cost} PLN");
             Console.WriteLine($"Przychód = {result.StockDto.Revenue} PLN");
             Console.WriteLine($"Dochód = {result.StockDto.Income} PLN");

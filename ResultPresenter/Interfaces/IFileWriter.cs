@@ -1,10 +1,9 @@
-﻿
-using Calculations.Dto;
+﻿using Calculations.Dto;
 
-namespace ResultPresenter.Interfaces
+namespace ResultsPresenter.Interfaces
 {
     public interface IFileWriter
-    { 
+    {
         Task PresentData(CalculationResultDto calculationResultDto);
     }
 }

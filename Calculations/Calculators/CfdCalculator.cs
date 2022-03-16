@@ -36,13 +36,14 @@ namespace Calculations.Calculators
                     SellDate = cfdClosedPosition.ClosingDate,
                     Units = cfdClosedPosition.Units ?? 0,
                     CurrencySymbol = "USD",
-                    PositionId = cfdClosedPosition.PositionId ?? 0
+                    PositionId = cfdClosedPosition.PositionId ?? 0,
+                    Leverage = cfdClosedPosition.Leverage
                 };
+                
+                Task<ExchangeRateEntity> exchangeRateTask = _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
-                Task<ExchangeRateEntity> exchangeRateTask = _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);               
-
-                var openingValue = cfdClosedPosition.OpeningRate * cfdClosedPosition.Units ?? 0;
-                var closingValue = cfdClosedPosition.ClosingRate * cfdClosedPosition.Units ?? 0;
+                var openingValue = cfdEntity.OpeningRate * cfdEntity.Units;
+                var closingValue = cfdEntity.ClosingRate * cfdEntity.Units;
 
                 if (cfdEntity.Name.ToLower().Contains("buy"))
                 {

@@ -3,6 +3,7 @@ using System;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20220312205303_DividendsCalculations")]
+    partial class DividendsCalculations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "6.0.1");
@@ -141,16 +143,16 @@ namespace Database.Migrations
                     b.Property<DateTime>("DateOfPayment")
                         .HasColumnType("TEXT");
 
-                    b.Property<decimal>("DividendReceived")
-                        .HasColumnType("TEXT");
-
-                    b.Property<decimal>("DividendReceivedExchanged")
-                        .HasColumnType("TEXT");
-
                     b.Property<decimal>("ExchangeRate")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("InstrumentName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("NetDividendReceived")
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal>("NetDividendReceivedExchanged")
                         .HasColumnType("TEXT");
 
                     b.Property<int>("PositionId")
