@@ -24,7 +24,7 @@ namespace Database.Entities
             return $"Operacja: {Name} | ID: {PositionId} |" +
                    $"\nIlość jednostek: {Units} |" +
                    $"\nData zakupu: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {ValuePerUnit} {CurrencySymbol} |" +
-                   $"\nWartość jednostek w dniu zakupu: {TotalValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {ExchangeRateDate.ToLongDateString()}: {ExchangeRate} PLN |" +
+                   $"\nWartość jednostek w dniu zakupu: {TotalValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {ExchangeRateDate.ToShortDateString()}: {ExchangeRate} PLN |" +
                    $"\nPo przeliczeniu: {TotalExchangedValue} PLN\n";
         }
     }
