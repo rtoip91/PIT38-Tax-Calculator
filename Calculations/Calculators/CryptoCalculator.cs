@@ -123,20 +123,25 @@ namespace Calculations.Calculators
                 {
                     PurchasedCryptoEntity purchasedCryptoEntity = new PurchasedCryptoEntity
                     {
-                        Name = $"KUPNO: {crypto}",
                         CurrencySymbol = "USD",
                         PurchaseDate = transaction.Date,
                         PositionId = transaction.PositionId ?? 0,
                         TotalValue = transaction.Amount
                     };
-                    ExchangeRateEntity purchasedExchangeRate =
-                        await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol,
-                            purchasedCryptoEntity.PurchaseDate);
+
+                    purchasedCryptoEntity.Name = GetCryptoCurrencyName(crypto);
+                    ExchangeRateEntity purchasedExchangeRate = await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol, purchasedCryptoEntity.PurchaseDate);
                     purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
                     purchasedCryptoEntity.TotalExchangedValue = (purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
                 }
             }
+        }
+
+        private string GetCryptoCurrencyName(string crypto)
+        {
+            var result = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.TryGetValue(crypto, out string cryptoName);
+            return result ? $"Kupno {cryptoName}" : $"Kupno {crypto}";
         }
     }
 }
