@@ -1,4 +1,5 @@
 ﻿using Calculations.Dto;
+using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
@@ -72,7 +73,7 @@ namespace Calculations.Calculators
         {
             SoldCryptoEntity soldCryptoEntity = new SoldCryptoEntity
             {
-                Name = cryptoClosedPosition.Operation,
+                Name = cryptoClosedPosition.Operation.Replace("Kupno", "Sprzedaż"),
                 SellDate = cryptoClosedPosition.ClosingDate,
                 CurrencySymbol = "USD",
                 PositionId = cryptoClosedPosition.PositionId ?? 0,
@@ -83,8 +84,8 @@ namespace Calculations.Calculators
             ExchangeRateEntity soldExchangeRate =
                 await _exchangeRates.GetRateForPreviousDay(soldCryptoEntity.CurrencySymbol, soldCryptoEntity.SellDate);
             soldCryptoEntity.ExchangeRate = soldExchangeRate.Rate;
-            soldCryptoEntity.TotalValue = Math.Round(soldCryptoEntity.ValuePerUnit * soldCryptoEntity.Units, 2);
-            soldCryptoEntity.TotalExchangedValue = Math.Round(soldCryptoEntity.TotalValue * soldCryptoEntity.ExchangeRate, 2);
+            soldCryptoEntity.TotalValue = (soldCryptoEntity.ValuePerUnit * soldCryptoEntity.Units).RoundDecimal();
+            soldCryptoEntity.TotalExchangedValue = (soldCryptoEntity.TotalValue * soldCryptoEntity.ExchangeRate).RoundDecimal();
             return soldCryptoEntity;
         }
 
@@ -104,9 +105,8 @@ namespace Calculations.Calculators
                 await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol,
                     purchasedCryptoEntity.PurchaseDate);
             purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
-            purchasedCryptoEntity.TotalValue = Math.Round(purchasedCryptoEntity.ValuePerUnit * purchasedCryptoEntity.Units, 2);
-            purchasedCryptoEntity.TotalExchangedValue =
-                Math.Round(purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate, 2);
+            purchasedCryptoEntity.TotalValue = (purchasedCryptoEntity.ValuePerUnit * purchasedCryptoEntity.Units).RoundDecimal();
+            purchasedCryptoEntity.TotalExchangedValue =(purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
             return purchasedCryptoEntity;
         }
 
@@ -121,7 +121,7 @@ namespace Calculations.Calculators
                 {
                     PurchasedCryptoEntity purchasedCryptoEntity = new PurchasedCryptoEntity
                     {
-                        Name = $"Buy {crypto}",
+                        Name = $"KUPNO: {crypto}",
                         CurrencySymbol = "USD",
                         PurchaseDate = transaction.Date,
                         PositionId = transaction.PositionId ?? 0,
@@ -131,8 +131,7 @@ namespace Calculations.Calculators
                         await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol,
                             purchasedCryptoEntity.PurchaseDate);
                     purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
-                    purchasedCryptoEntity.TotalExchangedValue =
-                        Math.Round(purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate, 2);
+                    purchasedCryptoEntity.TotalExchangedValue = (purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
                 }
             }

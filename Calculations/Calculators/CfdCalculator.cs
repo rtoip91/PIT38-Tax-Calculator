@@ -1,4 +1,5 @@
 ﻿using Calculations.Dto;
+using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
@@ -39,26 +40,26 @@ namespace Calculations.Calculators
                     PositionId = cfdClosedPosition.PositionId ?? 0,
                     Leverage = cfdClosedPosition.Leverage
                 };
-                
-                Task<ExchangeRateEntity> exchangeRateTask = _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
+
+                Task<ExchangeRateEntity> exchangeRateTask =
+                    _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
                 var openingValue = cfdEntity.OpeningRate * cfdEntity.Units;
                 var closingValue = cfdEntity.ClosingRate * cfdEntity.Units;
 
-                if (cfdEntity.Name.ToLower().Contains("buy"))
+                if (cfdEntity.Name.Contains("Kupno"))
                 {
-                    cfdEntity.GainValue = Math.Round(closingValue - openingValue, 2);
+                    cfdEntity.GainValue = (closingValue - openingValue).RoundDecimal();
                 }
 
-                if (cfdEntity.Name.ToLower().Contains("sell"))
+                if (cfdEntity.Name.Contains("Sprzedaż"))
                 {
-                    cfdEntity.GainValue = Math.Round(openingValue - closingValue, 2);
+                    cfdEntity.GainValue = (openingValue - closingValue).RoundDecimal();
                 }
-
 
                 await Task.WhenAll(exchangeRateTask);
-                cfdEntity.ExchangeRate = Math.Round(exchangeRateTask.Result.Rate,2);
-                decimal exchangedValue = Math.Round(cfdEntity.GainValue * cfdEntity.ExchangeRate, 2);
+                cfdEntity.ExchangeRate = (exchangeRateTask.Result.Rate).RoundDecimal();
+                decimal exchangedValue = (cfdEntity.GainValue * cfdEntity.ExchangeRate).RoundDecimal();
                 if (exchangedValue > 0)
                 {
                     cfdEntity.GainExchangedValue = exchangedValue;

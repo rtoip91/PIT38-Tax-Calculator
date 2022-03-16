@@ -11,7 +11,7 @@ namespace EtoroExcelReader.Dto
         {
             PositionId = row[ClosedPositionsColumns.PositionId].ToInt();
 
-            Operation = row[ClosedPositionsColumns.Operation].ToString();
+            Operation = row[ClosedPositionsColumns.Operation].OperationToString();
 
             CopiedInvestor = row[ClosedPositionsColumns.CopiedInvestor].ToString();
 

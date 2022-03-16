@@ -18,6 +18,22 @@ namespace ExcelReader.ExtensionMethods
             return decimal.Parse(value, ChooseProvider(value));
         }
 
+        internal static string OperationToString(this object item)
+        {
+            string value = item.ToString();
+
+            if (value != null && value.Contains("Buy"))
+            {
+                value = value.Replace("Buy", "Kupno");
+            }
+            if (value != null && value.Contains("Sell"))
+            {
+                value = value.Replace("Sell", "Sprzedaż");
+            }
+
+            return value;
+        }
+
         internal static int ToInt(this object item)
         {
             string value = item.ToString();
