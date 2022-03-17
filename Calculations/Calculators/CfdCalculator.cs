@@ -13,14 +13,17 @@ namespace Calculations.Calculators
         private readonly IExchangeRates _exchangeRates;
         private readonly IClosedPositionsDataAccess _closedPositionsDataAccess;
         private readonly ICfdEntityDataAccess _cfdEntityDataAccess;
+        private readonly IIncomeByCountryDataAccess _incomeByCountryDataAccess;
 
         public CfdCalculator(IExchangeRates exchangeRatesGetter,
             IClosedPositionsDataAccess closedPositionsDataAccess,
-            ICfdEntityDataAccess cfdEntityDataAccess)
+            ICfdEntityDataAccess cfdEntityDataAccess,
+            IIncomeByCountryDataAccess incomeByCountryDataAccess)
         {
             _exchangeRates = exchangeRatesGetter;
             _closedPositionsDataAccess = closedPositionsDataAccess;
             _cfdEntityDataAccess = cfdEntityDataAccess;
+            _incomeByCountryDataAccess = incomeByCountryDataAccess;
         }
 
         public async Task<T> Calculate<T>() where T : CfdCalculatorDto
@@ -66,6 +69,9 @@ namespace Calculations.Calculators
                 cfdEntity.ExchangeRateDate = exchangeRate.Date;
 
                 decimal exchangedValue = (cfdEntity.GainValue * cfdEntity.ExchangeRate).RoundDecimal();
+
+                _incomeByCountryDataAccess.AddIncome(cfdEntity.Country, exchangedValue);
+
                 if (exchangedValue > 0)
                 {
                     cfdEntity.GainExchangedValue = exchangedValue;

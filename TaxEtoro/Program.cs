@@ -23,7 +23,7 @@ namespace TaxEtoro
 
             await using var scope = Services.CreateAsyncScope();
             var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
-            AppDomain.CurrentDomain.ProcessExit += new EventHandler(actionPerformer.OnAppClose);
+            AppDomain.CurrentDomain.ProcessExit += actionPerformer.OnAppClose;
             var result = await actionPerformer.PerformCalculations();
 
             timer.Stop();
