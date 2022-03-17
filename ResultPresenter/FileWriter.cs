@@ -47,7 +47,6 @@ public class FileWriter : IFileWriter
         }
     }
 
-
     private async Task WritePitZgToFile()
     {
         FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.PitZgFileName}",

@@ -174,7 +174,6 @@ public class ExcelDataExtractor : IExcelDataExtractor
         });
     }
 
-
     private async Task ExtractTransactionReportsAsync(DataTable dataTable,
         IList<TransactionReportExcelDto> transactionReportDtos)
     {
