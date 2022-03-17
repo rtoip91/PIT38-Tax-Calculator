@@ -11,6 +11,7 @@ using Serilog;
 using System;
 using System.IO;
 using Calculations.Statics;
+using Database;
 using Microsoft.Extensions.Logging;
 using TaxEtoro.BussinessLogic;
 using TaxEtoro.Interfaces;
@@ -46,6 +47,7 @@ internal static class ServiceRegistration
             {
                 RegisterServices(services);
                 CalculationsServicesRegistration.RegisterServices(services);
+                DatabaseServiceRegistration.RegisterServices(services);
             })
             .ConfigureLogging((context, logging) =>
             {

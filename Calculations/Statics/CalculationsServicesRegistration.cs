@@ -18,15 +18,6 @@ public static class CalculationsServicesRegistration
         services.AddTransient<ICalculator<CryptoDto>, CryptoCalculator>();
         services.AddTransient<ICalculator<DividendCalculatorDto>, DividendCalculator>();
         services.AddTransient<ICalculator<StockCalculatorDto>, StockCalculator>();
-        services.AddScoped<IExchangeRatesDataAccess, ExchangeRatesDataAccess>();
-        services.AddScoped<ICfdEntityDataAccess, CfdEntityDataAccess>();
-        services.AddScoped<IPurchasedCryptoEntityDataAccess, PurchasedCryptoEntityDataAccess>();
-        services.AddScoped<ISoldCryptoEntityDataAccess, SoldCryptoEntityDataAccess>();
-        services.AddScoped<IStockEntityDataAccess, StockEntityDataAccess>();
-        services.AddScoped<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
-        services.AddScoped<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
-        services.AddScoped<IDividendsDataAccess, DividendsDataAccess>();
-        services.AddScoped<IDividendCalculationsDataAccess, DividendCalculationsDataAccess>();
         services.AddMemoryCache();
 
         services.AddHttpClient("ExchangeRates", config =>

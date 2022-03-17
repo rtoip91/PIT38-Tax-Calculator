@@ -12,14 +12,17 @@ namespace Calculations.Calculators
         private readonly IExchangeRates _exchangeRates;
         private readonly IClosedPositionsDataAccess _closedPositionDataAccess;
         private readonly IStockEntityDataAccess _stockEntityDataAccess;
+        private readonly IIncomeByCountryDataAccess _incomeByCountryDataAccess;
 
         public StockCalculator(IExchangeRates exchangeRates,
             IClosedPositionsDataAccess closedPositionsDataAccess,
-            IStockEntityDataAccess stockEntityDataAccess)
+            IStockEntityDataAccess stockEntityDataAccess,
+            IIncomeByCountryDataAccess incomeByCountryDataAccess)
         {
             _exchangeRates = exchangeRates;
             _closedPositionDataAccess = closedPositionsDataAccess;
             _stockEntityDataAccess = stockEntityDataAccess;
+            _incomeByCountryDataAccess = incomeByCountryDataAccess;
         }
 
         public async Task<T> Calculate<T>() where T : StockCalculatorDto
@@ -61,6 +64,8 @@ namespace Calculations.Calculators
                 stockEntity.ClosingExchangedValue = (stockEntity.ClosingValue * stockEntity.ClosingExchangeRate).RoundDecimal(4);
 
                 stockEntity.ExchangedProfit = (stockEntity.ClosingExchangedValue - stockEntity.OpeningExchangedValue).RoundDecimal();
+
+                _incomeByCountryDataAccess.AddIncome(stockEntity.Country, stockEntity.ExchangedProfit);
 
                 stockEntities.Add(stockEntity);
 

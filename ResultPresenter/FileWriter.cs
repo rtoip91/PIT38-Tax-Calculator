@@ -12,18 +12,21 @@ public class FileWriter : IFileWriter
     private readonly ISoldCryptoEntityDataAccess _soldCryptoEntityDataAccess;
     private readonly IPurchasedCryptoEntityDataAccess _purchasedCryptoEntityDataAccess;
     private readonly IDividendCalculationsDataAccess _dividendCalculationsDataAccess;
+    private readonly IIncomeByCountryDataAccess _incomeByCountryDataAccess;
 
     public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
         IStockEntityDataAccess stockEntityDataAccess,
         ISoldCryptoEntityDataAccess soldCryptoEntityDataAccess,
         IPurchasedCryptoEntityDataAccess purchasedCryptoEntityDataAccess,
-        IDividendCalculationsDataAccess dividendCalculationsDataAccess)
+        IDividendCalculationsDataAccess dividendCalculationsDataAccess,
+        IIncomeByCountryDataAccess incomeByCountryDataAccess)
     {
         _cfdEntityDataAccess = cfdEntityDataAccess;
         _stockEntityDataAccess = stockEntityDataAccess;
         _soldCryptoEntityDataAccess = soldCryptoEntityDataAccess;
         _purchasedCryptoEntityDataAccess = purchasedCryptoEntityDataAccess;
         _dividendCalculationsDataAccess = dividendCalculationsDataAccess;
+        _incomeByCountryDataAccess = incomeByCountryDataAccess;
     }
 
     public async Task PresentData(CalculationResultDto calculationResultDto)
@@ -33,6 +36,7 @@ public class FileWriter : IFileWriter
         await WriteStockResultsToFile(calculationResultDto.StockDto);
         await WriteCryptoResultsToFile(calculationResultDto.CryptoDto);
         await WriteDividendResultsToFile(calculationResultDto.DividendDto);
+        await WritePitZgToFile();
     }
 
     private void CreateDirectory()
@@ -43,10 +47,28 @@ public class FileWriter : IFileWriter
         }
     }
 
+
+    private async Task WritePitZgToFile()
+    {
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.PitZgFileName}",
+            FileMode.Create, FileAccess.Write);
+        await using StreamWriter sw = new StreamWriter(fs);
+
+        IList<IncomeByCountryEntity> incomeByCountryEntities = _incomeByCountryDataAccess.GetAllIncomes();
+
+        await sw.WriteLineAsync("--------Pit ZG--------");
+
+        foreach (var income in incomeByCountryEntities.Where(i=>i.Income > 0))
+        {
+            await sw.WriteLineAsync(income.ToString());
+        }
+    }
+
+
     private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto)
     {
-       
-        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.StockCalculationsFileName}", FileMode.Create, FileAccess.Write);
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.StockCalculationsFileName}",
+            FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
         IList<StockEntity> stockEntities = await _stockEntityDataAccess.GetEntities();
@@ -62,13 +84,16 @@ public class FileWriter : IFileWriter
             await sw.WriteLineAsync(stockEntity.ToString());
         }
     }
+
     private async Task WriteCryptoResultsToFile(CryptoDto cryptoDto)
     {
-
-        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CryptoCalculationsFileName}", FileMode.Create, FileAccess.Write);
+        FileStream fs =
+            new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CryptoCalculationsFileName}",
+                FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
-        IList<PurchasedCryptoEntity> purchasedCryptoEntities = await _purchasedCryptoEntityDataAccess.GetPurchasedCryptoEntities();
+        IList<PurchasedCryptoEntity> purchasedCryptoEntities =
+            await _purchasedCryptoEntityDataAccess.GetPurchasedCryptoEntities();
         IList<SoldCryptoEntity> soldCryptoEntities = await _soldCryptoEntityDataAccess.GetSoldCryptoEntities();
 
         int operationNumber = purchasedCryptoEntities.Count + soldCryptoEntities.Count;
@@ -95,7 +120,9 @@ public class FileWriter : IFileWriter
 
     private async Task WriteDividendResultsToFile(DividendCalculatorDto dividendCalculatorDto)
     {
-        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.DividendsCalculationsFileName}", FileMode.Create, FileAccess.Write);
+        FileStream fs =
+            new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.DividendsCalculationsFileName}",
+                FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
         IList<DividendCalculationsEntity> dividendCalculations = await _dividendCalculationsDataAccess.GetEntities();
@@ -115,7 +142,8 @@ public class FileWriter : IFileWriter
     private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
     {
         IList<CfdEntity> cfdEntities = await _cfdEntityDataAccess.GetCfdEntities();
-        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CfdCalculationsFileName}", FileMode.Create, FileAccess.Write);
+        FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CfdCalculationsFileName}",
+            FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
         await sw.WriteLineAsync("--------CFD--------");
