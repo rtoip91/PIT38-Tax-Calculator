@@ -17,18 +17,13 @@ namespace ExcelReader.ExtensionMethods
             }
 
             value = value.TrimEnd('%');
-
             return decimal.Parse(value, ChooseProvider(value));
         }
 
         internal static string ToIso3166Symbol(this object item)
         {
             string value = item.ToString();
-            if (string.IsNullOrWhiteSpace(value))
-            {
-                return CyprusIsoCode;
-            }
-            return value.Substring(0, 2);
+            return string.IsNullOrWhiteSpace(value) ? CyprusIsoCode : value.Substring(0, 2);
         }
 
         internal static TransactionType ToTransactionType(this object item)

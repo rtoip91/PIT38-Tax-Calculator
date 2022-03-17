@@ -41,27 +41,24 @@ namespace Calculations.Calculators
                 RegionInfo regionInfo = new RegionInfo(stockClosedPosition.ISIN);
                 stockEntity.Country = regionInfo.EnglishName;
 
-                Task<ExchangeRateEntity> closingRateTask =
-                    _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
-                Task<ExchangeRateEntity> openingRateTask =
-                    _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
-
-                stockEntity.OpeningUnitValue = (stockClosedPosition.OpeningRate ?? 0);
-                stockEntity.ClosingUnitValue = (stockClosedPosition.ClosingRate ?? 0);
+                stockEntity.OpeningUnitValue = (stockClosedPosition.OpeningRate ?? 0).RoundDecimal(4);
+                stockEntity.ClosingUnitValue = (stockClosedPosition.ClosingRate ?? 0).RoundDecimal(4);
                 stockEntity.Units = stockClosedPosition.Units ?? 0;
 
-                stockEntity.OpeningValue = stockEntity.OpeningUnitValue * stockEntity.Units;
-                stockEntity.ClosingValue = stockEntity.ClosingUnitValue * stockEntity.Units;
+                stockEntity.OpeningValue = (stockEntity.OpeningUnitValue * stockEntity.Units).RoundDecimal(4);
+                stockEntity.ClosingValue = (stockEntity.ClosingUnitValue * stockEntity.Units).RoundDecimal(4);
                 stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;
 
-                await Task.WhenAll(closingRateTask, openingRateTask);
-                stockEntity.ClosingExchangeRate = closingRateTask.Result.Rate;
-                stockEntity.ClosingExchangeRateDate = closingRateTask.Result.Date;
-                stockEntity.OpeningExchangeRate = openingRateTask.Result.Rate;
-                stockEntity.OpeningExchangeRateDate = openingRateTask.Result.Date;
+                ExchangeRateEntity closingRateTask = await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
+                stockEntity.ClosingExchangeRate = closingRateTask.Rate;
+                stockEntity.ClosingExchangeRateDate = closingRateTask.Date;
 
-                stockEntity.OpeningExchangedValue = (stockEntity.OpeningValue * stockEntity.OpeningExchangeRate);
-                stockEntity.ClosingExchangedValue = (stockEntity.ClosingValue * stockEntity.ClosingExchangeRate);
+                ExchangeRateEntity openingRateTask =await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
+                stockEntity.OpeningExchangeRate = openingRateTask.Rate;
+                stockEntity.OpeningExchangeRateDate = openingRateTask.Date;
+
+                stockEntity.OpeningExchangedValue = (stockEntity.OpeningValue * stockEntity.OpeningExchangeRate).RoundDecimal(4);
+                stockEntity.ClosingExchangedValue = (stockEntity.ClosingValue * stockEntity.ClosingExchangeRate).RoundDecimal(4);
 
                 stockEntity.ExchangedProfit = (stockEntity.ClosingExchangedValue - stockEntity.OpeningExchangedValue).RoundDecimal();
 

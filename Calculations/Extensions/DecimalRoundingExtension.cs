@@ -2,9 +2,11 @@
 {
     internal static class DecimalRoundingExtension
     {
-        internal static decimal RoundDecimal(this decimal value)
+        internal static decimal RoundDecimal(this decimal value, int decimals = 2)
         {
-            return Math.Round(value, 2, MidpointRounding.AwayFromZero);
+            return Math.Round(value, decimals, MidpointRounding.AwayFromZero);
         }
+
+
     }
 }

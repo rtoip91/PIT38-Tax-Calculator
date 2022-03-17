@@ -26,7 +26,7 @@ namespace EtoroExcelReader.Dto
 
             Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
 
-            Units = (decimal)(Amount * Leverage / OpeningRate);
+            Units = Math.Round((decimal)(Amount * Leverage / OpeningRate),6,MidpointRounding.AwayFromZero);
 
             Spread = row[ClosedPositionsColumns.Spread].ToDecimal();
 

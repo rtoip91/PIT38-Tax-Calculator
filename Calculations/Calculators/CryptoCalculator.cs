@@ -132,6 +132,7 @@ namespace Calculations.Calculators
                     purchasedCryptoEntity.Name = GetCryptoCurrencyName(crypto);
                     ExchangeRateEntity purchasedExchangeRate = await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol, purchasedCryptoEntity.PurchaseDate);
                     purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
+                    purchasedCryptoEntity.ExchangeRateDate = purchasedExchangeRate.Date;
                     purchasedCryptoEntity.TotalExchangedValue = (purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
                 }

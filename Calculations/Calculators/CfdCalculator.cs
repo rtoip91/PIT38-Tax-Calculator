@@ -47,11 +47,10 @@ namespace Calculations.Calculators
                 RegionInfo regionInfo = new RegionInfo(cfdClosedPosition.ISIN);
                 cfdEntity.Country = regionInfo.EnglishName;
 
-                Task<ExchangeRateEntity> exchangeRateTask =
-                    _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
+                ExchangeRateEntity exchangeRate = await _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
-                var openingValue = cfdEntity.OpeningRate * cfdEntity.Units;
-                var closingValue = cfdEntity.ClosingRate * cfdEntity.Units;
+                var openingValue = (cfdEntity.OpeningRate * cfdEntity.Units).RoundDecimal(4);
+                var closingValue = (cfdEntity.ClosingRate * cfdEntity.Units).RoundDecimal(4);
 
                 if (cfdEntity.TransactionType == TransactionType.Long)
                 {
@@ -63,10 +62,8 @@ namespace Calculations.Calculators
                     cfdEntity.GainValue = openingValue - closingValue;
                 }
 
-                await Task.WhenAll(exchangeRateTask);
-
-                cfdEntity.ExchangeRate = exchangeRateTask.Result.Rate;
-                cfdEntity.ExchangeRateDate = exchangeRateTask.Result.Date;
+                cfdEntity.ExchangeRate = exchangeRate.Rate;
+                cfdEntity.ExchangeRateDate = exchangeRate.Date;
 
                 decimal exchangedValue = (cfdEntity.GainValue * cfdEntity.ExchangeRate).RoundDecimal();
                 if (exchangedValue > 0)
