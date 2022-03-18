@@ -14,5 +14,6 @@ namespace Database.Repository
         IList<SoldCryptoEntity> SoldCryptoCalculations { get; }
         IList<DividendCalculationsEntity> DividendsCalculations { get; }
         IList<CfdEntity> CfdCalculations { get; }
+        string InputFileName { get; set; }
     }
 }

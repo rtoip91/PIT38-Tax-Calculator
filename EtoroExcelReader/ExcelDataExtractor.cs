@@ -32,10 +32,10 @@ public class ExcelDataExtractor : IExcelDataExtractor
         _dividendsDataAccess = dividendsDataAccess;
     }
 
-    public async Task<bool> ImportDataFromExcelIntoDbAsync()
+    public async Task<bool> ImportDataFromExcel(string directory, string fileName)
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var filePath = FileInputUtil.GetFileInfo(@"..\\TestFile", "TestFile2021v2.xlsx").FullName;
+        var filePath = FileInputUtil.GetFileInfo(directory,fileName).FullName;
         FileInfo fileInfo = new FileInfo(filePath);
 
         if (fileInfo.Extension != ".xlsx")

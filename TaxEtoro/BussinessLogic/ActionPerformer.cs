@@ -15,26 +15,28 @@ namespace TaxEtoro.BussinessLogic
         private ITaxCalculations _taxCalculations;
         private IDataCleaner _dataCleaner;
         private IFileWriter _fileWriter;
+        private readonly IFileDataAccess _fileDataAccess;
         private bool _isDisposed;
 
 
         public ActionPerformer(IExcelDataExtractor reader,
             ITaxCalculations taxCalculations,
             IDataCleaner dataCleaner,
-            IFileWriter fileWriter)
+            IFileWriter fileWriter,
+            IFileDataAccess fileDataAccess)
         {
             _reader = reader;
             _taxCalculations = taxCalculations;
             _dataCleaner = dataCleaner;
             _fileWriter = fileWriter;
             _isDisposed = false;
+            _fileDataAccess = fileDataAccess;
         }
 
         public async ValueTask DisposeAsync()
         {
             if (!_isDisposed)
             {
-                Console.WriteLine("Czyszczenie bazy danych");
                 await _dataCleaner.CleanData();
                 _isDisposed = true;               
             }
@@ -45,19 +47,13 @@ namespace TaxEtoro.BussinessLogic
             _ = DisposeAsync();
         }
 
-        public async Task<CalculationResultDto> PerformCalculations()
+        public async Task<CalculationResultDto> PerformCalculations(string directory, string fileName)
         {
-            try
-            {
-                await _reader.ImportDataFromExcelIntoDbAsync();
-                var result = await _taxCalculations.CalculateTaxes();
-                PresentRessults(result);
-                return result;
-            }
-            catch (Exception e)
-            {
-                throw;
-            }           
+            await _reader.ImportDataFromExcel(directory,fileName);
+            _fileDataAccess.SetFileName(fileName);
+            var result = await _taxCalculations.CalculateTaxes();
+            PresentRessults(result);
+            return result;
         }
 
         public async Task PresentCalcucaltionResults(CalculationResultDto result)
