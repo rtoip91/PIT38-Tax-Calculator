@@ -32,7 +32,7 @@ namespace Calculations.Calculators
             IList<PurchasedCryptoEntity> purchasedCryptoEntities = new List<PurchasedCryptoEntity>();
             IList<SoldCryptoEntity> soldCryptoEntities = new List<SoldCryptoEntity>();
 
-            var cryptoClosedPositions = await _closedPositionsDataAccess.GetCryptoPositions();
+            var cryptoClosedPositions = _closedPositionsDataAccess.GetCryptoPositions();
 
                 foreach (var cryptoClosedPosition in cryptoClosedPositions)
                 {
@@ -42,7 +42,7 @@ namespace Calculations.Calculators
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
                     soldCryptoEntities.Add(soldCryptoEntity);
 
-                    await _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
+                    _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
                 }
 
                 await AddUnsoldCryptos(purchasedCryptoEntities);            
@@ -118,7 +118,7 @@ namespace Calculations.Calculators
            
             foreach (var crypto in cryptoList)
             {
-                var transReports = await _transactionReportsDataAccess.GetUnsoldCryptoTransactions(crypto);
+                var transReports = _transactionReportsDataAccess.GetUnsoldCryptoTransactions(crypto);
                 foreach (var transaction in transReports)
                 {
                     PurchasedCryptoEntity purchasedCryptoEntity = new PurchasedCryptoEntity

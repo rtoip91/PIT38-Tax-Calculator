@@ -9,6 +9,8 @@ namespace Database.Repository
 {
     public interface IImportRepository
     {
-        IList<IncomeByCountryEntity> IncomeByCountryEntities { get; set; }
+        IList<IncomeByCountryEntity> IncomeByCountryEntities { get;}
+        IList<ClosedPositionEntity> ClosedPositions { get; }
+        IList<TransactionReportEntity> TransactionReports { get; }
     }
 }

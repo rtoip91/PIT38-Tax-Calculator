@@ -12,8 +12,12 @@ namespace Database.Repository
         public ImportRepository()
         {
             IncomeByCountryEntities = new List<IncomeByCountryEntity>();
+            ClosedPositions = new List<ClosedPositionEntity>();
+            TransactionReports = new List<TransactionReportEntity>();
         }
-        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get; set; }
-       
+        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get;}
+        public IList<ClosedPositionEntity> ClosedPositions { get;} 
+        public IList<TransactionReportEntity> TransactionReports { get;}
+
     }
 }

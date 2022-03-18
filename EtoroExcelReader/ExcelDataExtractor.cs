@@ -111,11 +111,9 @@ public class ExcelDataExtractor : IExcelDataExtractor
 
         try
         {
-            Task<int> addClosePositions = _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
-            Task<int> addTransactionReports = _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
-            Task<int> addDividends = _dividendsDataAccess.AddDividends(dividendEntities);
-
-            await Task.WhenAll(addClosePositions, addTransactionReports, addDividends);
+            _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
+           _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+            await _dividendsDataAccess.AddDividends(dividendEntities);
         }
         catch (Exception e)
         {

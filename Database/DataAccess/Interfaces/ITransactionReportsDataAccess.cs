@@ -9,8 +9,7 @@ namespace Database.DataAccess.Interfaces
 {
     public interface ITransactionReportsDataAccess
     {
-        Task<int> AddTransactionReports(IList<TransactionReportEntity> transactionReports);
-        Task<IList<TransactionReportEntity>> GetUnsoldCryptoTransactions(string cryptoName);
-        Task<IList<TransactionReportEntity>> GetDividendTransactions();
+        void AddTransactionReports(IList<TransactionReportEntity> transactionReports);
+        IList<TransactionReportEntity> GetUnsoldCryptoTransactions(string cryptoName);
     }
 }

@@ -3,50 +3,49 @@ using System.Linq;
 using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
+using Database.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database.DataAccess
 {
     public class ClosedPositionsDataAccess : IClosedPositionsDataAccess
     {
-        public async Task<int> AddClosePositions(IList<ClosedPositionEntity> closedPositions)
+        private readonly IImportRepository _importRepository;
+
+        public ClosedPositionsDataAccess(IImportRepository importRepository)
         {
-            await using var context = new ApplicationDbContext();
-            await context.AddRangeAsync(closedPositions);
-            return await context.SaveChangesAsync();
+            _importRepository = importRepository;
         }
 
-        public async Task<IList<ClosedPositionEntity>> GetCfdPositions()
+        public int AddClosePositions(IList<ClosedPositionEntity> closedPositions)
         {
-            await using var context = new ApplicationDbContext();
-            return await context.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).Include(c => c.TransactionReports)
-                .ToListAsync();
-        }
-
-        public async Task<IList<ClosedPositionEntity>> GetCryptoPositions()
-        {
-            await using var context = new ApplicationDbContext();
-            return await context.ClosedPositions.Where(c => c.IsReal.Contains("Kryptoaktywa")).Include(c => c.TransactionReports)
-                .ToListAsync();
-        }
-
-        public async Task<IList<ClosedPositionEntity>> GetStockPositions()
-        {
-            await using var context = new ApplicationDbContext();
-            return await context.ClosedPositions.Where(c => c.IsReal.Contains("Akcje") || c.IsReal.Contains("ETF")).Include(c => c.TransactionReports)
-                .ToListAsync();
-        }
-
-        public async Task<int> RemovePosition(ClosedPositionEntity closedPosition)
-        {
-            await using var context = new ApplicationDbContext();
-            if (closedPosition.TransactionReports != null)
+            foreach (var closedPosition in closedPositions)
             {
-                context.RemoveRange(closedPosition.TransactionReports);
+                _importRepository.ClosedPositions.Add(closedPosition);
             }
 
-            context.Remove(closedPosition);
-            return await context.SaveChangesAsync();
+            return closedPositions.Count;
+        }
+
+        public IList<ClosedPositionEntity> GetCfdPositions()
+        {
+            return _importRepository.ClosedPositions.Where(c => c.IsReal.Contains("CFD")).ToList();
+        }
+
+        public IList<ClosedPositionEntity> GetCryptoPositions()
+        {
+            return _importRepository.ClosedPositions.Where(c => c.IsReal.Contains("Kryptoaktywa")).ToList();
+        }
+
+        public IList<ClosedPositionEntity> GetStockPositions()
+        {
+            return _importRepository.ClosedPositions.Where(c => c.IsReal.Contains("Akcje") || c.IsReal.Contains("ETF"))
+                .ToList();
+        }
+
+        public void RemovePosition(ClosedPositionEntity closedPosition)
+        {
+            _importRepository.ClosedPositions.Remove(closedPosition);
         }
     }
 }

@@ -8,8 +8,6 @@ namespace Database.DataAccess;
         async Task IDataCleaner.CleanData()
         {
             await using var context = new ApplicationDbContext();
-            context.RemoveRange(context.ClosedPositions);
-            context.RemoveRange(context.TransactionReports);
             context.RemoveRange(context.CfdCalculations);
             context.RemoveRange(context.PurchasedCryptoCalculations);
             context.RemoveRange(context.SoldCryptoCalculations);

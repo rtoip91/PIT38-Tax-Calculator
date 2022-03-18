@@ -28,7 +28,7 @@ namespace Calculations.Calculators
 
         public async Task<T> Calculate<T>() where T : CfdCalculatorDto
         {
-            var cfdClosedPositions = await _closedPositionsDataAccess.GetCfdPositions();
+            var cfdClosedPositions = _closedPositionsDataAccess.GetCfdPositions();
             IList<CfdEntity> cfdEntities = new List<CfdEntity>();
 
             foreach (var cfdClosedPosition in cfdClosedPositions)
@@ -82,7 +82,7 @@ namespace Calculations.Calculators
                 }
 
                 cfdEntities.Add(cfdEntity);
-                await _closedPositionsDataAccess.RemovePosition(cfdClosedPosition);
+                _closedPositionsDataAccess.RemovePosition(cfdClosedPosition);
             }
 
             try
