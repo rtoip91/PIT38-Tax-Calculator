@@ -21,7 +21,7 @@ namespace TaxEtoro
         {
 
             IList<string> fileNames = new List<string>
-                { "TestFile2020.xlsx", "TestFile2021.xlsx", "TestFile2021v2.xlsx" };
+                { "TestFile2020.xlsx", "TestFile2021.xlsx", "TestFile2021v2.xlsx", "TestFile2022.xlsx" };
 
             foreach (var filename in fileNames)
             {
@@ -36,7 +36,7 @@ namespace TaxEtoro
                 timer.Stop();
 
                 TimeSpan timeTaken = timer.Elapsed;
-                Console.WriteLine($"Time taken: {timeTaken:m\\:ss\\.fff}");
+                Console.WriteLine($"Time taken: {timeTaken:m\\:ss\\.fff}\n");
 
                 await actionPerformer.PresentCalcucaltionResults(result);
             }

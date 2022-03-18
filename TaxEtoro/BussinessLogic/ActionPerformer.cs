@@ -64,28 +64,7 @@ namespace TaxEtoro.BussinessLogic
         private void PresentRessults(CalculationResultDto result)
         {
             Console.WriteLine();
-            Console.WriteLine("CFD:");
-            Console.WriteLine($"Zysk = {result.CdfDto.Gain} PLN");
-            Console.WriteLine($"Strata = {result.CdfDto.Loss} PLN");
-            Console.WriteLine($"Dochód = {result.CdfDto.Income} PLN");
-            Console.WriteLine();
-
-            Console.WriteLine("Kryptowaluty:");
-            Console.WriteLine($"Koszt zakupu = {result.CryptoDto.Cost} PLN");
-            Console.WriteLine($"Przychód = {result.CryptoDto.Revenue} PLN");
-            Console.WriteLine($"Dochód = {result.CryptoDto.Income} PLN");
-            Console.WriteLine();
-
-            Console.WriteLine("Dywidendy:");
-            Console.WriteLine($"Suma dywidend = {result.DividendDto.Dividend} PLN");
-            Console.WriteLine($"Podatek zaplacony = {result.DividendDto.TaxPaid} PLN");
-            Console.WriteLine($"Podatek pozostały do zapłaty = {result.DividendDto.TaxToBePaid} PLN");
-            Console.WriteLine();
-
-            Console.WriteLine("Akcje i ETFy:");
-            Console.WriteLine($"Koszt zakupu = {result.StockDto.Cost} PLN");
-            Console.WriteLine($"Przychód = {result.StockDto.Revenue} PLN");
-            Console.WriteLine($"Dochód = {result.StockDto.Income} PLN");
+            Console.WriteLine($"Zakończono przetwarzanie pliku: {_fileDataAccess.GetFileName()}");
             Console.WriteLine();
         }
     }
