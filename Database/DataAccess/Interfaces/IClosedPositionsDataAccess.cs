@@ -6,10 +6,10 @@ namespace Database.DataAccess.Interfaces
 {
     public interface IClosedPositionsDataAccess
     {
-        Task<int> AddClosePositions(IList<ClosedPositionEntity> closedPositions);
-        Task<IList<ClosedPositionEntity>> GetCfdPositions();
-        Task<IList<ClosedPositionEntity>> GetStockPositions();
-        Task<IList<ClosedPositionEntity>> GetCryptoPositions();
-        Task<int> RemovePosition(ClosedPositionEntity closedPosition);
+        int AddClosePositions(IList<ClosedPositionEntity> closedPositions);
+        IList<ClosedPositionEntity> GetCfdPositions();
+        IList<ClosedPositionEntity> GetStockPositions();
+        IList<ClosedPositionEntity> GetCryptoPositions();
+        void RemovePosition(ClosedPositionEntity closedPosition);
     }
 }

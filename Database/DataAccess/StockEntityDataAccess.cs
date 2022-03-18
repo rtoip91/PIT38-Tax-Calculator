@@ -3,22 +3,30 @@ using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Database.Repository;
 
 namespace Database.DataAccess
 {
     public class StockEntityDataAccess : IStockEntityDataAccess
     {
-        public async Task<int> AddEntities(IList<StockEntity> stockEntities)
+        private readonly IDataRepository _dataRepository;
+
+        public StockEntityDataAccess(IDataRepository dataRepository)
         {
-            await using var context = new ApplicationDbContext();
-            await context.AddRangeAsync(stockEntities);
-            return await context.SaveChangesAsync();
+            _dataRepository = dataRepository;
         }
 
-        public async Task<IList<StockEntity>> GetEntities()
+        public void AddEntities(IList<StockEntity> stockEntities)
         {
-            await using var context = new ApplicationDbContext();
-            return await context.StockCalculations.ToListAsync();
+            foreach (var stockEntity in stockEntities)
+            {
+                _dataRepository.StockCalculations.Add(stockEntity);
+            }
+        }
+
+        public IList<StockEntity> GetEntities()
+        {
+            return _dataRepository.StockCalculations;
         }
     }
 }

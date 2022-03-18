@@ -1,28 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
-using Microsoft.EntityFrameworkCore;
+using Database.Repository;
 
 namespace Database.DataAccess
 {
-    public  class DividendCalculationsDataAccess : IDividendCalculationsDataAccess
+    public class DividendCalculationsDataAccess : IDividendCalculationsDataAccess
     {
-        public async Task<int> AddEntities(IList<DividendCalculationsEntity> dividendCalculationsEntities)
-        {
+        private readonly IDataRepository _dataRepository;
 
-            await using var context = new ApplicationDbContext();
-            await context.AddRangeAsync(dividendCalculationsEntities);
-            return await context.SaveChangesAsync();
+        public DividendCalculationsDataAccess(IDataRepository dataRepository)
+        {
+            _dataRepository = dataRepository;
         }
 
-        public async Task<IList<DividendCalculationsEntity>> GetEntities()
+        public void AddEntities(IList<DividendCalculationsEntity> dividendCalculationsEntities)
         {
-            await using var context = new ApplicationDbContext();
-            return await context.DividendsCalculations.ToListAsync();
+            foreach (var dividendCalculationsEntity in dividendCalculationsEntities)
+            {
+                _dataRepository.DividendsCalculations.Add(dividendCalculationsEntity);
+            }
+        }
+
+        public IList<DividendCalculationsEntity> GetEntities()
+        {
+            return _dataRepository.DividendsCalculations;
         }
     }
 }

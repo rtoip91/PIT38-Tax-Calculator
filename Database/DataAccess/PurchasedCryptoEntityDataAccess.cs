@@ -1,24 +1,30 @@
 ﻿using System.Collections.Generic;
-using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
-using Microsoft.EntityFrameworkCore;
+using Database.Repository;
 
 namespace Database.DataAccess
 {
     public class PurchasedCryptoEntityDataAccess : IPurchasedCryptoEntityDataAccess
     {
-        public async Task<int> AddEntities(IList<PurchasedCryptoEntity> purchasedCryptoEntities)
+        private readonly IDataRepository _dataRepository;
+
+        public PurchasedCryptoEntityDataAccess(IDataRepository dataRepository)
         {
-            await using var context = new ApplicationDbContext();
-            await context.AddRangeAsync(purchasedCryptoEntities);
-            return await context.SaveChangesAsync();
+            _dataRepository = dataRepository;
         }
 
-        public async Task<IList<PurchasedCryptoEntity>> GetPurchasedCryptoEntities()
+        public void AddEntities(IList<PurchasedCryptoEntity> purchasedCryptoEntities)
         {
-            await using var context = new ApplicationDbContext();
-            return await context.PurchasedCryptoCalculations.ToListAsync();
+            foreach (var purchasedCryptoEntity in purchasedCryptoEntities)
+            {
+                _dataRepository.PurchasedCryptoCalculations.Add(purchasedCryptoEntity);
+            }
+        }
+
+        public IList<PurchasedCryptoEntity> GetPurchasedCryptoEntities()
+        {
+            return _dataRepository.PurchasedCryptoCalculations;
         }
     }
 }

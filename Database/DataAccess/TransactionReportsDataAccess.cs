@@ -1,36 +1,32 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
-using Microsoft.EntityFrameworkCore;
+using Database.Repository;
 
 namespace Database.DataAccess
 {
     public class TransactionReportsDataAccess : ITransactionReportsDataAccess
     {
-        public async Task<int> AddTransactionReports(IList<TransactionReportEntity> transactionReports)
+        private readonly IDataRepository _importRepository;
+        public TransactionReportsDataAccess( IDataRepository importRepository)
         {
-            await using var _dbContext = new ApplicationDbContext();
-            await _dbContext.AddRangeAsync(transactionReports);
-            return await _dbContext.SaveChangesAsync();
+            _importRepository = importRepository;
+        }
+        public void AddTransactionReports(IList<TransactionReportEntity> transactionReports)
+        {
+            foreach (var transactionReport in transactionReports)
+            {
+                _importRepository.TransactionReports.Add(transactionReport);
+            }
         }       
 
-        public async Task<IList<TransactionReportEntity>> GetUnsoldCryptoTransactions(string cryptoName)
+        public  IList<TransactionReportEntity> GetUnsoldCryptoTransactions(string cryptoName)
         {
-            await using var _dbContext = new ApplicationDbContext();
-            return await _dbContext.TransactionReports.Where(c =>
+            return _importRepository.TransactionReports.Where(c =>
                 c.Type.ToLower().Contains("Otwarta pozycja".ToLower())
                 && c.Details.ToLower().Contains($"{cryptoName.ToLower()}/")
-                && c.ClosedPosition == null).ToListAsync();
+                && c.ClosedPosition == null).ToList();
         }
-
-        public async Task<IList<TransactionReportEntity>> GetDividendTransactions()
-        {
-            await using var _dbContext = new ApplicationDbContext();
-            return await _dbContext.TransactionReports.Where(c =>
-                c.Details.ToLower().Contains("Payment caused by dividend".ToLower())
-                || c.Details.ToLower().Contains("Płatność w wyniku dywidendy".ToLower())).ToListAsync();
-        }       
     }
 }

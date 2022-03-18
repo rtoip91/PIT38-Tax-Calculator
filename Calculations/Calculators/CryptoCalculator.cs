@@ -32,7 +32,7 @@ namespace Calculations.Calculators
             IList<PurchasedCryptoEntity> purchasedCryptoEntities = new List<PurchasedCryptoEntity>();
             IList<SoldCryptoEntity> soldCryptoEntities = new List<SoldCryptoEntity>();
 
-            var cryptoClosedPositions = await _closedPositionsDataAccess.GetCryptoPositions();
+            var cryptoClosedPositions = _closedPositionsDataAccess.GetCryptoPositions();
 
                 foreach (var cryptoClosedPosition in cryptoClosedPositions)
                 {
@@ -42,15 +42,15 @@ namespace Calculations.Calculators
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
                     soldCryptoEntities.Add(soldCryptoEntity);
 
-                    await _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
+                    _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
                 }
 
                 await AddUnsoldCryptos(purchasedCryptoEntities);            
 
             try
             {
-                await _purchasedCryptoEntityDataAccess.AddEntities(purchasedCryptoEntities);
-                await _soldCryptoEntityDataAccess.AddEntities(soldCryptoEntities);
+                _purchasedCryptoEntityDataAccess.AddEntities(purchasedCryptoEntities);
+                _soldCryptoEntityDataAccess.AddEntities(soldCryptoEntities);
                 decimal totalLoss = purchasedCryptoEntities.Where(c=>c.PurchaseDate.Year == c.PurchaseDate.Year).Sum(c => c.TotalExchangedValue);
                 decimal totalGain = soldCryptoEntities.Sum(c => c.TotalExchangedValue);
 
@@ -118,7 +118,7 @@ namespace Calculations.Calculators
            
             foreach (var crypto in cryptoList)
             {
-                var transReports = await _transactionReportsDataAccess.GetUnsoldCryptoTransactions(crypto);
+                var transReports = _transactionReportsDataAccess.GetUnsoldCryptoTransactions(crypto);
                 foreach (var transaction in transReports)
                 {
                     PurchasedCryptoEntity purchasedCryptoEntity = new PurchasedCryptoEntity

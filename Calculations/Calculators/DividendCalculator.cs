@@ -27,7 +27,7 @@ namespace Calculations.Calculators
             decimal taxPaid = 0;
             decimal taxToBePaid = 0;
 
-            var dividends = await _dividendsDataAccess.GetDividends();
+            var dividends = _dividendsDataAccess.GetDividends();
             List<DividendCalculationsEntity> dividendCalculationsEntities = new List<DividendCalculationsEntity>();
 
             foreach (var dividend in dividends)
@@ -69,7 +69,7 @@ namespace Calculations.Calculators
                 dividendCalculationsEntities.Add(dividendCalculations);
             }
 
-            await _dividendCalculationsDataAccess.AddEntities(dividendCalculationsEntities);
+            _dividendCalculationsDataAccess.AddEntities(dividendCalculationsEntities);
 
             sum = Math.Round(sum, 2);
 

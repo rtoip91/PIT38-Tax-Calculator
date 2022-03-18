@@ -11,9 +11,9 @@ namespace Database.DataAccess
 {
     public class IncomeByCountryDataAccess : IIncomeByCountryDataAccess
     {
-        private readonly IImportRepository _repository;
+        private readonly IDataRepository _repository;
 
-        public IncomeByCountryDataAccess(IImportRepository repository)
+        public IncomeByCountryDataAccess(IDataRepository repository)
         {
             _repository = repository;
         }

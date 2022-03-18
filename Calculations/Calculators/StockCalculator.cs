@@ -28,7 +28,7 @@ namespace Calculations.Calculators
         public async Task<T> Calculate<T>() where T : StockCalculatorDto
         {
             IList<StockEntity> stockEntities = new List<StockEntity>();
-            var stockClosedPositions = await _closedPositionDataAccess.GetStockPositions();
+            var stockClosedPositions = _closedPositionDataAccess.GetStockPositions();
 
             foreach (var stockClosedPosition in stockClosedPositions)
             {
@@ -69,12 +69,12 @@ namespace Calculations.Calculators
 
                 stockEntities.Add(stockEntity);
 
-                await _closedPositionDataAccess.RemovePosition(stockClosedPosition);
+                _closedPositionDataAccess.RemovePosition(stockClosedPosition);
             }
 
             try
             {
-                await _stockEntityDataAccess.AddEntities(stockEntities);
+                _stockEntityDataAccess.AddEntities(stockEntities);
                 var totalLoss = stockEntities.Sum(c => c.OpeningExchangedValue).RoundDecimal();
                 var totalGain = stockEntities.Sum(c => c.ClosingExchangedValue).RoundDecimal();
 
