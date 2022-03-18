@@ -20,7 +20,7 @@ namespace Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("DataSource=EtoroTaxCalculator.db;");
+            optionsBuilder.UseSqlite("DataSource=TaxCalculator.db;");
         }
     }
 }

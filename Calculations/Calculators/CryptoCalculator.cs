@@ -34,24 +34,30 @@ namespace Calculations.Calculators
 
             var cryptoClosedPositions = _closedPositionsDataAccess.GetCryptoPositions();
 
-                foreach (var cryptoClosedPosition in cryptoClosedPositions)
+            foreach (var cryptoClosedPosition in cryptoClosedPositions)
+            {
+                if (cryptoClosedPosition.OpeningDate.Year == cryptoClosedPosition.ClosingDate.Year)
                 {
-                    PurchasedCryptoEntity purchasedCryptoEntity = await CreatePurchasedCryptoEntity(cryptoClosedPosition);
-                    SoldCryptoEntity soldCryptoEntity = await CreateSoldCryptoEntity(cryptoClosedPosition);
-
+                    PurchasedCryptoEntity purchasedCryptoEntity =
+                        await CreatePurchasedCryptoEntity(cryptoClosedPosition);
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
-                    soldCryptoEntities.Add(soldCryptoEntity);
-
-                    _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
                 }
 
-                await AddUnsoldCryptos(purchasedCryptoEntities);            
+                SoldCryptoEntity soldCryptoEntity = await CreateSoldCryptoEntity(cryptoClosedPosition);
+
+
+                soldCryptoEntities.Add(soldCryptoEntity);
+
+                _closedPositionsDataAccess.RemovePosition(cryptoClosedPosition);
+            }
+
+            await AddUnsoldCryptos(purchasedCryptoEntities);
 
             try
             {
                 _purchasedCryptoEntityDataAccess.AddEntities(purchasedCryptoEntities);
                 _soldCryptoEntityDataAccess.AddEntities(soldCryptoEntities);
-                decimal totalLoss = purchasedCryptoEntities.Where(c=>c.PurchaseDate.Year == c.PurchaseDate.Year).Sum(c => c.TotalExchangedValue);
+                decimal totalLoss = purchasedCryptoEntities.Sum(c => c.TotalExchangedValue);
                 decimal totalGain = soldCryptoEntities.Sum(c => c.TotalExchangedValue);
 
                 var cryptoDto = new CryptoDto
@@ -69,7 +75,7 @@ namespace Calculations.Calculators
             }
         }
 
-        private async Task<SoldCryptoEntity> CreateSoldCryptoEntity(ClosedPositionEntity cryptoClosedPosition) 
+        private async Task<SoldCryptoEntity> CreateSoldCryptoEntity(ClosedPositionEntity cryptoClosedPosition)
         {
             SoldCryptoEntity soldCryptoEntity = new SoldCryptoEntity
             {
@@ -86,7 +92,8 @@ namespace Calculations.Calculators
             soldCryptoEntity.ExchangeRate = soldExchangeRate.Rate;
             soldCryptoEntity.ExchangeRateDate = soldExchangeRate.Date;
             soldCryptoEntity.TotalValue = (soldCryptoEntity.ValuePerUnit * soldCryptoEntity.Units).RoundDecimal();
-            soldCryptoEntity.TotalExchangedValue = (soldCryptoEntity.TotalValue * soldCryptoEntity.ExchangeRate).RoundDecimal();
+            soldCryptoEntity.TotalExchangedValue =
+                (soldCryptoEntity.TotalValue * soldCryptoEntity.ExchangeRate).RoundDecimal();
             return soldCryptoEntity;
         }
 
@@ -107,15 +114,17 @@ namespace Calculations.Calculators
                     purchasedCryptoEntity.PurchaseDate);
             purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
             purchasedCryptoEntity.ExchangeRateDate = purchasedExchangeRate.Date;
-            purchasedCryptoEntity.TotalValue = (purchasedCryptoEntity.ValuePerUnit * purchasedCryptoEntity.Units).RoundDecimal();
-            purchasedCryptoEntity.TotalExchangedValue =(purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
+            purchasedCryptoEntity.TotalValue =
+                (purchasedCryptoEntity.ValuePerUnit * purchasedCryptoEntity.Units).RoundDecimal();
+            purchasedCryptoEntity.TotalExchangedValue =
+                (purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
             return purchasedCryptoEntity;
         }
 
         private async Task AddUnsoldCryptos(IList<PurchasedCryptoEntity> purchasedCryptoEntities)
         {
             IList<string> cryptoList = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
-           
+
             foreach (var crypto in cryptoList)
             {
                 var transReports = _transactionReportsDataAccess.GetUnsoldCryptoTransactions(crypto);
@@ -130,10 +139,13 @@ namespace Calculations.Calculators
                     };
 
                     purchasedCryptoEntity.Name = GetCryptoCurrencyName(crypto);
-                    ExchangeRateEntity purchasedExchangeRate = await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol, purchasedCryptoEntity.PurchaseDate);
+                    ExchangeRateEntity purchasedExchangeRate =
+                        await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol,
+                            purchasedCryptoEntity.PurchaseDate);
                     purchasedCryptoEntity.ExchangeRate = purchasedExchangeRate.Rate;
                     purchasedCryptoEntity.ExchangeRateDate = purchasedExchangeRate.Date;
-                    purchasedCryptoEntity.TotalExchangedValue = (purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
+                    purchasedCryptoEntity.TotalExchangedValue =
+                        (purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
                 }
             }
@@ -141,7 +153,8 @@ namespace Calculations.Calculators
 
         private string GetCryptoCurrencyName(string crypto)
         {
-            var result = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.TryGetValue(crypto, out string cryptoName);
+            var result =
+                Dictionaries.Dictionaries.CryptoCurrenciesDictionary.TryGetValue(crypto, out string cryptoName);
             return result ? $"Kupno {cryptoName}" : $"Kupno {crypto}";
         }
     }

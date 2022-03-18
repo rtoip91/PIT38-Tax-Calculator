@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,20 +19,28 @@ namespace TaxEtoro
 
         static async Task Main(string[] args)
         {
-            var timer = new Stopwatch();
-            timer.Start();
 
-            await using var scope = Services.CreateAsyncScope();
-            var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
-            AppDomain.CurrentDomain.ProcessExit += actionPerformer.OnAppClose;
-            var result = await actionPerformer.PerformCalculations();
+            IList<string> fileNames = new List<string>
+                { "TestFile2020.xlsx", "TestFile2021.xlsx", "TestFile2021v2.xlsx", "TestFile2022.xlsx" };
 
-            timer.Stop();
+            foreach (var filename in fileNames)
+            {
+                var timer = new Stopwatch();
+                timer.Start();
 
-            TimeSpan timeTaken = timer.Elapsed;
-            Console.WriteLine( $"Time taken: {timeTaken:m\\:ss\\.fff}");
+                await using var scope = Services.CreateAsyncScope();
+                var actionPerformer = scope.ServiceProvider.GetService<IActionPerformer>();
+                AppDomain.CurrentDomain.ProcessExit += actionPerformer.OnAppClose;
+                var result = await actionPerformer.PerformCalculations(@"..\\TestFile", filename);
+
+                timer.Stop();
+
+                TimeSpan timeTaken = timer.Elapsed;
+                Console.WriteLine($"Time taken: {timeTaken:m\\:ss\\.fff}\n");
+
+                await actionPerformer.PresentCalcucaltionResults(result);
+            }
             
-            await actionPerformer.PresentCalcucaltionResults(result);
         }
     }
 }
