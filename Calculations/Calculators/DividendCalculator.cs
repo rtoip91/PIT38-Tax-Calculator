@@ -69,7 +69,7 @@ namespace Calculations.Calculators
                 dividendCalculationsEntities.Add(dividendCalculations);
             }
 
-            await _dividendCalculationsDataAccess.AddEntities(dividendCalculationsEntities);
+            _dividendCalculationsDataAccess.AddEntities(dividendCalculationsEntities);
 
             sum = Math.Round(sum, 2);
 

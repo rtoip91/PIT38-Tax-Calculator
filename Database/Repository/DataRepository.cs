@@ -14,6 +14,8 @@ namespace Database.Repository
             StockCalculations = new List<StockEntity>();
             PurchasedCryptoCalculations = new List<PurchasedCryptoEntity>();
             SoldCryptoCalculations = new List<SoldCryptoEntity>();
+            DividendsCalculations = new List<DividendCalculationsEntity>();
+            CfdCalculations = new List<CfdEntity>();
         }
 
         public IList<IncomeByCountryEntity> IncomeByCountryEntities { get;}
@@ -23,6 +25,7 @@ namespace Database.Repository
         public IList<StockEntity> StockCalculations { get; }
         public IList<PurchasedCryptoEntity> PurchasedCryptoCalculations { get; }
         public IList<SoldCryptoEntity> SoldCryptoCalculations { get; }
-
+        public IList<DividendCalculationsEntity> DividendsCalculations { get; }
+        public IList<CfdEntity> CfdCalculations { get; }
     }
 }

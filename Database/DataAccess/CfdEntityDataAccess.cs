@@ -1,27 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
-using Microsoft.EntityFrameworkCore;
+using Database.Repository;
 
 namespace Database.DataAccess
 {
     public class CfdEntityDataAccess : ICfdEntityDataAccess
     {
-        public async Task<int> AddEntities(IList<CfdEntity> cfdEntities)
+        private readonly IDataRepository _dataRepository;
+
+        public CfdEntityDataAccess(IDataRepository dataRepository)
         {
-            await using var context = new ApplicationDbContext();
-            await context.AddRangeAsync(cfdEntities);
-            return await context.SaveChangesAsync();
+            _dataRepository = dataRepository;
         }
 
-        public async Task<IList<CfdEntity>> GetCfdEntities()
+        public void AddEntities(IList<CfdEntity> cfdEntities)
         {
-            await using var context = new ApplicationDbContext();
-            return await context.CfdCalculations.ToListAsync();
+            foreach (var cfdEntity in cfdEntities)
+            {
+                _dataRepository.CfdCalculations.Add(cfdEntity);
+            }
+        }
+
+        public IList<CfdEntity> GetCfdEntities()
+        {
+            return _dataRepository.CfdCalculations;
         }
     }
 }

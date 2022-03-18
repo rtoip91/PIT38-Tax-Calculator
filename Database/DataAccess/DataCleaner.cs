@@ -3,14 +3,12 @@ using System.Threading.Tasks;
 
 namespace Database.DataAccess;
 
-    public class DataCleaner : IDataCleaner
+public class DataCleaner : IDataCleaner
+{
+    async Task IDataCleaner.CleanData()
     {
-        async Task IDataCleaner.CleanData()
-        {
-            await using var context = new ApplicationDbContext();
-            context.RemoveRange(context.CfdCalculations);
-            context.RemoveRange(context.DividendsCalculations);
-            //context.RemoveRange(context.ExchangeRates);
-            await context.SaveChangesAsync();
-        }
+        await using var context = new ApplicationDbContext();
+        //context.RemoveRange(context.ExchangeRates);
+        await context.SaveChangesAsync();
     }
+}

@@ -87,7 +87,7 @@ namespace Calculations.Calculators
 
             try
             {
-                await _cfdEntityDataAccess.AddEntities(cfdEntities);
+                _cfdEntityDataAccess.AddEntities(cfdEntities);
 
                 decimal totalLoss = cfdEntities.Sum(c => c.LossExchangedValue);
                 decimal totalGain = cfdEntities.Sum(c => c.GainExchangedValue);

@@ -5,9 +5,7 @@ namespace Database
 {
     internal class ApplicationDbContext : DbContext
     {
-        public DbSet<DividendCalculationsEntity> DividendsCalculations { get; set; }
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
-        public DbSet<CfdEntity> CfdCalculations { get; set; }
 
         public ApplicationDbContext()
         {

@@ -124,7 +124,7 @@ public class FileWriter : IFileWriter
                 FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
-        IList<DividendCalculationsEntity> dividendCalculations = await _dividendCalculationsDataAccess.GetEntities();
+        IList<DividendCalculationsEntity> dividendCalculations = _dividendCalculationsDataAccess.GetEntities();
 
         await sw.WriteLineAsync("--------Dywidendy--------");
         await sw.WriteLineAsync($"Wartość dywidend = {dividendCalculatorDto.Dividend}");
@@ -140,7 +140,7 @@ public class FileWriter : IFileWriter
 
     private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
     {
-        IList<CfdEntity> cfdEntities = await _cfdEntityDataAccess.GetCfdEntities();
+        IList<CfdEntity> cfdEntities = _cfdEntityDataAccess.GetCfdEntities();
         FileStream fs = new FileStream($"{Constants.Constants.FilePath}{Constants.Constants.CfdCalculationsFileName}",
             FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
