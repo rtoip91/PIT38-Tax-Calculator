@@ -49,8 +49,8 @@ namespace Calculations.Calculators
 
             try
             {
-                await _purchasedCryptoEntityDataAccess.AddEntities(purchasedCryptoEntities);
-                await _soldCryptoEntityDataAccess.AddEntities(soldCryptoEntities);
+                _purchasedCryptoEntityDataAccess.AddEntities(purchasedCryptoEntities);
+                _soldCryptoEntityDataAccess.AddEntities(soldCryptoEntities);
                 decimal totalLoss = purchasedCryptoEntities.Where(c=>c.PurchaseDate.Year == c.PurchaseDate.Year).Sum(c => c.TotalExchangedValue);
                 decimal totalGain = soldCryptoEntities.Sum(c => c.TotalExchangedValue);
 

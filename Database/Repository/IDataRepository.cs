@@ -8,6 +8,9 @@ namespace Database.Repository
         IList<IncomeByCountryEntity> IncomeByCountryEntities { get;}
         IList<ClosedPositionEntity> ClosedPositions { get; }
         IList<TransactionReportEntity> TransactionReports { get; }
-        public IList<DividendEntity> Dividends { get; }
+        IList<DividendEntity> Dividends { get; }
+        IList<StockEntity> StockCalculations { get; }
+        IList<PurchasedCryptoEntity> PurchasedCryptoCalculations { get;}
+        IList<SoldCryptoEntity> SoldCryptoCalculations { get; }
     }
 }

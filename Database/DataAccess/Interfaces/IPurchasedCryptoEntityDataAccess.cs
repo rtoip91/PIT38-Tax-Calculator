@@ -9,7 +9,7 @@ namespace Database.DataAccess.Interfaces
 {
     public interface IPurchasedCryptoEntityDataAccess
     {
-        Task<int> AddEntities(IList<PurchasedCryptoEntity> purchasedCryptoEntities);
-        Task<IList<PurchasedCryptoEntity>> GetPurchasedCryptoEntities();
+        void AddEntities(IList<PurchasedCryptoEntity> purchasedCryptoEntities);
+        IList<PurchasedCryptoEntity> GetPurchasedCryptoEntities();
     }
 }

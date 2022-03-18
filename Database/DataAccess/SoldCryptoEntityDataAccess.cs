@@ -1,27 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
-using Microsoft.EntityFrameworkCore;
+using Database.Repository;
 
 namespace Database.DataAccess
 {
     public class SoldCryptoEntityDataAccess : ISoldCryptoEntityDataAccess
     {
-        public async Task<int> AddEntities(IList<SoldCryptoEntity> soldCryptoEntities)
+        private readonly IDataRepository _dataRepository;
+
+        public SoldCryptoEntityDataAccess(IDataRepository dataRepository)
         {
-            await using var context = new ApplicationDbContext();
-            await context.AddRangeAsync(soldCryptoEntities);
-            return await context.SaveChangesAsync();
+            _dataRepository = dataRepository;
         }
 
-        public async Task<IList<SoldCryptoEntity>> GetSoldCryptoEntities()
+        public void AddEntities(IList<SoldCryptoEntity> soldCryptoEntities)
         {
-            await using var context = new ApplicationDbContext();
-            return await context.SoldCryptoCalculations.ToListAsync();
+            foreach (var soldCryptoEntity in soldCryptoEntities)
+            {
+                _dataRepository.SoldCryptoCalculations.Add(soldCryptoEntity);
+            }
+        }
+
+        public IList<SoldCryptoEntity> GetSoldCryptoEntities()
+        {
+            return _dataRepository.SoldCryptoCalculations;
         }
     }
 }

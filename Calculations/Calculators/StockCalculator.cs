@@ -74,7 +74,7 @@ namespace Calculations.Calculators
 
             try
             {
-                await _stockEntityDataAccess.AddEntities(stockEntities);
+                _stockEntityDataAccess.AddEntities(stockEntities);
                 var totalLoss = stockEntities.Sum(c => c.OpeningExchangedValue).RoundDecimal();
                 var totalGain = stockEntities.Sum(c => c.ClosingExchangedValue).RoundDecimal();
 

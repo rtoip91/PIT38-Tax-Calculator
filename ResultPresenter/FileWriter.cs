@@ -71,7 +71,7 @@ public class FileWriter : IFileWriter
             FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
-        IList<StockEntity> stockEntities = await _stockEntityDataAccess.GetEntities();
+        IList<StockEntity> stockEntities = _stockEntityDataAccess.GetEntities();
 
         await sw.WriteLineAsync("--------Akcje i ETFy--------");
         await sw.WriteLineAsync($"Koszt = {stockCalculatorDto.Cost} PLN");
@@ -92,9 +92,8 @@ public class FileWriter : IFileWriter
                 FileMode.Create, FileAccess.Write);
         await using StreamWriter sw = new StreamWriter(fs);
 
-        IList<PurchasedCryptoEntity> purchasedCryptoEntities =
-            await _purchasedCryptoEntityDataAccess.GetPurchasedCryptoEntities();
-        IList<SoldCryptoEntity> soldCryptoEntities = await _soldCryptoEntityDataAccess.GetSoldCryptoEntities();
+        IList<PurchasedCryptoEntity> purchasedCryptoEntities = _purchasedCryptoEntityDataAccess.GetPurchasedCryptoEntities();
+        IList<SoldCryptoEntity> soldCryptoEntities = _soldCryptoEntityDataAccess.GetSoldCryptoEntities();
 
         int operationNumber = purchasedCryptoEntities.Count + soldCryptoEntities.Count;
 
