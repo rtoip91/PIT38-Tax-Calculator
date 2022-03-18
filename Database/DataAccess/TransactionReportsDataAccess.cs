@@ -8,8 +8,8 @@ namespace Database.DataAccess
 {
     public class TransactionReportsDataAccess : ITransactionReportsDataAccess
     {
-        private readonly IImportRepository _importRepository;
-        public TransactionReportsDataAccess( IImportRepository importRepository)
+        private readonly IDataRepository _importRepository;
+        public TransactionReportsDataAccess( IDataRepository importRepository)
         {
             _importRepository = importRepository;
         }

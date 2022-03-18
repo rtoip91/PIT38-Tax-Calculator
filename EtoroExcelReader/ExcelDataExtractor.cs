@@ -113,7 +113,7 @@ public class ExcelDataExtractor : IExcelDataExtractor
         {
             _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
            _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
-            await _dividendsDataAccess.AddDividends(dividendEntities);
+           _dividendsDataAccess.AddDividends(dividendEntities);
         }
         catch (Exception e)
         {

@@ -9,17 +9,17 @@ namespace Database
     {
         public static void RegisterServices(IServiceCollection services)
         {
-            services.AddScoped<IExchangeRatesDataAccess, ExchangeRatesDataAccess>();
-            services.AddScoped<ICfdEntityDataAccess, CfdEntityDataAccess>();
-            services.AddScoped<IPurchasedCryptoEntityDataAccess, PurchasedCryptoEntityDataAccess>();
-            services.AddScoped<ISoldCryptoEntityDataAccess, SoldCryptoEntityDataAccess>();
-            services.AddScoped<IStockEntityDataAccess, StockEntityDataAccess>();
-            services.AddScoped<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
-            services.AddScoped<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
-            services.AddScoped<IDividendsDataAccess, DividendsDataAccess>();
-            services.AddScoped<IDividendCalculationsDataAccess, DividendCalculationsDataAccess>();
-            services.AddScoped<IIncomeByCountryDataAccess, IncomeByCountryDataAccess>();
-            services.AddScoped<IImportRepository, ImportRepository>();
+            services.AddTransient<IExchangeRatesDataAccess, ExchangeRatesDataAccess>();
+            services.AddTransient<ICfdEntityDataAccess, CfdEntityDataAccess>();
+            services.AddTransient<IPurchasedCryptoEntityDataAccess, PurchasedCryptoEntityDataAccess>();
+            services.AddTransient<ISoldCryptoEntityDataAccess, SoldCryptoEntityDataAccess>();
+            services.AddTransient<IStockEntityDataAccess, StockEntityDataAccess>();
+            services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
+            services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
+            services.AddTransient<IDividendsDataAccess, DividendsDataAccess>();
+            services.AddTransient<IDividendCalculationsDataAccess, DividendCalculationsDataAccess>();
+            services.AddTransient<IIncomeByCountryDataAccess, IncomeByCountryDataAccess>();
+            services.AddScoped<IDataRepository, DataRepository>();
         }
     }
 }

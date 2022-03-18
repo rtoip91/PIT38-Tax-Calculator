@@ -6,8 +6,7 @@ namespace Database.DataAccess.Interfaces
 {
     public interface IDividendsDataAccess
     {
-        Task<int> AddDividends(IList<DividendEntity> dividends);
-
-        Task<IList<DividendEntity>> GetDividends();
+        void AddDividends(IList<DividendEntity> dividends);
+        IList<DividendEntity> GetDividends();
     }
 }

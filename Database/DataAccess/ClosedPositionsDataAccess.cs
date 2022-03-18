@@ -10,9 +10,9 @@ namespace Database.DataAccess
 {
     public class ClosedPositionsDataAccess : IClosedPositionsDataAccess
     {
-        private readonly IImportRepository _importRepository;
+        private readonly IDataRepository _importRepository;
 
-        public ClosedPositionsDataAccess(IImportRepository importRepository)
+        public ClosedPositionsDataAccess(IDataRepository importRepository)
         {
             _importRepository = importRepository;
         }

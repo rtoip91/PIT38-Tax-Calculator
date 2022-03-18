@@ -5,23 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
+using Database.Repository;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database.DataAccess
 {
     public  class DividendsDataAccess : IDividendsDataAccess
     {
-        public async Task<int> AddDividends(IList<DividendEntity> dividends)
+        private readonly IDataRepository _dataRepository;
+
+        public DividendsDataAccess(IDataRepository dataRepository)
         {
-            await using var context = new ApplicationDbContext();
-            await context.AddRangeAsync(dividends);
-            return await context.SaveChangesAsync();
+            _dataRepository = dataRepository;
         }
 
-        public async Task<IList<DividendEntity>> GetDividends()
+        public void AddDividends(IList<DividendEntity> dividends)
         {
-            await using var context = new ApplicationDbContext();
-            return await context.Dividends.ToListAsync();
+            foreach (var dividend in dividends)
+            {
+                _dataRepository.Dividends.Add(dividend);
+            }
+
+        }
+
+        public IList<DividendEntity> GetDividends()
+        {
+            return _dataRepository.Dividends;
         }
     }
 }
