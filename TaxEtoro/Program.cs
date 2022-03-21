@@ -21,7 +21,7 @@ namespace TaxEtoro
 
         static async Task Main(string[] args)
         {
-            var directory = FileInputUtil.GetDirectory(@"D:\\TestFile");
+            var directory = FileInputUtil.GetDirectory(@"..\\TestFile");
             var files = directory.GetFiles("*xlsx");
 
             IList<Task> tasks = new List<Task>();
@@ -34,7 +34,14 @@ namespace TaxEtoro
                 var task = Task.Run(async () =>
                 {
                     await DoWork(filename, directory.FullName);
+                }).ContinueWith((t) =>
+                {
+                    if (t.IsFaulted)
+                    {
+                        throw t.Exception;
+                    }
                 });
+
                 tasks.Add(task);
             }
 
