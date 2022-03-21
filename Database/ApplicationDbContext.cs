@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Database
 {
-    internal class ApplicationDbContext : DbContext
+    internal sealed class ApplicationDbContext : DbContext
     {
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
 

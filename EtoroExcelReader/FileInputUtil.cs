@@ -3,7 +3,7 @@ using System.IO;
 
 namespace ExcelReader
 {
-    internal static class FileInputUtil
+    public static class FileInputUtil
     {
         /// <summary>
         /// Returns a fileinfo with the full path of the requested file
@@ -26,6 +26,12 @@ namespace ExcelReader
             }
 
             return new DirectoryInfo(currentDir).Parent;
+        }
+
+        public static DirectoryInfo GetDirectory(string directory)
+        {
+            var rootDir = GetRootDirectory().FullName;
+            return new DirectoryInfo(Path.Combine(rootDir, directory));
         }
 
         public static DirectoryInfo GetSubDirectory(string directory, string subDirectory)
