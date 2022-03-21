@@ -7,22 +7,22 @@ namespace TaxEtoro.BussinessLogic
     {
         public void AfterCfd(object sender, EventArgs e)
         {
-            Console.WriteLine("Zakończono obliczanie CFD");
+            //Console.WriteLine("Zakończono obliczanie CFD");
         }
 
         public void AfterCrypto(object sender, EventArgs e)
         {
-            Console.WriteLine("Zakończono obliczanie Kryptowalut");
+            //Console.WriteLine("Zakończono obliczanie Kryptowalut");
         }
 
         public void AfterDividend(object sender, EventArgs e)
         {
-            Console.WriteLine("Zakończono obliczanie Dywidend");
+            //Console.WriteLine("Zakończono obliczanie Dywidend");
         }
 
         public void AfterStock(object sender, EventArgs e)
         {
-            Console.WriteLine("Zakończono obliczanie Akcji");
+            //Console.WriteLine("Zakończono obliczanie Akcji");
         }
     }
 }

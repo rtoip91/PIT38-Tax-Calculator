@@ -49,8 +49,9 @@ namespace TaxEtoro.BussinessLogic
 
         public async Task<CalculationResultDto> PerformCalculations(string directory, string fileName)
         {
-            await _reader.ImportDataFromExcel(directory,fileName);
             _fileDataAccess.SetFileName(fileName);
+            Console.WriteLine($"Rozpoczęto przetwarzanie pliku: {_fileDataAccess.GetFileName()}");
+            await _reader.ImportDataFromExcel(directory,fileName);
             var result = await _taxCalculations.CalculateTaxes();
             PresentRessults(result);
             return result;
