@@ -64,9 +64,7 @@ namespace TaxEtoro.BussinessLogic
 
         private void PresentRessults(CalculationResultDto result)
         {
-            Console.WriteLine();
             Console.WriteLine($"Zakończono przetwarzanie pliku: {_fileDataAccess.GetFileName()}");
-            Console.WriteLine();
         }
     }
 }
