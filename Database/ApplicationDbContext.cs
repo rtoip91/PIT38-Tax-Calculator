@@ -32,7 +32,7 @@ namespace Database
                 if (!_isMigrated)
                 {
                     Database.Migrate();
-                    locker = true;
+                    _isMigrated = true;
                 }
             }
         }
