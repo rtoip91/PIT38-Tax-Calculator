@@ -10,5 +10,6 @@ namespace Database.DataAccess.Interfaces
     {
         void SetFileName(string fileName);
         string GetFileName();
+        string GetFileNameWithoutExtension();
     }
 }

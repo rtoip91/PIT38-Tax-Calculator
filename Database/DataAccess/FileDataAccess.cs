@@ -1,9 +1,10 @@
-﻿using Database.DataAccess.Interfaces;
+﻿using System.IO;
+using Database.DataAccess.Interfaces;
 using Database.Repository;
 
 namespace Database.DataAccess
 {
-    public  class FileDataAccess : IFileDataAccess
+    public class FileDataAccess : IFileDataAccess
     {
         private readonly IDataRepository _dataRepository;
 
@@ -11,7 +12,7 @@ namespace Database.DataAccess
         {
             _dataRepository = dataRepository;
         }
-        
+
         public void SetFileName(string fileName)
         {
             _dataRepository.InputFileName = fileName;
@@ -20,6 +21,11 @@ namespace Database.DataAccess
         public string GetFileName()
         {
             return _dataRepository.InputFileName;
+        }
+
+        public string GetFileNameWithoutExtension()
+        {
+            return Path.GetFileNameWithoutExtension(_dataRepository.InputFileName);
         }
     }
 }
