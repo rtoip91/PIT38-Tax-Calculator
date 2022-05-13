@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
 using Database.Repository;
-using Microsoft.EntityFrameworkCore;
 
 namespace Database.DataAccess
 {
-    public  class DividendsDataAccess : IDividendsDataAccess
+    public class DividendsDataAccess : IDividendsDataAccess
     {
         private readonly IDataRepository _dataRepository;
 
@@ -25,7 +20,6 @@ namespace Database.DataAccess
             {
                 _dataRepository.Dividends.Add(dividend);
             }
-
         }
 
         public IList<DividendEntity> GetDividends()

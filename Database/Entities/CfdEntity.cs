@@ -10,7 +10,7 @@ namespace Database.Entities
     {
         [Key] public int Id { get; set; }
 
-        public TransactionType TransactionType { get; set; } 
+        public TransactionType TransactionType { get; set; }
         public string Name { get; set; }
         public long PositionId { get; set; }
         public DateTime PurchaseDate { get; set; }

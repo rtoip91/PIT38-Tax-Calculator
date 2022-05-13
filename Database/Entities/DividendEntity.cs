@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace Database.Entities
 {
     [Table("Dividends")]
-    public  class DividendEntity
+    public class DividendEntity
     {
         [Key] public int Id { get; set; }
 

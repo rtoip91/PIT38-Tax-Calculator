@@ -4,7 +4,7 @@ using Database.Entities;
 
 namespace Database.DataAccess.Interfaces
 {
-    public  interface IDividendCalculationsDataAccess
+    public interface IDividendCalculationsDataAccess
     {
         void AddEntities(IList<DividendCalculationsEntity> dividendCalculationsEntities);
         IList<DividendCalculationsEntity> GetEntities();

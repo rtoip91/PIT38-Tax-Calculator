@@ -35,7 +35,7 @@ public class ExcelDataExtractor : IExcelDataExtractor
     public async Task<bool> ImportDataFromExcel(string directory, string fileName)
     {
         ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-        var filePath = FileInputUtil.GetFileInfo(directory,fileName).FullName;
+        var filePath = FileInputUtil.GetFileInfo(directory, fileName).FullName;
         FileInfo fileInfo = new FileInfo(filePath);
 
         if (fileInfo.Extension != ".xlsx")
@@ -51,11 +51,13 @@ public class ExcelDataExtractor : IExcelDataExtractor
         await package.LoadAsync(fileInfo);
 
         DataTable closedPositionsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
-        DataTable transactionReportsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
+        DataTable transactionReportsDataTable =
+            await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
         DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.Dividends);
 
         Task extractClosedPositions = ExtractClosedPositionsAsync(closedPositionsDataTable, closedPositionDtos);
-        Task extractTransactionReports = ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos);
+        Task extractTransactionReports =
+            ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos);
         Task extractDividends = ExtractDividendsAsync(dividendsDataTable, dividendDtos);
 
         await Task.WhenAll(extractClosedPositions, extractTransactionReports, extractDividends);
@@ -84,7 +86,7 @@ public class ExcelDataExtractor : IExcelDataExtractor
         {
             ClosedPositionEntity closedPositionEntity = mapper.Map<ClosedPositionEntity>(closedPosition);
             closedPositionEntity.TransactionReports = new List<TransactionReportEntity>();
-            
+
 
             foreach (TransactionReportExcelDto transactionReport in transactionReportDtos
                          .Where(t => t.PositionId == closedPosition.PositionId).ToList())
@@ -112,8 +114,8 @@ public class ExcelDataExtractor : IExcelDataExtractor
         try
         {
             _closedPositionsDataAccess.AddClosePositions(closedPositionEntities);
-           _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
-           _dividendsDataAccess.AddDividends(dividendEntities);
+            _transactionReportsDataAccess.AddTransactionReports(transactionReportEntities);
+            _dividendsDataAccess.AddDividends(dividendEntities);
         }
         catch (Exception e)
         {

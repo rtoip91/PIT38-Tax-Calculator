@@ -1,6 +1,5 @@
 ﻿using Calculations.Dto;
 using Calculations.Exceptions;
-
 using Calculations.Interfaces;
 using Database.Entities;
 using Newtonsoft.Json;

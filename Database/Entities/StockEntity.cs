@@ -29,7 +29,7 @@ namespace Database.Entities
 
         public decimal ClosingValue { get; set; }
 
-        public decimal Profit { get; set; }        
+        public decimal Profit { get; set; }
 
         public decimal ExchangedProfit { get; set; }
 
@@ -48,12 +48,12 @@ namespace Database.Entities
         public string Country { get; set; }
 
         public override string ToString()
-        {            
+        {
             return $"Operacja: {Name} | ID: {PositionId} | Kraj: {Country} |" +
                    $"\nIlość jednostek: {Units} |" +
                    $"\nData otwarcia: {PurchaseDate.ToShortDateString()} | Cena za jednostkę: {OpeningUnitValue} {CurrencySymbol} |" +
                    $"\nData zamknięcia: {SellDate.ToShortDateString()} | Cena za jednostkę: {ClosingUnitValue} {CurrencySymbol} |" +
-                   $"\nWartość jednostek w dniu zakupu: {OpeningValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {OpeningExchangeRateDate.ToShortDateString()}: {OpeningExchangeRate} PLN | Po przeliczeniu: {OpeningExchangedValue} PLN" + 
+                   $"\nWartość jednostek w dniu zakupu: {OpeningValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {OpeningExchangeRateDate.ToShortDateString()}: {OpeningExchangeRate} PLN | Po przeliczeniu: {OpeningExchangedValue} PLN" +
                    $"\nWartość jednostek w dniu sprzedaży: {ClosingValue} {CurrencySymbol} | Kurs {CurrencySymbol} z dnia {ClosingExchangeRateDate.ToShortDateString()}: {ClosingExchangeRate} PLN | Po przeliczeniu: {ClosingExchangedValue} PLN" +
                    $"\nWynik po przeliczeniu: {ExchangedProfit} PLN\n";
         }

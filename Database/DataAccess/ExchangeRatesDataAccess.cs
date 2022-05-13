@@ -11,7 +11,7 @@ namespace Database.DataAccess
     {
         private readonly IMemoryCache _memoryCache;
 
-        public ExchangeRatesDataAccess( IMemoryCache memoryCache)
+        public ExchangeRatesDataAccess(IMemoryCache memoryCache)
         {
             _memoryCache = memoryCache;
         }
@@ -22,17 +22,20 @@ namespace Database.DataAccess
             var exchangeRate = _memoryCache.Get<ExchangeRateEntity>($"{currencyCode}-{date.Date.ToShortDateString()}");
             if (exchangeRate == null)
             {
-                exchangeRate = context.ExchangeRates.FirstOrDefault(rate => rate.Code == currencyCode && rate.Date.Date == date.Date);
+                exchangeRate =
+                    context.ExchangeRates.FirstOrDefault(rate =>
+                        rate.Code == currencyCode && rate.Date.Date == date.Date);
                 if (exchangeRate != null)
                 {
-                    _memoryCache.Set($"{currencyCode}-{date.Date.ToShortDateString()}", exchangeRate,TimeSpan.FromMinutes(2));
+                    _memoryCache.Set($"{currencyCode}-{date.Date.ToShortDateString()}", exchangeRate,
+                        TimeSpan.FromMinutes(2));
                 }
             }
-               
+
             return exchangeRate;
         }
 
-        public async Task<ExchangeRateEntity> MakeCopyAndSaveToDb( ExchangeRateEntity item)
+        public async Task<ExchangeRateEntity> MakeCopyAndSaveToDb(ExchangeRateEntity item)
         {
             ExchangeRateEntity newEntity = new ExchangeRateEntity
             {
@@ -50,7 +53,8 @@ namespace Database.DataAccess
         {
             await using var context = new ApplicationDbContext();
             await context.AddAsync(exchangeRate);
-            _memoryCache.Set($"{exchangeRate.Code}-{exchangeRate.Date.Date.ToShortDateString()}", exchangeRate, TimeSpan.FromMinutes(2));
+            _memoryCache.Set($"{exchangeRate.Code}-{exchangeRate.Date.Date.ToShortDateString()}", exchangeRate,
+                TimeSpan.FromMinutes(2));
             return await context.SaveChangesAsync();
         }
     }

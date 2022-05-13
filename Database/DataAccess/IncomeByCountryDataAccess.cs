@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
 using Database.Repository;
@@ -21,7 +18,7 @@ namespace Database.DataAccess
         public void AddIncome(string countryName, decimal income)
         {
             var incomeByCountry = _repository.IncomeByCountryEntities.FirstOrDefault(i => i.Country == countryName);
-            if(incomeByCountry != null)
+            if (incomeByCountry != null)
             {
                 incomeByCountry.Income += income;
             }
@@ -39,7 +36,7 @@ namespace Database.DataAccess
 
         public IncomeByCountryEntity GetIncomeByCountryName(string countryName)
         {
-            return _repository.IncomeByCountryEntities.FirstOrDefault(i => string.Equals(i.Country ,countryName));
+            return _repository.IncomeByCountryEntities.FirstOrDefault(i => string.Equals(i.Country, countryName));
         }
     }
 }

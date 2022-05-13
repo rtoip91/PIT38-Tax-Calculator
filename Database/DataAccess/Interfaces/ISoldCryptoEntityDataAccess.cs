@@ -8,7 +8,7 @@ using Database.Entities;
 namespace Database.DataAccess.Interfaces
 {
     public interface ISoldCryptoEntityDataAccess
-    { 
+    {
         void AddEntities(IList<SoldCryptoEntity> soldCryptoEntities);
         IList<SoldCryptoEntity> GetSoldCryptoEntities();
     }

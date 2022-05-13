@@ -18,10 +18,10 @@ namespace Database.Repository
             CfdCalculations = new List<CfdEntity>();
         }
 
-        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get;}
-        public IList<ClosedPositionEntity> ClosedPositions { get;} 
-        public IList<TransactionReportEntity> TransactionReports { get;}
-        public IList<DividendEntity> Dividends { get;}
+        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get; }
+        public IList<ClosedPositionEntity> ClosedPositions { get; }
+        public IList<TransactionReportEntity> TransactionReports { get; }
+        public IList<DividendEntity> Dividends { get; }
         public IList<StockEntity> StockCalculations { get; }
         public IList<PurchasedCryptoEntity> PurchasedCryptoCalculations { get; }
         public IList<SoldCryptoEntity> SoldCryptoCalculations { get; }

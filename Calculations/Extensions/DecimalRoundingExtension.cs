@@ -6,7 +6,5 @@
         {
             return Math.Round(value, decimals, MidpointRounding.AwayFromZero);
         }
-
-
     }
 }

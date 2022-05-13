@@ -11,7 +11,7 @@ namespace Database.DataAccess.Interfaces
     {
         public void AddIncome(string countryName, decimal income);
 
-        public IList<IncomeByCountryEntity> GetAllIncomes ();
+        public IList<IncomeByCountryEntity> GetAllIncomes();
 
         public IncomeByCountryEntity GetIncomeByCountryName(string countryName);
     }

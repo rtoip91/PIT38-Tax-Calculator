@@ -42,11 +42,12 @@ namespace ExcelReader.ExtensionMethods
         {
             string value = item.ToString();
 
-            if (value != null && value.Substring(0,4).Contains("Buy"))
+            if (value != null && value.Substring(0, 4).Contains("Buy"))
             {
                 value = value.Replace("Buy", "Kupno");
             }
-            if (value != null && value.Substring(0,4).Contains("Sell"))
+
+            if (value != null && value.Substring(0, 4).Contains("Sell"))
             {
                 value = value.Replace("Sell", "Sprzedaż");
             }

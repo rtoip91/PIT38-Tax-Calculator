@@ -9,19 +9,21 @@ namespace Database.DataAccess
     public class TransactionReportsDataAccess : ITransactionReportsDataAccess
     {
         private readonly IDataRepository _importRepository;
-        public TransactionReportsDataAccess( IDataRepository importRepository)
+
+        public TransactionReportsDataAccess(IDataRepository importRepository)
         {
             _importRepository = importRepository;
         }
+
         public void AddTransactionReports(IList<TransactionReportEntity> transactionReports)
         {
             foreach (var transactionReport in transactionReports)
             {
                 _importRepository.TransactionReports.Add(transactionReport);
             }
-        }       
+        }
 
-        public  IList<TransactionReportEntity> GetUnsoldCryptoTransactions(string cryptoName)
+        public IList<TransactionReportEntity> GetUnsoldCryptoTransactions(string cryptoName)
         {
             return _importRepository.TransactionReports.Where(c =>
                 c.Type.ToLower().Contains("Otwarta pozycja".ToLower())

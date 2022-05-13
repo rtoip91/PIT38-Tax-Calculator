@@ -45,7 +45,7 @@ public class FileWriter : IFileWriter
 
     private void CreateDirectory()
     {
-        string path = $"{Constants.Constants.FilePath}\\";
+        var path = $"{Constants.Constants.FilePath}\\";
 
         if (!Directory.Exists(path))
         {

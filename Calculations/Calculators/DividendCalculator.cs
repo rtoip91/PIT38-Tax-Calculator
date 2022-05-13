@@ -44,15 +44,18 @@ namespace Calculations.Calculators
 
                 dividendCalculations.Country = regionInfo.EnglishName;
 
-                ExchangeRateEntity exchangeRateEntity = await _exchangeRates.GetRateForPreviousDay(dividendCalculations.Currency, dividend.DateOfPayment);
+                ExchangeRateEntity exchangeRateEntity =
+                    await _exchangeRates.GetRateForPreviousDay(dividendCalculations.Currency, dividend.DateOfPayment);
                 dividendCalculations.ExchangeRate = exchangeRateEntity.Rate;
                 dividendCalculations.ExchangeRateDate = exchangeRateEntity.Date;
 
-                dividendCalculations.DividendReceivedExchanged = Math.Round(dividendCalculations.DividendReceived * dividendCalculations.ExchangeRate, 2); 
+                dividendCalculations.DividendReceivedExchanged =
+                    Math.Round(dividendCalculations.DividendReceived * dividendCalculations.ExchangeRate, 2);
 
                 dividendCalculations.WithholdingTaxRate = dividend.ISIN.Equals("US") ? 15 : dividend.WithholdingTaxRate;
 
-                dividendCalculations.WithholdingTaxPaid = Math.Round(dividendCalculations.DividendReceivedExchanged * dividendCalculations.WithholdingTaxRate / 100 , 2);
+                dividendCalculations.WithholdingTaxPaid = Math.Round(
+                    dividendCalculations.DividendReceivedExchanged * dividendCalculations.WithholdingTaxRate / 100, 2);
 
                 decimal tax19percent = Math.Round(dividendCalculations.DividendReceivedExchanged * 0.19m, 2);
 

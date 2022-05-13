@@ -38,7 +38,7 @@ namespace TaxEtoro.BussinessLogic
             if (!_isDisposed)
             {
                 await _dataCleaner.CleanData();
-                _isDisposed = true;               
+                _isDisposed = true;
             }
         }
 
@@ -51,7 +51,7 @@ namespace TaxEtoro.BussinessLogic
         {
             _fileDataAccess.SetFileName(fileName);
             Console.WriteLine($"Rozpoczęto przetwarzanie pliku: {_fileDataAccess.GetFileName()}");
-            await _reader.ImportDataFromExcel(directory,fileName);
+            await _reader.ImportDataFromExcel(directory, fileName);
             var result = await _taxCalculations.CalculateTaxes();
             PresentRessults(result);
             return result;

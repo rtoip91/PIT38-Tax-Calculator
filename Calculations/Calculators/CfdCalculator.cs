@@ -50,7 +50,8 @@ namespace Calculations.Calculators
                 RegionInfo regionInfo = new RegionInfo(cfdClosedPosition.ISIN);
                 cfdEntity.Country = regionInfo.EnglishName;
 
-                ExchangeRateEntity exchangeRate = await _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
+                ExchangeRateEntity exchangeRate =
+                    await _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);
 
                 var openingValue = (cfdEntity.OpeningRate * cfdEntity.Units).RoundDecimal(4);
                 var closingValue = (cfdEntity.ClosingRate * cfdEntity.Units).RoundDecimal(4);

@@ -52,18 +52,23 @@ namespace Calculations.Calculators
                 stockEntity.ClosingValue = (stockEntity.ClosingUnitValue * stockEntity.Units).RoundDecimal(4);
                 stockEntity.Profit = stockEntity.ClosingValue - stockEntity.OpeningValue;
 
-                ExchangeRateEntity closingRateTask = await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
+                ExchangeRateEntity closingRateTask =
+                    await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.SellDate);
                 stockEntity.ClosingExchangeRate = closingRateTask.Rate;
                 stockEntity.ClosingExchangeRateDate = closingRateTask.Date;
 
-                ExchangeRateEntity openingRateTask =await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
+                ExchangeRateEntity openingRateTask =
+                    await _exchangeRates.GetRateForPreviousDay(stockEntity.CurrencySymbol, stockEntity.PurchaseDate);
                 stockEntity.OpeningExchangeRate = openingRateTask.Rate;
                 stockEntity.OpeningExchangeRateDate = openingRateTask.Date;
 
-                stockEntity.OpeningExchangedValue = (stockEntity.OpeningValue * stockEntity.OpeningExchangeRate).RoundDecimal(4);
-                stockEntity.ClosingExchangedValue = (stockEntity.ClosingValue * stockEntity.ClosingExchangeRate).RoundDecimal(4);
+                stockEntity.OpeningExchangedValue =
+                    (stockEntity.OpeningValue * stockEntity.OpeningExchangeRate).RoundDecimal(4);
+                stockEntity.ClosingExchangedValue =
+                    (stockEntity.ClosingValue * stockEntity.ClosingExchangeRate).RoundDecimal(4);
 
-                stockEntity.ExchangedProfit = (stockEntity.ClosingExchangedValue - stockEntity.OpeningExchangedValue).RoundDecimal();
+                stockEntity.ExchangedProfit =
+                    (stockEntity.ClosingExchangedValue - stockEntity.OpeningExchangedValue).RoundDecimal();
 
                 _incomeByCountryDataAccess.AddIncome(stockEntity.Country, stockEntity.ExchangedProfit);
 
