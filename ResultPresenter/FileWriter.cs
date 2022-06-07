@@ -66,7 +66,7 @@ public class FileWriter : IFileWriter
     {
         await using FileStream zipFile = CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
-        ZipArchiveEntry pitZgEntry = archive.CreateEntry(Constants.Constants.PitZgFileName);
+        ZipArchiveEntry pitZgEntry = CreateZipFileEntry(archive, Constants.Constants.PitZgFileName);
         await using StreamWriter sw = new StreamWriter(pitZgEntry.Open());
 
         IList<IncomeByCountryEntity> incomeByCountryEntities = _incomeByCountryDataAccess.GetAllIncomes();
@@ -79,12 +79,20 @@ public class FileWriter : IFileWriter
         }
     }
 
+    private static ZipArchiveEntry CreateZipFileEntry(ZipArchive archive, string entryName)
+    {
+        ZipArchiveEntry? entry = archive.GetEntry(entryName);
+        entry?.Delete();
+        ZipArchiveEntry pitZgEntry = archive.CreateEntry(entryName);
+        return pitZgEntry;
+    }
+
 
     private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto)
     {
         await using FileStream zipFile = CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
-        ZipArchiveEntry stockEntry = archive.CreateEntry(Constants.Constants.StockCalculationsFileName);
+        ZipArchiveEntry stockEntry = CreateZipFileEntry(archive, Constants.Constants.StockCalculationsFileName);
         await using StreamWriter sw = new StreamWriter(stockEntry.Open());
 
         IList<StockEntity> stockEntities = _stockEntityDataAccess.GetEntities();
@@ -105,7 +113,7 @@ public class FileWriter : IFileWriter
     {
         await using FileStream zipFile = CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
-        ZipArchiveEntry cryptoEntry = archive.CreateEntry(Constants.Constants.CryptoCalculationsFileName);
+        ZipArchiveEntry cryptoEntry = CreateZipFileEntry(archive, Constants.Constants.CryptoCalculationsFileName);
         await using StreamWriter sw = new StreamWriter(cryptoEntry.Open());
 
         IList<PurchasedCryptoEntity> purchasedCryptoEntities =
@@ -138,7 +146,7 @@ public class FileWriter : IFileWriter
     {
         await using FileStream zipFile = CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
-        ZipArchiveEntry dividendsEntry = archive.CreateEntry(Constants.Constants.DividendsCalculationsFileName);
+        ZipArchiveEntry dividendsEntry = CreateZipFileEntry(archive, Constants.Constants.DividendsCalculationsFileName);
         await using StreamWriter sw = new StreamWriter(dividendsEntry.Open());
         IList<DividendCalculationsEntity> dividendCalculations = _dividendCalculationsDataAccess.GetEntities();
 
@@ -159,7 +167,7 @@ public class FileWriter : IFileWriter
         await using FileStream zipFile = CreateOrUpdateZipFile();
         IList<CfdEntity> cfdEntities = _cfdEntityDataAccess.GetCfdEntities();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
-        ZipArchiveEntry cfdEntry = archive.CreateEntry(Constants.Constants.CfdCalculationsFileName);
+        ZipArchiveEntry cfdEntry = CreateZipFileEntry(archive, Constants.Constants.CfdCalculationsFileName);
 
         await using StreamWriter sw = new StreamWriter(cfdEntry.Open());
 
