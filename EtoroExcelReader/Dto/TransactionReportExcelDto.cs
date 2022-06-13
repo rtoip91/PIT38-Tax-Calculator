@@ -17,7 +17,7 @@ namespace EtoroExcelReader.Dto
 
             Details = row[TransactionReportsColumns.Details].ToString();
 
-            PositionId = row[TransactionReportsColumns.PositionId].ToInt();
+            PositionId = row[TransactionReportsColumns.PositionId].ToLong();
 
             Amount = row[TransactionReportsColumns.Amount].ToDecimal();
 
@@ -36,7 +36,7 @@ namespace EtoroExcelReader.Dto
 
         public string Details { get; }
 
-        public int PositionId { get; }
+        public long PositionId { get; }
 
         public decimal Amount { get; }
 

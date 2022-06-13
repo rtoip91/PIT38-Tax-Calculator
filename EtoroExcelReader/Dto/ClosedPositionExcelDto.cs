@@ -10,7 +10,7 @@ namespace EtoroExcelReader.Dto
     {
         public ClosedPositionExcelDto(DataRow row)
         {
-            PositionId = row[ClosedPositionsColumns.PositionId].ToInt();
+            PositionId = row[ClosedPositionsColumns.PositionId].ToLong();
 
             TransactionType = row[ClosedPositionsColumns.Operation].ToTransactionType();
 
@@ -49,7 +49,7 @@ namespace EtoroExcelReader.Dto
             ISIN = row[ClosedPositionsColumns.ISIN].ToIso3166Symbol();
         }
 
-        public int? PositionId { get; }
+        public long? PositionId { get; }
 
         public TransactionType TransactionType { get; }
 

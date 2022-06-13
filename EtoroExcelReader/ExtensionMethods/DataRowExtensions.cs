@@ -66,6 +66,17 @@ namespace ExcelReader.ExtensionMethods
             return int.Parse(value, ChooseProvider(value));
         }
 
+        internal static long ToLong(this object item)
+        {
+            string value = item.ToString();
+            if (string.IsNullOrWhiteSpace(value))
+            {
+                return 0;
+            }
+
+            return long.Parse(value, ChooseProvider(value));
+        }
+
         internal static DateTime ToDate(this object item)
         {
             string value = item.ToString();

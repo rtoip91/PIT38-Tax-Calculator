@@ -24,7 +24,7 @@ public class FileWriter : IFileWriter
         IIncomeByCountryDataAccess incomeByCountryDataAccess,
         IFileDataAccess fileDataAccess)
     {
-        _cfdEntityDataAccess = cfdEntityDataAccess;
+        _cfdEntityDataAccess = cfdEntityDataAccess; 
         _stockEntityDataAccess = stockEntityDataAccess;
         _soldCryptoEntityDataAccess = soldCryptoEntityDataAccess;
         _purchasedCryptoEntityDataAccess = purchasedCryptoEntityDataAccess;

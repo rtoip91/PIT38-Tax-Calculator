@@ -21,7 +21,7 @@ namespace TaxEtoro
 
         static async Task Main(string[] args)
         {
-            var directory = FileInputUtil.GetDirectory(@"..\\TestFile");
+            var directory = FileInputUtil.GetDirectory(@"d:\\TestFile");
             var files = directory.GetFiles("*xlsx");
 
             IList<Task> tasks = new List<Task>();

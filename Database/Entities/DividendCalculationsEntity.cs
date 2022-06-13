@@ -9,7 +9,7 @@ namespace Database.Entities
     {
         [Key] public int Id { get; set; }
 
-        public int PositionId { get; set; }
+        public long PositionId { get; set; }
         public string InstrumentName { get; set; }
 
         public DateTime DateOfPayment { get; set; }

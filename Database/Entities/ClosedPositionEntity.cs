@@ -9,7 +9,7 @@ namespace Database.Entities
     [Table("ClosedPositions")]
     public class ClosedPositionEntity
     {
-        [Key] public int? PositionId { get; set; }
+        [Key] public long? PositionId { get; set; }
 
         public string Operation { get; set; }
 

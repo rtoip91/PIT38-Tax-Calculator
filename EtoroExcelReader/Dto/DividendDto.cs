@@ -14,7 +14,7 @@ namespace ExcelReader.Dto
             NetDividendReceived = row[DividendsColumns.NetDividendReceived].ToDecimal();
             WithholdingTaxRate = row[DividendsColumns.WithholdingTaxRate].ToDecimal();
             WithholdingTaxAmount = row[DividendsColumns.WithholdingTaxAmount].ToDecimal();
-            PositionId = row[DividendsColumns.PositionId].ToInt();
+            PositionId = row[DividendsColumns.PositionId].ToLong();
             PositionType = row[DividendsColumns.PositionType].ToString();
             ISIN = row[DividendsColumns.ISIN].ToIso3166Symbol();
         }
@@ -24,7 +24,7 @@ namespace ExcelReader.Dto
         public decimal NetDividendReceived { get; }
         public decimal WithholdingTaxRate { get; }
         public decimal WithholdingTaxAmount { get; }
-        public int PositionId { get; }
+        public long PositionId { get; }
         public string PositionType { get; }
         public string ISIN { get; }
     }
