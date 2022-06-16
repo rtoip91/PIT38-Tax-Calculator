@@ -2,6 +2,7 @@
 using Calculations.Dto;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
+using Microsoft.Extensions.Configuration;
 using ResultsPresenter.Interfaces;
 
 namespace ResultsPresenter;
@@ -15,6 +16,9 @@ public class FileWriter : IFileWriter
     private readonly IDividendCalculationsDataAccess _dividendCalculationsDataAccess;
     private readonly IIncomeByCountryDataAccess _incomeByCountryDataAccess;
     private readonly IFileDataAccess _fileDataAccess;
+    private readonly IConfiguration _configuration;
+    private readonly string _filePath;
+
 
     public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
         IStockEntityDataAccess stockEntityDataAccess,
@@ -22,7 +26,8 @@ public class FileWriter : IFileWriter
         IPurchasedCryptoEntityDataAccess purchasedCryptoEntityDataAccess,
         IDividendCalculationsDataAccess dividendCalculationsDataAccess,
         IIncomeByCountryDataAccess incomeByCountryDataAccess,
-        IFileDataAccess fileDataAccess)
+        IFileDataAccess fileDataAccess,
+        IConfiguration configuration)
     {
         _cfdEntityDataAccess = cfdEntityDataAccess; 
         _stockEntityDataAccess = stockEntityDataAccess;
@@ -31,6 +36,9 @@ public class FileWriter : IFileWriter
         _dividendCalculationsDataAccess = dividendCalculationsDataAccess;
         _incomeByCountryDataAccess = incomeByCountryDataAccess;
         _fileDataAccess = fileDataAccess;
+        _configuration = configuration;
+
+        _filePath = _configuration.GetValue<string>("ResultStorageFolder");
     }
 
     public async Task PresentData(CalculationResultDto calculationResultDto)
@@ -45,7 +53,7 @@ public class FileWriter : IFileWriter
 
     private void CreateDirectory()
     {
-        var path = $"{Constants.Constants.FilePath}\\";
+        var path = $"{_filePath}\\";
 
         if (!Directory.Exists(path))
         {
@@ -55,7 +63,7 @@ public class FileWriter : IFileWriter
 
     private FileStream CreateOrUpdateZipFile()
     {
-        string path = $"{Constants.Constants.FilePath}{_fileDataAccess.GetFileNameWithoutExtension()}.zip";
+        string path = $"{_filePath}\\{_fileDataAccess.GetFileNameWithoutExtension()}.zip";
 
         FileStream zipToOpen = new FileStream(path, FileMode.OpenOrCreate);
 
