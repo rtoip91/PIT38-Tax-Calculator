@@ -7,5 +7,4 @@ internal static class Constants
     public const string CryptoCalculationsFileName = "Kryptowaluty.txt";
     public const string DividendsCalculationsFileName = "Dywidendy.txt";
     public const string PitZgFileName = "PitZG.txt";
-    public const string FilePath = @"d:\TaxResult\";
 }
