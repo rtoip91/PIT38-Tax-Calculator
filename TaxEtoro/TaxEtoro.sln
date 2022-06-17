@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculations", "..\Calculat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResultsPresenter", "..\ResultPresenter\ResultsPresenter.csproj", "{D089CB16-8E19-4EB4-BC0B-9AFE623D362F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "..\WebApi\WebApi.csproj", "{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -61,6 +63,14 @@ Global
 		{D089CB16-8E19-4EB4-BC0B-9AFE623D362F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D089CB16-8E19-4EB4-BC0B-9AFE623D362F}.Release|x64.ActiveCfg = Release|Any CPU
 		{D089CB16-8E19-4EB4-BC0B-9AFE623D362F}.Release|x64.Build.0 = Release|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Debug|x64.Build.0 = Debug|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Release|x64.ActiveCfg = Release|Any CPU
+		{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
