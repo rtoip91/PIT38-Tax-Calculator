@@ -41,7 +41,7 @@ namespace TaxEtoro.BussinessLogic
             }
         }
 
-        public void OnAppClose(object sender, EventArgs e)
+        private void OnAppClose(object sender, EventArgs e)
         {
             _ = DisposeAsync();
         }
@@ -68,7 +68,7 @@ namespace TaxEtoro.BussinessLogic
             await Task.WhenAll(tasks);
         }
 
-        public async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
+        private async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
             AsyncServiceScope scope)
         {
             IExcelDataExtractor reader = scope.ServiceProvider.GetService<IExcelDataExtractor>();
@@ -83,7 +83,7 @@ namespace TaxEtoro.BussinessLogic
             return result;
         }
 
-        public async Task PresentCalcucaltionResults(CalculationResultDto result, AsyncServiceScope scope)
+        private async Task PresentCalcucaltionResults(CalculationResultDto result, AsyncServiceScope scope)
         {
             IFileDataAccess fileDataAccess = scope.ServiceProvider.GetService<IFileDataAccess>();
             IFileWriter fileWriter = scope.ServiceProvider.GetService<IFileWriter>();

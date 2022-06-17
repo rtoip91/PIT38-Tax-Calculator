@@ -31,7 +31,8 @@ internal static class ServiceRegistration
      }
 
      private static void BuildConfig(IConfigurationBuilder configurationBuilder)
-    {
+    {        
+
         configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
             .AddJsonFile(

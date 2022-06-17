@@ -16,7 +16,6 @@ public class FileWriter : IFileWriter
     private readonly IDividendCalculationsDataAccess _dividendCalculationsDataAccess;
     private readonly IIncomeByCountryDataAccess _incomeByCountryDataAccess;
     private readonly IFileDataAccess _fileDataAccess;
-    private readonly IConfiguration _configuration;
     private readonly string _filePath;
 
 
@@ -29,16 +28,15 @@ public class FileWriter : IFileWriter
         IFileDataAccess fileDataAccess,
         IConfiguration configuration)
     {
-        _cfdEntityDataAccess = cfdEntityDataAccess; 
+        _cfdEntityDataAccess = cfdEntityDataAccess;
         _stockEntityDataAccess = stockEntityDataAccess;
         _soldCryptoEntityDataAccess = soldCryptoEntityDataAccess;
         _purchasedCryptoEntityDataAccess = purchasedCryptoEntityDataAccess;
         _dividendCalculationsDataAccess = dividendCalculationsDataAccess;
         _incomeByCountryDataAccess = incomeByCountryDataAccess;
         _fileDataAccess = fileDataAccess;
-        _configuration = configuration;
 
-        _filePath = _configuration.GetValue<string>("ResultStorageFolder");
+        _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
     public async Task PresentData(CalculationResultDto calculationResultDto)
