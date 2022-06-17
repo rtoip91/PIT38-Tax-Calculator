@@ -22,7 +22,15 @@ namespace TaxEtoro.Statics;
 
 internal static class ServiceRegistration
 {
-    private static void BuildConfig(IConfigurationBuilder configurationBuilder)
+
+    public static IServiceProvider ServiceProvider { get; }
+
+     static ServiceRegistration()
+     {
+         ServiceProvider = Register();
+     }
+
+     private static void BuildConfig(IConfigurationBuilder configurationBuilder)
     {
         configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
             .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -32,7 +40,7 @@ internal static class ServiceRegistration
             .AddEnvironmentVariables();
     }
 
-    public static IServiceProvider Register()
+    private static IServiceProvider Register()
     {
         var builder = new ConfigurationBuilder();
         BuildConfig(builder);
@@ -69,5 +77,6 @@ internal static class ServiceRegistration
         services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
         services.AddTransient<IFileWriter, FileWriter>();
+        services.AddSingleton(x => ServiceProvider);
     }
 }

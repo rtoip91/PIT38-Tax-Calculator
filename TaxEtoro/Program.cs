@@ -10,17 +10,16 @@ namespace TaxEtoro
 {
     class Program
     {
-        private static IActionPerformer ActionPerformer { get; set; }
+        private static readonly IActionPerformer ActionPerformer;
 
         static Program()
         {
-            ActionPerformer = new ActionPerformer();
+            var serviceProvider = ServiceRegistration.ServiceProvider;
+            ActionPerformer = serviceProvider.GetService<IActionPerformer>();
         }
 
         static async Task Main(string[] args)
         {
-           
-            var actionPerformer = new ActionPerformer();
             var timer = new Stopwatch();
 
             timer.Start();

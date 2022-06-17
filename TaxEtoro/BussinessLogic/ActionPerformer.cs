@@ -10,7 +10,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using ResultsPresenter.Interfaces;
 using TaxEtoro.Interfaces;
-using TaxEtoro.Statics;
 
 namespace TaxEtoro.BussinessLogic
 {
@@ -22,12 +21,14 @@ namespace TaxEtoro.BussinessLogic
         private readonly IServiceProvider _serviceProvider;
 
 
-        public ActionPerformer()
+        public ActionPerformer(IServiceProvider serviceProvider,
+            IDataCleaner dataCleaner,
+            IConfiguration configuration)
         {
-            _serviceProvider = ServiceRegistration.Register();
-            _dataCleaner = _serviceProvider.GetService<IDataCleaner>();
+            _serviceProvider = serviceProvider;
+            _dataCleaner = dataCleaner;
             _isDisposed = false;
-            _configuration = _serviceProvider.GetService<IConfiguration>();
+            _configuration = configuration;
             AppDomain.CurrentDomain.ProcessExit += OnAppClose;
         }
 
@@ -67,7 +68,8 @@ namespace TaxEtoro.BussinessLogic
             await Task.WhenAll(tasks);
         }
 
-        public async Task<CalculationResultDto> PerformCalculations(string directory, string fileName, AsyncServiceScope scope)
+        public async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
+            AsyncServiceScope scope)
         {
             IExcelDataExtractor reader = scope.ServiceProvider.GetService<IExcelDataExtractor>();
             ITaxCalculations taxCalculations = scope.ServiceProvider.GetService<ITaxCalculations>();
@@ -85,7 +87,7 @@ namespace TaxEtoro.BussinessLogic
         {
             IFileDataAccess fileDataAccess = scope.ServiceProvider.GetService<IFileDataAccess>();
             IFileWriter fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
-           
+
             await fileWriter.PresentData(result);
             Console.WriteLine($"Zakończono przetwarzanie pliku: {fileDataAccess.GetFileName()}");
         }
