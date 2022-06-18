@@ -1,9 +1,12 @@
 using Calculations;
 using Calculations.Interfaces;
+using Calculations.Statics;
+using Database;
 using Database.DataAccess;
 using Database.DataAccess.Interfaces;
 using ExcelReader;
 using ExcelReader.Interfaces;
+using TaxEtoro.Statics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,14 +16,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+TaxEtoroServiceRegistration.RegisterServices(builder.Services);
+CalculationsServicesRegistration.RegisterServices(builder.Services);
+DatabaseServiceRegistration.RegisterServices(builder.Services);
 
-builder.Services.AddTransient<IExcelDataExtractor, ExcelDataExtractor>();
-builder.Services.AddTransient<IDataCleaner, DataCleaner>();
 
-builder.Services.AddTransient<ITaxCalculations, TaxCalculations>();
-
-builder.Services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
-builder.Services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
 
 
 var app = builder.Build();

@@ -90,7 +90,17 @@ namespace Calculations
 
             string result = await resp.Content.ReadAsStringAsync();
             ExchangeRatesDto? exchangeRates;
-            exchangeRates = JsonConvert.DeserializeObject<ExchangeRatesDto>(result);
+            try
+            {
+                exchangeRates = JsonConvert.DeserializeObject<ExchangeRatesDto>(result);
+            }
+            catch (JsonReaderException e)
+            {
+                Console.WriteLine("Could not parse given exchange rate response");
+                Console.WriteLine(result);
+                throw;
+            }
+            
             ExchangeRateEntity entity = new ExchangeRateEntity();
 
             entity.Code = currencyCode;

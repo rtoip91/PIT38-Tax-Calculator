@@ -13,6 +13,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Calculations\Calculations.csproj" />
     <ProjectReference Include="..\EtoroExcelReader\ExcelReader.csproj" />
+    <ProjectReference Include="..\TaxEtoro\TaxEtoro.csproj" />
   </ItemGroup>
 
 </Project>

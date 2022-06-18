@@ -13,7 +13,7 @@ namespace TaxEtoro
 
         static Program()
         {
-            var serviceProvider = ServiceRegistration.ServiceProvider;
+            var serviceProvider = TaxEtoroServiceRegistration.ServiceProvider;
             ActionPerformer = serviceProvider.GetService<IActionPerformer>();
         }
 

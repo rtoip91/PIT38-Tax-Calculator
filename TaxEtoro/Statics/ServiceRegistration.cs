@@ -20,12 +20,12 @@ using ResultsPresenter.Interfaces;
 
 namespace TaxEtoro.Statics;
 
-internal static class ServiceRegistration
+public static class TaxEtoroServiceRegistration
 {
 
     public static IServiceProvider ServiceProvider { get; }
 
-     static ServiceRegistration()
+     static TaxEtoroServiceRegistration()
      {
          ServiceProvider = Register();
      }
@@ -68,7 +68,7 @@ internal static class ServiceRegistration
         return host.Services;
     }
 
-    private static void RegisterServices(IServiceCollection services)
+    public static void RegisterServices(IServiceCollection services)
     {
         services.AddTransient<IExcelDataExtractor, ExcelDataExtractor>();
         services.AddTransient<IDataCleaner, DataCleaner>();
