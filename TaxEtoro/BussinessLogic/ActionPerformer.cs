@@ -17,18 +17,19 @@ namespace TaxEtoro.BussinessLogic
     {
         private readonly IDataCleaner _dataCleaner;
         private readonly IConfiguration _configuration;
-        private bool _isDisposed;
         private readonly IServiceProvider _serviceProvider;
+        private bool _isDisposed;
+       
 
 
-        public ActionPerformer(IServiceProvider serviceProvider,
-            IDataCleaner dataCleaner,
-            IConfiguration configuration)
+        public ActionPerformer(IDataCleaner dataCleaner,
+            IConfiguration configuration,
+            IServiceProvider serviceProvider)
         {
-            _serviceProvider = serviceProvider;
             _dataCleaner = dataCleaner;
             _isDisposed = false;
             _configuration = configuration;
+            _serviceProvider = serviceProvider;
             AppDomain.CurrentDomain.ProcessExit += OnAppClose;
         }
 

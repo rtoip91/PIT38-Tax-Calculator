@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TaxEtoro.Interfaces;
 
@@ -16,10 +17,20 @@ namespace WebApi.Controllers
         }
 
         [HttpGet(Name = "RunCalculations")]
-        public async Task<bool> Get()
+        public async Task<string> Get()
         {
+            var timer = new Stopwatch();
+
+            timer.Start();
+
+
             await _actionPerformer.PerformCalculationsAndWriteResults();
-            return true;
+
+            timer.Stop();
+
+            TimeSpan timeTaken = timer.Elapsed;
+           
+            return $"Time taken: {timeTaken:m\\:ss\\.fff}";
         }
     }
 }
