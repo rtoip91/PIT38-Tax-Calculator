@@ -63,10 +63,18 @@ namespace TaxEtoro.BussinessLogic
                     await PresentCalcucaltionResults(dto, scope);
                 });
 
+                var fileRemoval = task.ContinueWith(_ =>
+                {
+                    filename.Delete();
+                    Console.WriteLine($"File: {filename.Name} was deleted");
+                });
+
                 tasks.Add(task);
+                tasks.Add(fileRemoval);
             }
 
             await Task.WhenAll(tasks);
+            
         }
 
         private async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
