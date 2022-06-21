@@ -5,7 +5,7 @@ namespace TaxEtoro.Interfaces
 {
     public interface IActionPerformer : IAsyncDisposable
     {
-        public Task PerformCalculationsAndWriteResults();
+        public Task PerformCalculationsAndWriteResultsPeriodically(IServiceProvider serviceProvider);
     }
 
 }

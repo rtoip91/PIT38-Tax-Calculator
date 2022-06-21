@@ -4,6 +4,8 @@ using Database.DataAccess.Interfaces;
 using ExcelReader.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using ExcelReader;
 using Microsoft.Extensions.Configuration;
@@ -17,10 +19,8 @@ namespace TaxEtoro.BussinessLogic
     {
         private readonly IDataCleaner _dataCleaner;
         private readonly IConfiguration _configuration;
-        private readonly IServiceProvider _serviceProvider;
+        private readonly PeriodicTimer _periodicTimer;
         private bool _isDisposed;
-       
-
 
         public ActionPerformer(IDataCleaner dataCleaner,
             IConfiguration configuration,
@@ -29,8 +29,7 @@ namespace TaxEtoro.BussinessLogic
             _dataCleaner = dataCleaner;
             _isDisposed = false;
             _configuration = configuration;
-            _serviceProvider = serviceProvider;
-           
+            _periodicTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
         }
 
         public async ValueTask DisposeAsync()
@@ -42,21 +41,27 @@ namespace TaxEtoro.BussinessLogic
             }
         }
 
-      
-        public async Task PerformCalculationsAndWriteResults()
+
+        private async Task DoWork(IServiceProvider serviceProvider)
         {
             var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
             var files = directory.GetFiles("*xlsx");
 
             IList<Task> tasks = new List<Task>();
 
+            if (!files.Any())
+            {
+                Console.WriteLine("No files detected");
+                return;
+            }
+
             foreach (var filename in files)
             {
                 var task = Task.Run(async () =>
                 {
-                    await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
+                    await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
                     var dto = await PerformCalculations(directory.FullName, filename.Name, scope);
-                    await PresentCalcucaltionResults(dto, scope);
+                    await PresentCalculationResults(dto, scope);
                 });
 
                 var fileRemoval = task.ContinueWith(_ =>
@@ -70,7 +75,15 @@ namespace TaxEtoro.BussinessLogic
             }
 
             await Task.WhenAll(tasks);
-            
+        }
+
+
+        public async Task PerformCalculationsAndWriteResultsPeriodically(IServiceProvider serviceProvider)
+        {
+            while (await _periodicTimer.WaitForNextTickAsync())
+            {
+                await DoWork(serviceProvider);
+            }
         }
 
         private async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
@@ -88,7 +101,7 @@ namespace TaxEtoro.BussinessLogic
             return result;
         }
 
-        private async Task PresentCalcucaltionResults(CalculationResultDto result, AsyncServiceScope scope)
+        private async Task PresentCalculationResults(CalculationResultDto result, AsyncServiceScope scope)
         {
             IFileDataAccess fileDataAccess = scope.ServiceProvider.GetService<IFileDataAccess>();
             IFileWriter fileWriter = scope.ServiceProvider.GetService<IFileWriter>();

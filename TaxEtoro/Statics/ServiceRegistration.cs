@@ -22,52 +22,6 @@ namespace TaxEtoro.Statics;
 
 public static class TaxEtoroServiceRegistration
 {
-
-    public static IServiceProvider ServiceProvider { get; }
-
-     static TaxEtoroServiceRegistration()
-     {
-         ServiceProvider = Register();
-     }
-
-     private static void BuildConfig(IConfigurationBuilder configurationBuilder)
-    {        
-
-        configurationBuilder.SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile(
-                $"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIROMENT") ?? "Production"}.json",
-                optional: true)
-            .AddEnvironmentVariables();
-    }
-
-    private static IServiceProvider Register()
-    {
-        var builder = new ConfigurationBuilder();
-        BuildConfig(builder);
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Build())
-            .Enrich.FromLogContext()
-            .WriteTo.File("log.txt", fileSizeLimitBytes: 300000, rollOnFileSizeLimit: true)
-            .CreateLogger();
-
-        var host = Host.CreateDefaultBuilder()
-            .ConfigureServices((context, services) =>
-            {
-                RegisterServices(services);
-                CalculationsServicesRegistration.RegisterServices(services);
-                DatabaseServiceRegistration.RegisterServices(services);
-            })
-            .ConfigureLogging((context, logging) =>
-            {
-                logging.ClearProviders();
-                logging.AddDebug();
-            })
-            .Build();
-
-        return host.Services;
-    }
-
     public static void RegisterServices(IServiceCollection services)
     {
         services.AddTransient<IExcelDataExtractor, ExcelDataExtractor>();
@@ -78,6 +32,5 @@ public static class TaxEtoroServiceRegistration
         services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
         services.AddTransient<IFileWriter, FileWriter>();
-        services.AddSingleton(x => ServiceProvider);
     }
 }

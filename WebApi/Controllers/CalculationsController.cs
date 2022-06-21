@@ -5,7 +5,7 @@ using TaxEtoro.Interfaces;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/[controller]/[action]")]
     [ApiController]
     public class CalculationsController : ControllerBase
     {
@@ -45,27 +45,7 @@ namespace WebApi.Controllers
             }
 
 
-            // Process uploaded files
-            // Don't rely on or trust the FileName property without validation.
-
-            return this.StatusCode(StatusCodes.Status400BadRequest, "Incorrect file to upload");
-        }
-
-
-        [HttpGet(Name = "RunCalculations")]
-        public async Task<string> Get()
-        {
-            var timer = new Stopwatch();
-
-            timer.Start();
-
-            await _actionPerformer.PerformCalculationsAndWriteResults();
-
-            timer.Stop();
-
-            TimeSpan timeTaken = timer.Elapsed;
-
-            return $"Time taken: {timeTaken:m\\:ss\\.fff}";
+            return StatusCode(StatusCodes.Status400BadRequest, "Incorrect file to upload");
         }
     }
 }

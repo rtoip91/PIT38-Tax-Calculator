@@ -1,5 +1,6 @@
 using Calculations.Statics;
 using Database;
+using TaxEtoro.Interfaces;
 using TaxEtoro.Statics;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -26,10 +27,15 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+var actionPerformer = app.Services.GetService<IActionPerformer>();
+actionPerformer.PerformCalculationsAndWriteResultsPeriodically(app.Services);
 
 app.Run();
