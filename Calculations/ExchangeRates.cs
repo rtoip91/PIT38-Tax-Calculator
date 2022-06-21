@@ -94,7 +94,7 @@ namespace Calculations
             {
                 exchangeRates = JsonConvert.DeserializeObject<ExchangeRatesDto>(result);
             }
-            catch (JsonReaderException e)
+            catch (JsonReaderException)
             {
                 Console.WriteLine("Could not parse given exchange rate response");
                 Console.WriteLine(result);

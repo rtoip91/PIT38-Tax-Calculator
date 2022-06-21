@@ -23,8 +23,7 @@ namespace TaxEtoro.BussinessLogic
         private bool _isDisposed;
 
         public ActionPerformer(IDataCleaner dataCleaner,
-            IConfiguration configuration,
-            IServiceProvider serviceProvider)
+            IConfiguration configuration)
         {
             _dataCleaner = dataCleaner;
             _isDisposed = false;
@@ -76,7 +75,6 @@ namespace TaxEtoro.BussinessLogic
 
             await Task.WhenAll(tasks);
         }
-
 
         public async Task PerformCalculationsAndWriteResultsPeriodically(IServiceProvider serviceProvider)
         {
