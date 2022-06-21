@@ -30,7 +30,7 @@ namespace TaxEtoro.BussinessLogic
             _isDisposed = false;
             _configuration = configuration;
             _serviceProvider = serviceProvider;
-            AppDomain.CurrentDomain.ProcessExit += OnAppClose;
+           
         }
 
         public async ValueTask DisposeAsync()
@@ -42,11 +42,7 @@ namespace TaxEtoro.BussinessLogic
             }
         }
 
-        private void OnAppClose(object sender, EventArgs e)
-        {
-            _ = DisposeAsync();
-        }
-
+      
         public async Task PerformCalculationsAndWriteResults()
         {
             var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
