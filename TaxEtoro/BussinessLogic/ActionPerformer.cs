@@ -20,15 +20,18 @@ namespace TaxEtoro.BussinessLogic
         private readonly IDataCleaner _dataCleaner;
         private readonly IConfiguration _configuration;
         private readonly PeriodicTimer _periodicTimer;
+        private readonly IServiceProvider _serviceProvider;
         private bool _isDisposed;
 
         public ActionPerformer(IDataCleaner dataCleaner,
-            IConfiguration configuration)
+            IConfiguration configuration,
+            IServiceProvider serviceProvider)
         {
             _dataCleaner = dataCleaner;
             _isDisposed = false;
             _configuration = configuration;
             _periodicTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+            _serviceProvider = serviceProvider;
         }
 
         public async ValueTask DisposeAsync()
@@ -76,11 +79,11 @@ namespace TaxEtoro.BussinessLogic
             await Task.WhenAll(tasks);
         }
 
-        public async Task PerformCalculationsAndWriteResultsPeriodically(IServiceProvider serviceProvider)
+        public async Task PerformCalculationsAndWriteResultsPeriodically()
         {
             while (await _periodicTimer.WaitForNextTickAsync())
             {
-                await DoWork(serviceProvider);
+                await DoWork(_serviceProvider);
             }
         }
 

@@ -36,6 +36,6 @@ app.UseAuthorization();
 app.MapControllers();
 
 var actionPerformer = app.Services.GetService<IActionPerformer>();
-actionPerformer.PerformCalculationsAndWriteResultsPeriodically(app.Services);
+actionPerformer.PerformCalculationsAndWriteResultsPeriodically();
 
 app.Run();

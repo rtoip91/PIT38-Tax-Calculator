@@ -1,22 +1,17 @@
-﻿using System.Diagnostics;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using TaxEtoro.Interfaces;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]/[action]")]
+    [Route("api/file/[action]")]
     [ApiController]
-    public class CalculationsController : ControllerBase
+    public class UploadFileController : ControllerBase
     {
-        private readonly IActionPerformer _actionPerformer;
         private readonly IConfiguration _configuration;
 
-
-        public CalculationsController(IActionPerformer actionPerformer,
+        public UploadFileController(IActionPerformer actionPerformer,
             IConfiguration configuration)
         {
-            _actionPerformer = actionPerformer;
             _configuration = configuration;
         }
 
@@ -25,8 +20,8 @@ namespace WebApi.Controllers
         /// </summary>
         /// <param name="inputExcelFile">Excel input file</param>
         /// <returns>File upload result</returns>
-        [HttpPost(Name = "PostFile")]
-        public async Task<IActionResult> PostFile(IFormFile inputExcelFile)
+        [HttpPost(Name = "uploadInputFile")]
+        public async Task<IActionResult> UploadFile(IFormFile inputExcelFile)
         {
             long size = inputExcelFile.Length;
 
