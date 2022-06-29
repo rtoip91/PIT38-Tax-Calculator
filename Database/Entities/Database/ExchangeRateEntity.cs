@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Database.Entities
+namespace Database.Entities.Database
 {
     [Table("ExchangeRates")]
     public class ExchangeRateEntity

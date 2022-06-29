@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using Database.Entities;
+using Database.Entities.InMemory;
 
 namespace Database.Repository
 {

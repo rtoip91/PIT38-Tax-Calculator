@@ -3,6 +3,7 @@ using Database.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Database.Entities.InMemory;
 using Database.Repository;
 
 namespace Database.DataAccess

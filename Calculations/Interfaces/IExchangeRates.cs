@@ -1,4 +1,5 @@
 ﻿using Database.Entities;
+using Database.Entities.Database;
 
 namespace Calculations.Interfaces
 {

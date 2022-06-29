@@ -5,6 +5,7 @@ using Database.Entities;
 using Newtonsoft.Json;
 using System.Net;
 using Database.DataAccess.Interfaces;
+using Database.Entities.Database;
 
 namespace Calculations
 {

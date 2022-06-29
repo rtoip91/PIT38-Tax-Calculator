@@ -1,4 +1,5 @@
-﻿using Database.Entities;
+﻿using System.IO;
+using Database.Entities.Database;
 using Microsoft.EntityFrameworkCore;
 
 namespace Database
@@ -6,7 +7,8 @@ namespace Database
     internal sealed class ApplicationDbContext : DbContext
     {
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
-        private static bool _isMigrated = false;
+        public DbSet<FileEntity> FileEntities { get; set; }
+        private static bool _isMigrated;
         private static object locker = new();
 
         public ApplicationDbContext()
