@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Database.Entities;
 using Database.Entities.InMemory;
 
@@ -28,6 +29,6 @@ namespace Database.Repository
         public IList<SoldCryptoEntity> SoldCryptoCalculations { get; }
         public IList<DividendCalculationsEntity> DividendsCalculations { get; }
         public IList<CfdEntity> CfdCalculations { get; }
-        public string InputFileName { get; set; }
+        public Guid OperationGuid { get; set; }
     }
 }

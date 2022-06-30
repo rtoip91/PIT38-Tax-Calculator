@@ -18,6 +18,7 @@ public class FileWriter : IFileWriter
     private readonly IIncomeByCountryDataAccess _incomeByCountryDataAccess;
     private readonly IFileDataAccess _fileDataAccess;
     private readonly string _filePath;
+    private Guid _operationGuid;
 
 
     public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
@@ -40,9 +41,10 @@ public class FileWriter : IFileWriter
         _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
-    public async Task PresentData(CalculationResultDto calculationResultDto)
+    public async Task PresentData(Guid operationId, CalculationResultDto calculationResultDto)
     {
         CreateDirectory();
+        _operationGuid = operationId;
         await WriteCfdResultsToFile(calculationResultDto.CdfDto);
         await WriteStockResultsToFile(calculationResultDto.StockDto);
         await WriteCryptoResultsToFile(calculationResultDto.CryptoDto);
@@ -60,9 +62,10 @@ public class FileWriter : IFileWriter
         }
     }
 
-    private FileStream CreateOrUpdateZipFile()
+    private async Task<FileStream> CreateOrUpdateZipFile()
     {
-        string path = $"{_filePath}\\{_fileDataAccess.GetFileNameWithoutExtension()}.zip";
+        string fileName = await _fileDataAccess.GetCalculationResultFileName(_operationGuid);
+        string path = $"{_filePath}\\{fileName}";
 
         FileStream zipToOpen = new FileStream(path, FileMode.OpenOrCreate);
 
@@ -71,7 +74,7 @@ public class FileWriter : IFileWriter
 
     private async Task WritePitZgToFile()
     {
-        await using FileStream zipFile = CreateOrUpdateZipFile();
+        await using FileStream zipFile = await CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry pitZgEntry = CreateZipFileEntry(archive, Constants.Constants.PitZgFileName);
         await using StreamWriter sw = new StreamWriter(pitZgEntry.Open());
@@ -86,7 +89,7 @@ public class FileWriter : IFileWriter
         }
     }
 
-    private static ZipArchiveEntry CreateZipFileEntry(ZipArchive archive, string entryName)
+    private ZipArchiveEntry CreateZipFileEntry(ZipArchive archive, string entryName)
     {
         ZipArchiveEntry? entry = archive.GetEntry(entryName);
         entry?.Delete();
@@ -97,7 +100,7 @@ public class FileWriter : IFileWriter
 
     private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto)
     {
-        await using FileStream zipFile = CreateOrUpdateZipFile();
+        await using FileStream zipFile = await CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry stockEntry = CreateZipFileEntry(archive, Constants.Constants.StockCalculationsFileName);
         await using StreamWriter sw = new StreamWriter(stockEntry.Open());
@@ -118,7 +121,7 @@ public class FileWriter : IFileWriter
 
     private async Task WriteCryptoResultsToFile(CryptoDto cryptoDto)
     {
-        await using FileStream zipFile = CreateOrUpdateZipFile();
+        await using FileStream zipFile = await CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry cryptoEntry = CreateZipFileEntry(archive, Constants.Constants.CryptoCalculationsFileName);
         await using StreamWriter sw = new StreamWriter(cryptoEntry.Open());
@@ -151,7 +154,7 @@ public class FileWriter : IFileWriter
 
     private async Task WriteDividendResultsToFile(DividendCalculatorDto dividendCalculatorDto)
     {
-        await using FileStream zipFile = CreateOrUpdateZipFile();
+        await using FileStream zipFile = await CreateOrUpdateZipFile();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry dividendsEntry = CreateZipFileEntry(archive, Constants.Constants.DividendsCalculationsFileName);
         await using StreamWriter sw = new StreamWriter(dividendsEntry.Open());
@@ -171,7 +174,7 @@ public class FileWriter : IFileWriter
 
     private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
     {
-        await using FileStream zipFile = CreateOrUpdateZipFile();
+        await using FileStream zipFile = await CreateOrUpdateZipFile();
         IList<CfdEntity> cfdEntities = _cfdEntityDataAccess.GetCfdEntities();
         using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry cfdEntry = CreateZipFileEntry(archive, Constants.Constants.CfdCalculationsFileName);

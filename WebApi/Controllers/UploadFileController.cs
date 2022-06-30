@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TaxEtoro.Interfaces;
+﻿using Database.DataAccess.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace WebApi.Controllers
 {
@@ -8,11 +8,13 @@ namespace WebApi.Controllers
     public class UploadFileController : ControllerBase
     {
         private readonly IConfiguration _configuration;
+        private readonly IFileDataAccess _fileDataAccess;
 
-        public UploadFileController(IActionPerformer actionPerformer,
-            IConfiguration configuration)
+        public UploadFileController(IConfiguration configuration,
+            IFileDataAccess fileDataAccess)
         {
             _configuration = configuration;
+            _fileDataAccess = fileDataAccess;
         }
 
         /// <summary>
@@ -27,7 +29,9 @@ namespace WebApi.Controllers
 
             if (inputExcelFile.Length > 0)
             {
-                string filename = $"{Guid.NewGuid()}.xlsx";
+                var guid = Guid.NewGuid();
+                string filename = await _fileDataAccess.AddNewFile(guid);
+
                 var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
                     filename);
 
@@ -36,7 +40,7 @@ namespace WebApi.Controllers
                     await inputExcelFile.CopyToAsync(stream);
                 }
 
-                return Ok(new { filename, size });
+                return Ok(new { guid });
             }
 
 
