@@ -1,6 +1,5 @@
 ﻿using Database.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-
 namespace WebApi.Controllers
 {
     [Route("api/file/[action]")]
@@ -45,6 +44,23 @@ namespace WebApi.Controllers
 
 
             return StatusCode(StatusCodes.Status400BadRequest, "Incorrect file to upload");
+        }
+
+        [HttpGet(Name = "getResultFile")]
+        public async Task<IActionResult> GetResultFile(Guid operationId)
+        {
+            var filename = await _fileDataAccess.GetCalculationResultFileName(operationId);
+            if(filename == null)
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
+            }
+            var filePath = Path.Combine(_configuration["ResultStorageFolder"], filename);
+            if (!System.IO.File.Exists(filePath))
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
+            }
+            var stream = System.IO.File.OpenRead(filePath);
+            return File(stream, "application/octet-stream", filename);            
         }
     }
 }
