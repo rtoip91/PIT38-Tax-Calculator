@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Database.Entities.InMemory;
 using ExcelReader.Dto;
+using Microsoft.Extensions.Logging;
 
 namespace ExcelReader;
 
@@ -23,14 +24,17 @@ public class ExcelDataExtractor : IExcelDataExtractor
     private readonly IClosedPositionsDataAccess _closedPositionsDataAccess;
     private readonly ITransactionReportsDataAccess _transactionReportsDataAccess;
     private readonly IDividendsDataAccess _dividendsDataAccess;
+    private readonly ILogger<ExcelDataExtractor> _logger;
 
     public ExcelDataExtractor(IClosedPositionsDataAccess closedPositionsDataAccess,
         ITransactionReportsDataAccess transactionReportsDataAccess,
-        IDividendsDataAccess dividendsDataAccess)
+        IDividendsDataAccess dividendsDataAccess,
+        ILogger<ExcelDataExtractor> logger)
     {
         _closedPositionsDataAccess = closedPositionsDataAccess;
         _transactionReportsDataAccess = transactionReportsDataAccess;
         _dividendsDataAccess = dividendsDataAccess;
+        _logger = logger;
     }
 
     public async Task<bool> ImportDataFromExcel(string directory, string fileName)
@@ -56,10 +60,10 @@ public class ExcelDataExtractor : IExcelDataExtractor
             await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
         DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.Dividends);
 
-        Task extractClosedPositions = ExtractClosedPositionsAsync(closedPositionsDataTable, closedPositionDtos);
+        Task extractClosedPositions = ExtractClosedPositionsAsync(closedPositionsDataTable, closedPositionDtos, fileName);
         Task extractTransactionReports =
-            ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos);
-        Task extractDividends = ExtractDividendsAsync(dividendsDataTable, dividendDtos);
+            ExtractTransactionReportsAsync(transactionReportsDataTable, transactionReportDtos, fileName);
+        Task extractDividends = ExtractDividendsAsync(dividendsDataTable, dividendDtos, fileName);
 
         await Task.WhenAll(extractClosedPositions, extractTransactionReports, extractDividends);
 
@@ -120,7 +124,7 @@ public class ExcelDataExtractor : IExcelDataExtractor
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError(e.Message);
             return false;
         }
 
@@ -150,7 +154,7 @@ public class ExcelDataExtractor : IExcelDataExtractor
     }
 
     private async Task ExtractClosedPositionsAsync(DataTable dataTable,
-        IList<ClosedPositionExcelDto> closedPositionDtos)
+        IList<ClosedPositionExcelDto> closedPositionDtos, string fileName)
     {
         await Task.Run(() =>
         {
@@ -159,11 +163,13 @@ public class ExcelDataExtractor : IExcelDataExtractor
                 ClosedPositionExcelDto closedPosition = new ClosedPositionExcelDto(row);
                 closedPositionDtos.Add(closedPosition);
             }
+
+            _logger.LogInformation($"[{fileName}] added {dataTable.Rows.Count} closed positions");
         });
     }
 
     private async Task ExtractDividendsAsync(DataTable dataTable,
-        IList<DividendDto> dividendDtos)
+        IList<DividendDto> dividendDtos, string fileName)
     {
         await Task.Run(() =>
         {
@@ -172,11 +178,13 @@ public class ExcelDataExtractor : IExcelDataExtractor
                 DividendDto closedPosition = new DividendDto(row);
                 dividendDtos.Add(closedPosition);
             }
+
+            _logger.LogInformation($"[{fileName}] added {dataTable.Rows.Count} dividend positions");
         });
     }
 
     private async Task ExtractTransactionReportsAsync(DataTable dataTable,
-        IList<TransactionReportExcelDto> transactionReportDtos)
+        IList<TransactionReportExcelDto> transactionReportDtos, string fileName)
     {
         await Task.Run(() =>
         {
@@ -185,6 +193,8 @@ public class ExcelDataExtractor : IExcelDataExtractor
                 TransactionReportExcelDto transactionReport = new TransactionReportExcelDto(row);
                 transactionReportDtos.Add(transactionReport);
             }
+
+            _logger.LogInformation($"[{fileName}] added {dataTable.Rows.Count} transaction reports");
         });
     }
 }

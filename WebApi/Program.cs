@@ -1,5 +1,6 @@
 using Calculations.Statics;
 using Database;
+using Serilog;
 using TaxEtoro.Interfaces;
 using TaxEtoro.Statics;
 
@@ -7,8 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+
+var logger = new LoggerConfiguration()
+  .MinimumLevel.Information()
+  .WriteTo.Console()
+  .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)  
+  .CreateLogger();
+
 builder.Logging.ClearProviders();
-builder.Logging.AddDebug();
+builder.Logging.AddSerilog(logger);
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

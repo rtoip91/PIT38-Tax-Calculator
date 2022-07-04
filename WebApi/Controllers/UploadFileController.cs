@@ -8,12 +8,14 @@ namespace WebApi.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IFileDataAccess _fileDataAccess;
-
+        private readonly ILogger<UploadFileController> _logger;
         public UploadFileController(IConfiguration configuration,
-            IFileDataAccess fileDataAccess)
+            IFileDataAccess fileDataAccess,
+            ILogger<UploadFileController> logger)
         {
             _configuration = configuration;
             _fileDataAccess = fileDataAccess;
+            _logger = logger;
         }
 
         /// <summary>
@@ -39,10 +41,12 @@ namespace WebApi.Controllers
                     await inputExcelFile.CopyToAsync(stream);
                 }
 
+                _logger.LogInformation($"Succesfuly added a file {filename} !");
+
                 return Ok(new { guid });
             }
 
-
+            _logger.LogWarning("Wrong file provided");
             return StatusCode(StatusCodes.Status400BadRequest, "Incorrect file to upload");
         }
 

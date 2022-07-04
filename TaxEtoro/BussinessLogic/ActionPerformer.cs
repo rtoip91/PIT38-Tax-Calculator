@@ -13,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using ResultsPresenter.Interfaces;
 using TaxEtoro.Interfaces;
+using Microsoft.Extensions.Logging;
 
 namespace TaxEtoro.BussinessLogic
 {
@@ -23,12 +24,15 @@ namespace TaxEtoro.BussinessLogic
         private readonly PeriodicTimer _periodicTimer;
         private readonly IServiceProvider _serviceProvider;
         private readonly IFileDataAccess _fileDataAccess;
+        private readonly ILogger<ActionPerformer> _logger;
+
         private bool _isDisposed;
 
         public ActionPerformer(IDataCleaner dataCleaner,
             IConfiguration configuration,
             IServiceProvider serviceProvider,
-            IFileDataAccess fileDataAccess)
+            IFileDataAccess fileDataAccess,
+            ILogger<ActionPerformer> logger)
         {
             _dataCleaner = dataCleaner;
             _isDisposed = false;
@@ -36,6 +40,7 @@ namespace TaxEtoro.BussinessLogic
             _periodicTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
             _serviceProvider = serviceProvider;
             _fileDataAccess = fileDataAccess;
+            _logger = logger;
         }
 
         public async ValueTask DisposeAsync()
@@ -57,7 +62,7 @@ namespace TaxEtoro.BussinessLogic
 
             if (!operations.Any())
             {
-                Console.WriteLine("No pending operations detected");
+                _logger.LogInformation("No pending operations detected");
                 return;
             }
 
@@ -82,7 +87,7 @@ namespace TaxEtoro.BussinessLogic
                 var fileRemoval = task.ContinueWith(_ =>
                 {
                     file.Delete();
-                    Console.WriteLine($"File: {file.Name} was deleted");
+                    _logger.LogInformation($"File: {file.Name} was deleted");
                 });
 
                 tasks.Add(task);
@@ -106,7 +111,7 @@ namespace TaxEtoro.BussinessLogic
             IExcelDataExtractor reader = scope.ServiceProvider.GetService<IExcelDataExtractor>();
             ITaxCalculations taxCalculations = scope.ServiceProvider.GetService<ITaxCalculations>();
 
-            Console.WriteLine($"Rozpoczęto przetwarzanie pliku: {fileName}");
+            _logger.LogInformation($"Started processing of the file {fileName}");
             await reader.ImportDataFromExcel(directory, fileName);
             var result = await taxCalculations.CalculateTaxes();
 
@@ -119,7 +124,8 @@ namespace TaxEtoro.BussinessLogic
             IFileWriter fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
 
             await fileWriter.PresentData(operationGuid, result);
-            Console.WriteLine($"Zakończono przetwarzanie pliku: {_fileDataAccess.GetInputFileName(operationGuid)}");
+            string fileName = await _fileDataAccess.GetInputFileName(operationGuid);
+            _logger.LogInformation($"Finished processing of the file {fileName}");
         }
     }
 }
