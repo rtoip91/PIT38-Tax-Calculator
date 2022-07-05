@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ExcelReader
+namespace ExcelReader.Statics
 {
     public static class FileInputUtil
     {

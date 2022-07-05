@@ -1,5 +1,6 @@
 using Calculations.Statics;
 using Database;
+using ExcelReader.Statics;
 using Serilog;
 using TaxEtoro.Interfaces;
 using TaxEtoro.Statics;
@@ -25,6 +26,7 @@ builder.Services.AddSwaggerGen();
 TaxEtoroServiceRegistration.RegisterServices(builder.Services);
 CalculationsServicesRegistration.RegisterServices(builder.Services);
 DatabaseServiceRegistration.RegisterServices(builder.Services);
+ExcelReaderServiceRegistration.RegisterServices(builder.Services);
 
 var app = builder.Build();
 
@@ -34,8 +36,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-
 
 app.UseHttpsRedirection();
 

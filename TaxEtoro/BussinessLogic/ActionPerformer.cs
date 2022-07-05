@@ -7,13 +7,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ExcelReader;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 using ResultsPresenter.Interfaces;
 using TaxEtoro.Interfaces;
 using Microsoft.Extensions.Logging;
+using ExcelReader.Statics;
 
 namespace TaxEtoro.BussinessLogic
 {

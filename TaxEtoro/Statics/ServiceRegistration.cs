@@ -16,7 +16,6 @@ public static class TaxEtoroServiceRegistration
 {
     public static void RegisterServices(IServiceCollection services)
     {
-        services.AddTransient<IExcelDataExtractor, ExcelDataExtractor>();
         services.AddTransient<IDataCleaner, DataCleaner>();
         services.AddTransient<IEventsSubscriber, EventsSubscriber>();
         services.AddTransient<ITaxCalculations, TaxCalculations>();
