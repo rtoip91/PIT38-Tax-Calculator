@@ -82,7 +82,7 @@ namespace ExcelReader
                     extractedData.ClosedPositions.Add(closedPosition);
                 }
 
-                _logger.LogInformation($"[{fileName}] added {dataTable.Rows.Count} closed positions");
+                _logger.LogDebug($"[{fileName}] added {dataTable.Rows.Count} closed positions");
                 dataTable.Rows.Clear();
             });
         }
@@ -98,7 +98,7 @@ namespace ExcelReader
                     extractedData.Dividends.Add(closedPosition);
                 }
 
-                _logger.LogInformation($"[{fileName}] added {dataTable.Rows.Count} dividend positions");
+                _logger.LogDebug($"[{fileName}] added {dataTable.Rows.Count} dividend positions");
                 dataTable.Rows.Clear();
             });
         }
@@ -114,7 +114,7 @@ namespace ExcelReader
                     extractedData.TransactionReports.Add(transactionReport);
                 }
 
-                _logger.LogInformation($"[{fileName}] added {dataTable.Rows.Count} transaction reports");
+                _logger.LogDebug($"[{fileName}] added {dataTable.Rows.Count} transaction reports");
                 dataTable.Rows.Clear();
             });
         }

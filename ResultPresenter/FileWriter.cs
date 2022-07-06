@@ -1,7 +1,6 @@
 ﻿using System.IO.Compression;
 using Calculations.Dto;
 using Database.DataAccess.Interfaces;
-using Database.Entities;
 using Database.Entities.InMemory;
 using Microsoft.Extensions.Configuration;
 using ResultsPresenter.Interfaces;
