@@ -4,6 +4,7 @@ using Database.DataAccess.Interfaces;
 using ExcelReader.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -78,9 +79,7 @@ namespace TaxEtoro.BussinessLogic
                 var task = Task.Run(async () =>
                 {
                     await using AsyncServiceScope scope = serviceProvider.CreateAsyncScope();
-                    var dto = await PerformCalculations(directory.FullName, file.Name, scope);
-                    var dtoString = JsonConvert.SerializeObject(dto);
-                    await _fileDataAccess.SetAsCalculated(operation, dtoString);
+                    var dto = await Calculate(directory, file, scope, operation);
                     await PresentCalculationResults(dto, operation, scope);
                 });
 
@@ -95,6 +94,15 @@ namespace TaxEtoro.BussinessLogic
             }
 
             await Task.WhenAll(tasks);
+        }
+
+        private async Task<CalculationResultDto> Calculate(DirectoryInfo directory, FileInfo file,
+            AsyncServiceScope scope, Guid operation)
+        {
+            var dto = await PerformCalculations(directory.FullName, file.Name, scope);
+            var dtoString = JsonConvert.SerializeObject(dto);
+            await _fileDataAccess.SetAsCalculated(operation, dtoString);
+            return dto;
         }
 
         public async Task PerformCalculationsAndWriteResultsPeriodically()
@@ -123,9 +131,9 @@ namespace TaxEtoro.BussinessLogic
         {
             IFileWriter fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
 
-            await fileWriter.PresentData(operationGuid, result);
-            string fileName = await _fileDataAccess.GetInputFileName(operationGuid);
-            _logger.LogInformation($"Finished processing of the file {fileName}");
+            string fileName = await fileWriter.PresentData(operationGuid, result);
+
+            _logger.LogInformation($"Created results in {fileName}");
         }
     }
 }

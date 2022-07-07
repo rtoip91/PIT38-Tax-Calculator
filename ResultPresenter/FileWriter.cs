@@ -40,7 +40,7 @@ public class FileWriter : IFileWriter
         _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
-    public async Task PresentData(Guid operationId, CalculationResultDto calculationResultDto)
+    public async Task<string> PresentData(Guid operationId, CalculationResultDto calculationResultDto)
     {
         CreateDirectory();
         _operationGuid = operationId;
@@ -49,6 +49,7 @@ public class FileWriter : IFileWriter
         await WriteCryptoResultsToFile(calculationResultDto.CryptoDto);
         await WriteDividendResultsToFile(calculationResultDto.DividendDto);
         await WritePitZgToFile();
+        return await _fileDataAccess.GetCalculationResultFileName(_operationGuid);
     }
 
     private void CreateDirectory()
