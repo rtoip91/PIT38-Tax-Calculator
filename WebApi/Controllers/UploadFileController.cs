@@ -58,12 +58,15 @@ namespace WebApi.Controllers
             {
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
             }
+
             var filePath = Path.Combine(_configuration["ResultStorageFolder"], filename);
             if (!System.IO.File.Exists(filePath))
             {
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
             }
+
             var stream = System.IO.File.OpenRead(filePath);
+            await _fileDataAccess.SetAsDownloaded(operationId);
             return File(stream, "application/octet-stream", filename);            
         }
     }

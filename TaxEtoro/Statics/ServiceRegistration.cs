@@ -22,5 +22,6 @@ public static class TaxEtoroServiceRegistration
         services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
         services.AddTransient<IFileWriter, FileWriter>();
+        services.AddTransient<IFileCleaner, FileCleaner>();
     }
 }

@@ -44,6 +44,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 var actionPerformer = app.Services.GetService<IActionPerformer>();
-actionPerformer.PerformCalculationsAndWriteResultsPeriodically();
+if (actionPerformer != null)
+{
+    actionPerformer.PerformCalculationsAndWriteResultsPeriodically();
+    actionPerformer.ClearResultFilesPeriodically();
+}
 
 app.Run();

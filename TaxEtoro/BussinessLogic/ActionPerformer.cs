@@ -21,11 +21,14 @@ namespace TaxEtoro.BussinessLogic
     internal class ActionPerformer : IActionPerformer
     {
         private readonly IDataCleaner _dataCleaner;
-        private readonly IConfiguration _configuration;
-        private readonly PeriodicTimer _periodicTimer;
+        private readonly IConfiguration _configuration;       
         private readonly IServiceProvider _serviceProvider;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<ActionPerformer> _logger;
+        private readonly IFileCleaner _fileCleaner;
+
+        private readonly PeriodicTimer _calculationsTimer;
+        private readonly PeriodicTimer _fileCleanTimer;
 
         private bool _isDisposed;
 
@@ -33,15 +36,18 @@ namespace TaxEtoro.BussinessLogic
             IConfiguration configuration,
             IServiceProvider serviceProvider,
             IFileDataAccess fileDataAccess,
-            ILogger<ActionPerformer> logger)
+            ILogger<ActionPerformer> logger,
+            IFileCleaner fileCleaner)
         {
             _dataCleaner = dataCleaner;
             _isDisposed = false;
             _configuration = configuration;
-            _periodicTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+            _calculationsTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+            _fileCleanTimer = new PeriodicTimer(TimeSpan.FromSeconds(10));
             _serviceProvider = serviceProvider;
             _fileDataAccess = fileDataAccess;
             _logger = logger;
+            _fileCleaner = fileCleaner;
         }
 
         public async ValueTask DisposeAsync()
@@ -107,7 +113,7 @@ namespace TaxEtoro.BussinessLogic
 
         public async Task PerformCalculationsAndWriteResultsPeriodically()
         {
-            while (await _periodicTimer.WaitForNextTickAsync())
+            while (await _calculationsTimer.WaitForNextTickAsync())
             {
                 await DoWork(_serviceProvider);
             }
@@ -134,6 +140,14 @@ namespace TaxEtoro.BussinessLogic
             string fileName = await fileWriter.PresentData(operationGuid, result);
 
             _logger.LogInformation($"Created results in {fileName}");
+        }
+
+        public async Task ClearResultFilesPeriodically()
+        {
+            while (await _fileCleanTimer.WaitForNextTickAsync())
+            {
+                await _fileCleaner.CleanCalculationResultFiles();
+            }
         }
     }
 }
