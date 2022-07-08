@@ -2,8 +2,8 @@ using Calculations.Statics;
 using Database;
 using ExcelReader.Statics;
 using Serilog;
-using TaxEtoro.Interfaces;
 using TaxEtoro.Statics;
+using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,11 +43,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-var actionPerformer = app.Services.GetService<IActionPerformer>();
-if (actionPerformer != null)
-{
-    actionPerformer.PerformCalculationsAndWriteResultsPeriodically();
-    actionPerformer.ClearResultFilesPeriodically();
-}
+app.RunPeriodicTasks();
 
 app.Run();

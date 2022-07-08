@@ -2,8 +2,6 @@
 using Calculations.Interfaces;
 using Database.DataAccess;
 using Database.DataAccess.Interfaces;
-using ExcelReader;
-using ExcelReader.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using TaxEtoro.BussinessLogic;
 using TaxEtoro.Interfaces;
@@ -23,5 +21,6 @@ public static class TaxEtoroServiceRegistration
         services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
         services.AddTransient<IFileWriter, FileWriter>();
         services.AddTransient<IFileCleaner, FileCleaner>();
+        services.AddTransient<IFileProcessor, FileProcessor>();
     }
 }
