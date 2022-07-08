@@ -40,7 +40,7 @@ public class FileWriter : IFileWriter
         _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
-    public async Task<string> PresentData(Guid operationId, CalculationResultDto calculationResultDto)
+    public async Task<string> PresentData(Guid operationId, FileInfo inputFileData, CalculationResultDto calculationResultDto)
     {
         CreateDirectory();
         _operationGuid = operationId;
@@ -49,6 +49,7 @@ public class FileWriter : IFileWriter
         await WriteCryptoResultsToFile(calculationResultDto.CryptoDto);
         await WriteDividendResultsToFile(calculationResultDto.DividendDto);
         await WritePitZgToFile();
+        await CopyExcelFileToZip(inputFileData);
         return await _fileDataAccess.GetCalculationResultFileName(_operationGuid);
     }
 
@@ -70,6 +71,13 @@ public class FileWriter : IFileWriter
         FileStream zipToOpen = new FileStream(path, FileMode.OpenOrCreate);
 
         return zipToOpen;
+    }
+
+    private async Task CopyExcelFileToZip(FileInfo file)
+    {
+        await using FileStream zipFile = await CreateOrUpdateZipFile();
+        using ZipArchive archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
+        archive.CreateEntryFromFile(file.FullName, Constants.Constants.EtoroExcelFile);
     }
 
     private async Task WritePitZgToFile()

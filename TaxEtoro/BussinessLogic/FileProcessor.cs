@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Calculations.Dto;
@@ -83,7 +84,7 @@ namespace TaxEtoro.BussinessLogic
             {
                 await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
                 var dto = await Calculate(directory, file, scope, operation);
-                await PresentCalculationResults(dto, operation, scope);
+                await PresentCalculationResults(dto, file, scope, operation);
             });
             return task;
         }
@@ -101,12 +102,12 @@ namespace TaxEtoro.BussinessLogic
             return result;
         }
 
-        private async Task PresentCalculationResults(CalculationResultDto result, Guid operationGuid,
-            AsyncServiceScope scope)
+        private async Task PresentCalculationResults(CalculationResultDto result, FileInfo file,
+            AsyncServiceScope scope, Guid operationGuid)
         {
             IFileWriter fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
 
-            string fileName = await fileWriter.PresentData(operationGuid, result);
+            string fileName = await fileWriter.PresentData(operationGuid, file, result);
 
             _logger.LogInformation($"Created results in {fileName}");
         }
