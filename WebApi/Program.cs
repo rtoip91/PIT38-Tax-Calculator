@@ -11,6 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 var logger = new LoggerConfiguration()
+  .MinimumLevel.Override("Microsoft.AspNetCore",Serilog.Events.LogEventLevel.Warning)
   .MinimumLevel.Information()
   .WriteTo.Console()
   .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)  

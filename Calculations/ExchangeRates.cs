@@ -13,16 +13,17 @@ namespace Calculations
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IExchangeRatesDataAccess _exchangeRatesDataAccess;
-        private readonly SemaphoreSlim _semaphore;
+        private readonly IExchangeRatesLocker _exchangeRatesLocker;
         private readonly ILogger<ExchangeRates> _logger;
 
         public ExchangeRates(IHttpClientFactory httpClientFactory, 
             IExchangeRatesDataAccess exchangeRatesDataAccess,
+            IExchangeRatesLocker exchangeRatesLocker,
             ILogger<ExchangeRates> logger)
         {
             _httpClientFactory = httpClientFactory;
             _exchangeRatesDataAccess = exchangeRatesDataAccess;
-            _semaphore = new SemaphoreSlim(1, 1);
+            _exchangeRatesLocker = exchangeRatesLocker;
             _logger = logger;
         }
 
@@ -42,9 +43,11 @@ namespace Calculations
 
             DateTime newDate = date.AddDays(subtractDays);
 
+            var locker = _exchangeRatesLocker.GetLocker(newDate);
+
             if (!bankHoliday)
             {
-                await _semaphore.WaitAsync();
+                await locker.WaitAsync();
             }
 
             ExchangeRateEntity entity;
@@ -67,7 +70,7 @@ namespace Calculations
             {
                 if (!bankHoliday)
                 {
-                    _semaphore.Release();
+                    locker.Release();
                 }
             }
         }
@@ -80,7 +83,7 @@ namespace Calculations
         private async Task<ExchangeRateEntity> HandleBankHoliday(string currencyCode, DateTime holidayDate)
         {
             DateTime holidayDay = holidayDate;
-            ExchangeRateEntity entity = await GetRateForPreviousDayBankHolidayHandling(currencyCode, holidayDate,true);
+            ExchangeRateEntity entity = await GetRateForPreviousDayBankHolidayHandling(currencyCode, holidayDate, true);
             entity.Date = holidayDay;
             return await _exchangeRatesDataAccess.MakeCopyAndSaveToDb(entity);
         }
