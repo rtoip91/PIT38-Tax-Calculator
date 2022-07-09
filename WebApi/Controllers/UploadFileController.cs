@@ -41,7 +41,7 @@ namespace WebApi.Controllers
                     await inputExcelFile.CopyToAsync(stream);
                 }
 
-                _logger.LogInformation($"Succesfuly added a file {filename} !");
+                _logger.LogInformation($"Succesfuly uploaded a file {filename}");
 
                 return Ok(new { guid });
             }

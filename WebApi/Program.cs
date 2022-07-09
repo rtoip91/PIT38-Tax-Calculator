@@ -15,7 +15,8 @@ var logger = new LoggerConfiguration()
   .MinimumLevel.Override("System.Net.Http.HttpClient", Serilog.Events.LogEventLevel.Warning)
   .MinimumLevel.Information()
   .WriteTo.Console()
-  .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)  
+  .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)
+  .Enrich.FromLogContext()
   .CreateLogger();
 
 builder.Logging.ClearProviders();
