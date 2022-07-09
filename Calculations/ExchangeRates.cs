@@ -1,11 +1,11 @@
 ﻿using Calculations.Dto;
 using Calculations.Exceptions;
 using Calculations.Interfaces;
-using Database.Entities;
 using Newtonsoft.Json;
 using System.Net;
 using Database.DataAccess.Interfaces;
 using Database.Entities.Database;
+using Microsoft.Extensions.Logging;
 
 namespace Calculations
 {
@@ -13,14 +13,20 @@ namespace Calculations
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IExchangeRatesDataAccess _exchangeRatesDataAccess;
+        private readonly SemaphoreSlim _semaphore;
+        private readonly ILogger<ExchangeRates> _logger;
 
-        public ExchangeRates(IHttpClientFactory httpClientFactory, IExchangeRatesDataAccess exchangeRatesDataAccess)
+        public ExchangeRates(IHttpClientFactory httpClientFactory, 
+            IExchangeRatesDataAccess exchangeRatesDataAccess,
+            ILogger<ExchangeRates> logger)
         {
             _httpClientFactory = httpClientFactory;
             _exchangeRatesDataAccess = exchangeRatesDataAccess;
+            _semaphore = new SemaphoreSlim(1, 1);
+            _logger = logger;
         }
 
-        public async Task<ExchangeRateEntity> GetRateForPreviousDay(string currencyCode, DateTime date)
+        private async Task<ExchangeRateEntity> GetRateForPreviousDayBankHolidayHandling(string currencyCode, DateTime date, bool bankHoliday = false)
         {
             double subtractDays = -1;
 
@@ -35,6 +41,12 @@ namespace Calculations
             }
 
             DateTime newDate = date.AddDays(subtractDays);
+
+            if (!bankHoliday)
+            {
+                await _semaphore.WaitAsync();
+            }
+
             ExchangeRateEntity entity;
             try
             {
@@ -43,6 +55,7 @@ namespace Calculations
             }
             catch (BankHolidayException)
             {
+                _logger.LogInformation($"Bank holiday on {newDate.ToShortDateString}");
                 return await HandleBankHoliday(currencyCode, newDate);
             }
             catch (Exception ex)
@@ -50,12 +63,24 @@ namespace Calculations
                 Console.WriteLine(ex.Message);
                 throw;
             }
+            finally
+            {
+                if (!bankHoliday)
+                {
+                    _semaphore.Release();
+                }
+            }
+        }
+
+        public async Task<ExchangeRateEntity> GetRateForPreviousDay(string currencyCode, DateTime date)
+        {
+            return await GetRateForPreviousDayBankHolidayHandling(currencyCode, date);
         }
 
         private async Task<ExchangeRateEntity> HandleBankHoliday(string currencyCode, DateTime holidayDate)
         {
             DateTime holidayDay = holidayDate;
-            ExchangeRateEntity entity = await GetRateForPreviousDay(currencyCode, holidayDate);
+            ExchangeRateEntity entity = await GetRateForPreviousDayBankHolidayHandling(currencyCode, holidayDate,true);
             entity.Date = holidayDay;
             return await _exchangeRatesDataAccess.MakeCopyAndSaveToDb(entity);
         }
@@ -79,6 +104,7 @@ namespace Calculations
             var httpClient = _httpClientFactory.CreateClient("ExchangeRates");
             using var resp = await httpClient.GetAsync($"{currencyCode.ToLower()}/{date:yyyy-MM-dd}/",
                 HttpCompletionOption.ResponseHeadersRead);
+
             if (resp.StatusCode == HttpStatusCode.NotFound)
             {
                 throw new BankHolidayException();
@@ -97,8 +123,8 @@ namespace Calculations
             }
             catch (JsonReaderException)
             {
-                Console.WriteLine("Could not parse given exchange rate response");
-                Console.WriteLine(result);
+                _logger.LogError("Could not parse given exchange rate response");
+                _logger.LogInformation(result);
                 throw;
             }
             

@@ -1,8 +1,6 @@
 ﻿using Calculations.Calculators;
 using Calculations.Dto;
 using Calculations.Interfaces;
-using Database.DataAccess;
-using Database.DataAccess.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Calculations.Statics;
@@ -11,7 +9,7 @@ public static class CalculationsServicesRegistration
 {
     public static void RegisterServices(IServiceCollection services)
     {
-        services.AddTransient<IExchangeRates, ExchangeRates>();
+        services.AddSingleton<IExchangeRates, ExchangeRates>();
         services.AddScoped<ICalculator<CalculationResultDto>, Calculator>();
         services.AddScoped<ICalculationEvents>(x => (Calculator)x.GetService<ICalculator<CalculationResultDto>>());
         services.AddTransient<ICalculator<CfdCalculatorDto>, CfdCalculator>();
