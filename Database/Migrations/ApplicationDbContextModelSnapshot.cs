@@ -15,9 +15,9 @@ namespace Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.3");
+            modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
 
-            modelBuilder.Entity("Database.Entities.ExchangeRateEntity", b =>
+            modelBuilder.Entity("Database.Entities.Database.ExchangeRateEntity", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -38,6 +38,35 @@ namespace Database.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("ExchangeRates");
+                });
+
+            modelBuilder.Entity("Database.Entities.Database.FileEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("CalculationResultFileName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("CalculationResultJson")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("InputFileName")
+                        .HasColumnType("TEXT");
+
+                    b.Property<Guid>("OperationGuid")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("StatusChangeDate")
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("File");
                 });
 #pragma warning restore 612, 618
         }

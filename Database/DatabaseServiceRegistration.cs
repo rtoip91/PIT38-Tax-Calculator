@@ -19,7 +19,7 @@ namespace Database
             services.AddTransient<IDividendsDataAccess, DividendsDataAccess>();
             services.AddTransient<IDividendCalculationsDataAccess, DividendCalculationsDataAccess>();
             services.AddTransient<IIncomeByCountryDataAccess, IncomeByCountryDataAccess>();
-            services.AddScoped<IFileDataAccess, FileDataAccess>();
+            services.AddTransient<IFileDataAccess, FileDataAccess>();
             services.AddScoped<IDataRepository, DataRepository>();
         }
     }

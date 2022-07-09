@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace ExcelReader
+namespace ExcelReader.Statics
 {
     public static class FileInputUtil
     {
@@ -32,12 +32,6 @@ namespace ExcelReader
         {
             var rootDir = GetRootDirectory().FullName;
             return new DirectoryInfo(Path.Combine(rootDir, directory));
-        }
-
-        public static DirectoryInfo GetSubDirectory(string directory, string subDirectory)
-        {
-            var currentDir = GetRootDirectory().FullName;
-            return new DirectoryInfo(Path.Combine(currentDir, directory, subDirectory));
         }
     }
 }

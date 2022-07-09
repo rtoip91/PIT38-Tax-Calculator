@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Database.Entities;
+using Database.Entities.InMemory;
 using ExcelReader.Dto;
 
 namespace ExcelReader.MappingProfiles

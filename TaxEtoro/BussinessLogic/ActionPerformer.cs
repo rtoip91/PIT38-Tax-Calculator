@@ -1,14 +1,7 @@
-﻿using Calculations.Dto;
-using Calculations.Interfaces;
-using Database.DataAccess.Interfaces;
-using ExcelReader.Interfaces;
+﻿using Database.DataAccess.Interfaces;
 using System;
-using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
-using ExcelReader;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using ResultsPresenter.Interfaces;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
@@ -16,20 +9,24 @@ namespace TaxEtoro.BussinessLogic
     internal class ActionPerformer : IActionPerformer
     {
         private readonly IDataCleaner _dataCleaner;
-        private readonly IConfiguration _configuration;
+        private readonly IFileCleaner _fileCleaner;
+        private readonly IFileProcessor _fileProcessor;
+
+        private readonly PeriodicTimer _calculationsTimer;
+        private readonly PeriodicTimer _fileCleanTimer;
+
         private bool _isDisposed;
-        private readonly IServiceProvider _serviceProvider;
 
-
-        public ActionPerformer(IServiceProvider serviceProvider,
-            IDataCleaner dataCleaner,
-            IConfiguration configuration)
+        public ActionPerformer(IDataCleaner dataCleaner,
+            IFileCleaner fileCleaner,
+            IFileProcessor fileProcessor)
         {
-            _serviceProvider = serviceProvider;
             _dataCleaner = dataCleaner;
             _isDisposed = false;
-            _configuration = configuration;
-            AppDomain.CurrentDomain.ProcessExit += OnAppClose;
+            _calculationsTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+            _fileCleanTimer = new PeriodicTimer(TimeSpan.FromMinutes(10));
+            _fileCleaner = fileCleaner;
+            _fileProcessor = fileProcessor;
         }
 
         public async ValueTask DisposeAsync()
@@ -41,55 +38,20 @@ namespace TaxEtoro.BussinessLogic
             }
         }
 
-        private void OnAppClose(object sender, EventArgs e)
+        public async Task PerformCalculationsAndWriteResultsPeriodically()
         {
-            _ = DisposeAsync();
-        }
-
-        public async Task PerformCalculationsAndWriteResults()
-        {
-            var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
-            var files = directory.GetFiles("*xlsx");
-
-            IList<Task> tasks = new List<Task>();
-
-            foreach (var filename in files)
+            while (await _calculationsTimer.WaitForNextTickAsync())
             {
-                var task = Task.Run(async () =>
-                {
-                    await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
-                    var dto = await PerformCalculations(directory.FullName, filename.Name, scope);
-                    await PresentCalcucaltionResults(dto, scope);
-                });
-
-                tasks.Add(task);
+                await _fileProcessor.ProcessFiles();
             }
-
-            await Task.WhenAll(tasks);
         }
 
-        private async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
-            AsyncServiceScope scope)
+        public async Task ClearResultFilesPeriodically()
         {
-            IExcelDataExtractor reader = scope.ServiceProvider.GetService<IExcelDataExtractor>();
-            ITaxCalculations taxCalculations = scope.ServiceProvider.GetService<ITaxCalculations>();
-            IFileDataAccess fileDataAccess = scope.ServiceProvider.GetService<IFileDataAccess>();
-
-            fileDataAccess.SetFileName(fileName);
-            Console.WriteLine($"Rozpoczęto przetwarzanie pliku: {fileDataAccess.GetFileName()}");
-            await reader.ImportDataFromExcel(directory, fileName);
-            var result = await taxCalculations.CalculateTaxes();
-
-            return result;
-        }
-
-        private async Task PresentCalcucaltionResults(CalculationResultDto result, AsyncServiceScope scope)
-        {
-            IFileDataAccess fileDataAccess = scope.ServiceProvider.GetService<IFileDataAccess>();
-            IFileWriter fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
-
-            await fileWriter.PresentData(result);
-            Console.WriteLine($"Zakończono przetwarzanie pliku: {fileDataAccess.GetFileName()}");
+            while (await _fileCleanTimer.WaitForNextTickAsync())
+            {
+                await _fileCleaner.CleanCalculationResultFiles();
+            }
         }
     }
 }

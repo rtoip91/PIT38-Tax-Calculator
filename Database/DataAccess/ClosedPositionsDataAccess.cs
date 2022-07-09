@@ -3,6 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
+using Database.Entities.InMemory;
 using Database.Repository;
 using Microsoft.EntityFrameworkCore;
 

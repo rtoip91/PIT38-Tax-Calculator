@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Database.Entities;
+using Database.Entities.Database;
 
 namespace Database.DataAccess.Interfaces
 {

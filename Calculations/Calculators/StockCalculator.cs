@@ -4,6 +4,8 @@ using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities;
 using Calculations.Extensions;
+using Database.Entities.Database;
+using Database.Entities.InMemory;
 
 namespace Calculations.Calculators
 {

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Database.Entities;
+using Database.Entities.InMemory;
 
 namespace Database.DataAccess.Interfaces
 {

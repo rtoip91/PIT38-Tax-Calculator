@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Database.Enums;
 
-namespace Database.Entities
+namespace Database.Entities.InMemory
 {
     [Table("CfdCalculations")]
     public class CfdEntity
