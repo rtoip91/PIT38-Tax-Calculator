@@ -58,7 +58,7 @@ namespace Calculations
             }
             catch (BankHolidayException)
             {
-                _logger.LogInformation($"Bank holiday on {newDate.ToShortDateString}");
+                _logger.LogInformation($"Bank holiday on {newDate.ToShortDateString()}");
                 return await HandleBankHoliday(currencyCode, newDate);
             }
             catch (Exception ex)
@@ -97,6 +97,7 @@ namespace Calculations
                 return exchangeRate;
             }
 
+            _logger.LogInformation($"Getting exchange rate from api {currencyCode} [{date.ToShortDateString()}] ");
             exchangeRate = await GetRatesFromApi(currencyCode, date);
             await _exchangeRatesDataAccess.SaveRate(exchangeRate);
             return exchangeRate;
@@ -145,6 +146,7 @@ namespace Calculations
                 }
             }
 
+            _logger.LogInformation($"Succesfuly recived exchange rate from api {entity.Code} [{entity.Date.ToShortDateString()}]");
             return entity;
         }
     }
