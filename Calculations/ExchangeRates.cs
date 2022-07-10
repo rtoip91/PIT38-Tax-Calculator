@@ -51,6 +51,7 @@ namespace Calculations
             }
 
             ExchangeRateEntity entity;
+
             try
             {
                 entity = await GetRateForDay(currencyCode, newDate);

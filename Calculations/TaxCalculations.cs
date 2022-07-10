@@ -5,14 +5,11 @@ namespace Calculations;
 
 public class TaxCalculations : ITaxCalculations
 {
-    private readonly ICalculator<CalculationResultDto> _calculator;
-    private readonly ICalculationEvents _events;
+    private readonly ICalculator<CalculationResultDto> _calculator;  
 
-    public TaxCalculations( ICalculator<CalculationResultDto> calculator,
-        ICalculationEvents events)
+    public TaxCalculations( ICalculator<CalculationResultDto> calculator)
     {
-        _calculator = calculator;
-        _events = events;
+        _calculator = calculator;       
     }
 
     public async Task<CalculationResultDto> CalculateTaxes()

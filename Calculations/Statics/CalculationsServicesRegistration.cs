@@ -11,8 +11,7 @@ public static class CalculationsServicesRegistration
     {
         services.AddTransient<IExchangeRates, ExchangeRates>();
         services.AddSingleton<IExchangeRatesLocker, ExchangeRatesLocker>();
-        services.AddScoped<ICalculator<CalculationResultDto>, Calculator>();
-        services.AddScoped<ICalculationEvents>(x => (Calculator)x.GetService<ICalculator<CalculationResultDto>>());
+        services.AddScoped<ICalculator<CalculationResultDto>, Calculator>();       
         services.AddTransient<ICalculator<CfdCalculatorDto>, CfdCalculator>();
         services.AddTransient<ICalculator<CryptoDto>, CryptoCalculator>();
         services.AddTransient<ICalculator<DividendCalculatorDto>, DividendCalculator>();

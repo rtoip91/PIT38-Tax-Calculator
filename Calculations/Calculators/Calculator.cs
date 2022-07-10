@@ -3,12 +3,8 @@ using Calculations.Interfaces;
 
 namespace Calculations.Calculators
 {
-    internal class Calculator : ICalculator<CalculationResultDto>, ICalculationEvents
-    {
-        public event EventHandler? CfdCalculationFinished;
-        public event EventHandler? CryptoCalculationFinished;
-        public event EventHandler? DividendCalculationFinished;
-        public event EventHandler? StockCalculationFinished;
+    internal class Calculator : ICalculator<CalculationResultDto>
+    {      
 
         private readonly ICalculator<CfdCalculatorDto> _cfdCalculator;
         private readonly ICalculator<CryptoDto> _cryptoCalculator;
@@ -30,44 +26,11 @@ namespace Calculations.Calculators
         {
             var calculationResultDto = new CalculationResultDto();
 
-            calculationResultDto.CdfDto = await _cfdCalculator.Calculate<CfdCalculatorDto>();
-            OnCfdCalculationFinished();
-            calculationResultDto.CryptoDto = await _cryptoCalculator.Calculate<CryptoDto>();
-            OnCryptoCalculationFinished();
-            calculationResultDto.DividendDto = await _dividendCalculator.Calculate<DividendCalculatorDto>();
-            OnDividendCalculationFinished();
-            calculationResultDto.StockDto = await _stockCalculator.Calculate<StockCalculatorDto>();
-            OnStockCalculationFinished();
+            calculationResultDto.CdfDto = await _cfdCalculator.Calculate<CfdCalculatorDto>();          
+            calculationResultDto.CryptoDto = await _cryptoCalculator.Calculate<CryptoDto>();          
+            calculationResultDto.DividendDto = await _dividendCalculator.Calculate<DividendCalculatorDto>();          
+            calculationResultDto.StockDto = await _stockCalculator.Calculate<StockCalculatorDto>();            
             return (T)calculationResultDto;
-        }
-
-        private void OnCfdCalculationFinished()
-        {
-            CfdCalculationFinished?.Invoke(this, null);
-        }
-
-        private void OnCryptoCalculationFinished()
-        {
-            if (CryptoCalculationFinished != null)
-            {
-                CryptoCalculationFinished(this, null);
-            }
-        }
-
-        private void OnDividendCalculationFinished()
-        {
-            if (DividendCalculationFinished != null)
-            {
-                DividendCalculationFinished(this, null);
-            }
-        }
-
-        private void OnStockCalculationFinished()
-        {
-            if (StockCalculationFinished != null)
-            {
-                StockCalculationFinished(this, null);
-            }
-        }
+        }    
     }
 }
