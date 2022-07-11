@@ -13,8 +13,7 @@ namespace TaxEtoro.Statics;
 public static class TaxEtoroServiceRegistration
 {
     public static void RegisterServices(IServiceCollection services)
-    {
-        services.AddTransient<IDataCleaner, DataCleaner>();
+    {       
         services.AddTransient<ITaxCalculations, TaxCalculations>();
         services.AddTransient<IActionPerformer, ActionPerformer>();
         services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();

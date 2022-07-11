@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31912.275
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxEtoro", "TaxEtoro.csproj", "{9E35CA3A-3680-49FD-9CA7-ED9452545301}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TaxCalculatingService", "TaxCalculatingService.csproj", "{9E35CA3A-3680-49FD-9CA7-ED9452545301}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelReader", "..\EtoroExcelReader\ExcelReader.csproj", "{D2CC48F6-02A1-4649-9609-33A5AA5CD918}"
 EndProject
@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Calculations", "..\Calculat
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ResultsPresenter", "..\ResultPresenter\ResultsPresenter.csproj", "{D089CB16-8E19-4EB4-BC0B-9AFE623D362F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApi", "..\WebApi\WebApi.csproj", "{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApi", "..\WebApi\WebApi.csproj", "{38085F29-5D88-47E8-8329-E0D5D2A0B5F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

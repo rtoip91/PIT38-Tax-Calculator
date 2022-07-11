@@ -1,9 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace TaxEtoro.Interfaces
 {
-    public interface IActionPerformer : IAsyncDisposable
+    public interface IActionPerformer
     {
         public Task PerformCalculationsAndWriteResultsPeriodically();
         public Task ClearResultFilesPeriodically();
