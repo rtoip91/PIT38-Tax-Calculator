@@ -20,7 +20,7 @@ namespace TaxEtoro.BussinessLogic
 {
     internal class FileProcessor : IFileProcessor
     {
-        private IServiceProvider _serviceProvider;
+        private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<FileProcessor> _logger;

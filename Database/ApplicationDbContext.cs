@@ -9,7 +9,7 @@ namespace Database
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
         public DbSet<FileEntity> FileEntities { get; set; }
         private static bool _isMigrated;
-        private static object locker = new();
+        private static readonly object locker = new();
 
         public ApplicationDbContext()
         {

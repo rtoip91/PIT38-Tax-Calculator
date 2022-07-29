@@ -17,7 +17,6 @@ namespace Database.Entities.Database
         [JsonConverter(typeof(StringEnumConverter))]
         public FileStatus Status { get; set; }
 
-
         public string CalculationResultFileName { get; set; }
 
         public string CalculationResultJson { get; set; }
