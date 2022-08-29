@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Database.Entities;
 using Database.Entities.InMemory;
 using EtoroExcelReader.Dto;
 

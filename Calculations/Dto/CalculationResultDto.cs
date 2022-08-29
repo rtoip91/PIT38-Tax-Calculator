@@ -1,6 +1,6 @@
 ﻿namespace Calculations.Dto
 {
-    public class CalculationResultDto
+    public record CalculationResultDto
     {
         public CfdCalculatorDto CdfDto { get; set; }
         public CryptoDto CryptoDto { get; set; }

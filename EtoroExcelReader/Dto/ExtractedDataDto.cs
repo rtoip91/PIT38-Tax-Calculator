@@ -3,7 +3,7 @@ using EtoroExcelReader.Dto;
 
 namespace ExcelReader.Dto
 {
-    public class ExtractedDataDto
+    public record ExtractedDataDto
     {
         public ExtractedDataDto()
         {

@@ -5,7 +5,7 @@ using ExcelReader.ExtensionMethods;
 
 namespace ExcelReader.Dto
 {
-    public class DividendDto
+    public record DividendDto
     {
         public DividendDto(DataRow row)
         {

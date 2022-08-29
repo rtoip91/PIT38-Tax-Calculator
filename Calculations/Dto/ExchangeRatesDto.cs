@@ -2,7 +2,7 @@
 
 namespace Calculations.Dto
 {
-    internal class ExchangeRatesDto
+    internal record ExchangeRatesDto
     {
         [JsonProperty(PropertyName = "currency")]
         public string Currency { get; set; }

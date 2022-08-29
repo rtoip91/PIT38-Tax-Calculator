@@ -1,6 +1,6 @@
 ﻿namespace Calculations.Dto
 {
-    public class DividendCalculatorDto
+    public record DividendCalculatorDto
     {
         public decimal Dividend { get; set; }
         public decimal TaxPaid { get; set; }

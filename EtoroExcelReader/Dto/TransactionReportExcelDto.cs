@@ -5,7 +5,7 @@ using System.Data;
 
 namespace EtoroExcelReader.Dto
 {
-    public class TransactionReportExcelDto
+    public record TransactionReportExcelDto
     {
         public TransactionReportExcelDto(DataRow row)
         {

@@ -6,7 +6,7 @@ using Database.Enums;
 
 namespace EtoroExcelReader.Dto
 {
-    public class ClosedPositionExcelDto
+    public record ClosedPositionExcelDto
     {
         public ClosedPositionExcelDto(DataRow row)
         {

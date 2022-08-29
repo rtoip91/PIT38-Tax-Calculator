@@ -1,6 +1,6 @@
 ﻿namespace Calculations.Dto
 {
-    public class StockCalculatorDto
+    public record StockCalculatorDto
     {
         public decimal Cost { get; set; }
         public decimal Revenue { get; set; }

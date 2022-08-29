@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Calculations.Dto
 {
-    public class CfdCalculatorDto
+    public record CfdCalculatorDto
     {
         public decimal Gain { get; set; }
         public decimal Loss { get; set; }
