@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
 using Calculations.Dto;
@@ -18,22 +17,25 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class FileProcessor : IFileProcessor
+    internal sealed class FileProcessor : IFileProcessor
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly IConfiguration _configuration;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<FileProcessor> _logger;
+        private readonly IExchangeRatesLocker _exchangeRatesLocker;
 
         public FileProcessor(IServiceProvider serviceProvider,
             IConfiguration configuration,
             IFileDataAccess fileDataAccess,
-            ILogger<FileProcessor> logger)
+            ILogger<FileProcessor> logger,
+            IExchangeRatesLocker exchangeRatesLocker)
         {
             _serviceProvider = serviceProvider;
             _configuration = configuration;
             _fileDataAccess = fileDataAccess;
             _logger = logger;
+            _exchangeRatesLocker = exchangeRatesLocker;
         }
 
         public async Task ProcessFiles()
@@ -65,7 +67,10 @@ namespace TaxEtoro.BussinessLogic
                 tasks.Add(fileRemovalTask);
             }
 
-            await Task.WhenAll(tasks);
+            await Task.WhenAll(tasks).ContinueWith(_ =>
+            {
+                _exchangeRatesLocker.ClearLockers();
+            });
         }
 
         private Task RemoveFile(Task task, FileInfo file)

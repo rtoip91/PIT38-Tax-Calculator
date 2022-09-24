@@ -6,7 +6,7 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class ActionPerformer : IActionPerformer
+    internal sealed class ActionPerformer : IActionPerformer
     {       
         private readonly IFileCleaner _fileCleaner;
         private readonly IFileProcessor _fileProcessor;
@@ -14,12 +14,10 @@ namespace TaxEtoro.BussinessLogic
         private readonly PeriodicTimer _calculationsTimer;
         private readonly PeriodicTimer _fileCleanTimer;
 
-        private bool _isDisposed;
 
         public ActionPerformer(IFileCleaner fileCleaner,
             IFileProcessor fileProcessor)
-        {            
-            _isDisposed = false;
+        {
             _calculationsTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
             _fileCleanTimer = new PeriodicTimer(TimeSpan.FromMinutes(10));
             _fileCleaner = fileCleaner;

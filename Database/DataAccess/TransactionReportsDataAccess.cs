@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Database.DataAccess.Interfaces;
-using Database.Entities;
 using Database.Entities.InMemory;
 using Database.Repository;
 
 namespace Database.DataAccess
 {
-    public class TransactionReportsDataAccess : ITransactionReportsDataAccess
+    public sealed class TransactionReportsDataAccess : ITransactionReportsDataAccess
     {
         private readonly IDataRepository _importRepository;
 

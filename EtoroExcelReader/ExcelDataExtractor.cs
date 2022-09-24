@@ -9,7 +9,7 @@ using Microsoft.Extensions.Logging;
 
 namespace ExcelReader;
 
-public class ExcelDataExtractor : IExcelDataExtractor
+public sealed class ExcelDataExtractor : IExcelDataExtractor
 {
     private readonly IExtractedDataProcessor _extractedDataProcessor;
     private readonly IExcelFileHandler _excelFileHandler;

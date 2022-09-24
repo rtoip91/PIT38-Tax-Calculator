@@ -13,7 +13,7 @@ using OfficeOpenXml.Export.ToDataTable;
 
 namespace ExcelReader
 {
-    internal class ExcelFileHandler : IExcelFileHandler
+    internal sealed class ExcelFileHandler : IExcelFileHandler
     {
         private readonly ILogger<ExcelFileHandler> _logger;
 

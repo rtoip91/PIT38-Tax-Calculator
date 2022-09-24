@@ -5,7 +5,7 @@ using Database.Entities.InMemory;
 
 namespace Database.Repository
 {
-    public interface IDataRepository
+    public interface IDataRepository : IDisposable
     {
         IList<IncomeByCountryEntity> IncomeByCountryEntities { get; }
         IList<ClosedPositionEntity> ClosedPositions { get; }

@@ -7,7 +7,7 @@ using ResultsPresenter.Interfaces;
 
 namespace ResultsPresenter;
 
-public class FileWriter : IFileWriter
+public sealed class FileWriter : IFileWriter
 {
     private readonly ICfdEntityDataAccess _cfdEntityDataAccess;
     private readonly IStockEntityDataAccess _stockEntityDataAccess;
