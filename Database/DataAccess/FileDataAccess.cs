@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Database.DataAccess
 {
-    public class FileDataAccess : IFileDataAccess
+    public sealed class FileDataAccess : IFileDataAccess
     {
         public async Task<string> AddNewFile(Guid operationGuid)
         {

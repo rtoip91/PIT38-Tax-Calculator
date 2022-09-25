@@ -9,7 +9,7 @@ using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
 {
-    internal class FileCleaner : IFileCleaner
+    internal sealed class FileCleaner : IFileCleaner
     {
         private readonly string _filePath;
         private readonly IFileDataAccess _fileDataAccess;

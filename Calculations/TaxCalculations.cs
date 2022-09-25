@@ -3,7 +3,7 @@ using Calculations.Interfaces;
 
 namespace Calculations;
 
-public class TaxCalculations : ITaxCalculations
+public sealed class TaxCalculations : ITaxCalculations
 {
     private readonly ICalculator<CalculationResultDto> _calculator;  
 

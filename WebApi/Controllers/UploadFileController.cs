@@ -4,7 +4,7 @@ namespace WebApi.Controllers
 {
     [Route("api/file/[action]")]
     [ApiController]
-    public class UploadFileController : ControllerBase
+    public sealed class UploadFileController : ControllerBase
     {
         private readonly IConfiguration _configuration;
         private readonly IFileDataAccess _fileDataAccess;

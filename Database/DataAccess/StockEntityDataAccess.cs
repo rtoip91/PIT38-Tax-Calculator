@@ -1,14 +1,11 @@
 ﻿using Database.DataAccess.Interfaces;
-using Database.Entities;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Database.Entities.InMemory;
 using Database.Repository;
 
 namespace Database.DataAccess
 {
-    public class StockEntityDataAccess : IStockEntityDataAccess
+    public sealed class StockEntityDataAccess : IStockEntityDataAccess
     {
         private readonly IDataRepository _dataRepository;
 

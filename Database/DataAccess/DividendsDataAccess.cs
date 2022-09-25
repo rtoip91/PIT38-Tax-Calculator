@@ -1,12 +1,11 @@
 ﻿using System.Collections.Generic;
 using Database.DataAccess.Interfaces;
-using Database.Entities;
 using Database.Entities.InMemory;
 using Database.Repository;
 
 namespace Database.DataAccess
 {
-    public class DividendsDataAccess : IDividendsDataAccess
+    public sealed class DividendsDataAccess : IDividendsDataAccess
     {
         private readonly IDataRepository _dataRepository;
 

@@ -9,7 +9,7 @@ using ExcelReader.MappingProfiles;
 
 namespace ExcelReader
 {
-    internal class ExtractedDataProcessor : IExtractedDataProcessor
+    internal sealed class ExtractedDataProcessor : IExtractedDataProcessor
     {
         private readonly Mapper _mapper;
 
