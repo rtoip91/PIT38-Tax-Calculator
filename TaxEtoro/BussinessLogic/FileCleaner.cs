@@ -40,7 +40,7 @@ namespace TaxEtoro.BussinessLogic
                 if(!fileInfo.Exists)
                 {
                     await _fileDataAccess.SetAsDeleted(fileName);
-                    _logger.LogInformation($"File:{fileName} is already deleted");
+                    _logger.LogInformation($"Result file:{fileName} is already deleted");
                     return;
                 }
 
@@ -48,11 +48,11 @@ namespace TaxEtoro.BussinessLogic
                 {
                     fileInfo.Delete();
                     await _fileDataAccess.SetAsDeleted(fileName);
-                    _logger.LogInformation($"File:{fileName} was deleted");
+                    _logger.LogInformation($"Result file:{fileName} was deleted");
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogError(ex, $"Deletion of file {fileName} failed.");
+                    _logger.LogError(ex, $"Deletion of result file {fileName} failed.");
                 }               
 
             }

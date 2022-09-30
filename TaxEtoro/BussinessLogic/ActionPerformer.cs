@@ -1,5 +1,6 @@
 ﻿using Database.DataAccess.Interfaces;
 using System;
+using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using TaxEtoro.Interfaces;
@@ -18,7 +19,7 @@ namespace TaxEtoro.BussinessLogic
         public ActionPerformer(IFileCleaner fileCleaner,
             IFileProcessor fileProcessor)
         {
-            _calculationsTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+            _calculationsTimer = new PeriodicTimer(TimeSpan.FromMinutes(2));
             _fileCleanTimer = new PeriodicTimer(TimeSpan.FromMinutes(10));
             _fileCleaner = fileCleaner;
             _fileProcessor = fileProcessor;

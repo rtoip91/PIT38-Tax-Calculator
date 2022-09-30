@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime;
 using System.Threading.Tasks;
 using Calculations.Dto;
 using Calculations.Interfaces;
@@ -67,10 +68,11 @@ namespace TaxEtoro.BussinessLogic
                 tasks.Add(fileRemovalTask);
             }
 
-            await Task.WhenAll(tasks).ContinueWith(_ =>
-            {
-                _exchangeRatesLocker.ClearLockers();
-            });
+            await Task.WhenAll(tasks);
+            _exchangeRatesLocker.ClearLockers();
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect();
+
         }
 
         private Task RemoveFile(Task task, FileInfo file)

@@ -1,5 +1,7 @@
 ﻿using Database.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+
 namespace WebApi.Controllers
 {
     [Route("api/file/[action]")]
@@ -9,6 +11,8 @@ namespace WebApi.Controllers
         private readonly IConfiguration _configuration;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<UploadFileController> _logger;
+        private List<Task<IActionResult>> _tasks;
+
         public UploadFileController(IConfiguration configuration,
             IFileDataAccess fileDataAccess,
             ILogger<UploadFileController> logger)
@@ -16,14 +20,31 @@ namespace WebApi.Controllers
             _configuration = configuration;
             _fileDataAccess = fileDataAccess;
             _logger = logger;
+            _tasks = new List<Task<IActionResult>>();
         }
 
+       
+
+        [HttpPost(Name = "uploadInputFileStressTest")]
+        public Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence)
+        {
+
+            for (int i = 0; i < occurence; i++)
+            {
+                _tasks.Add(UploadFile(inputExcelFile));
+            }
+
+            return Task.FromResult<IActionResult>(Ok("Stress Testing !!!"));
+        }
+
+
+
         /// <summary>
-        /// Posts the excel input file
-        /// </summary>
-        /// <param name="inputExcelFile">Excel input file</param>
-        /// <returns>File upload result</returns>
-        [HttpPost(Name = "uploadInputFile")]
+            /// Posts the excel input file
+            /// </summary>
+            /// <param name="inputExcelFile">Excel input file</param>
+            /// <returns>File upload result</returns>
+            [HttpPost(Name = "uploadInputFile")]
         public async Task<IActionResult> UploadFile(IFormFile inputExcelFile)
         {
             long size = inputExcelFile.Length;
@@ -65,7 +86,7 @@ namespace WebApi.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
             }
 
-            var stream = System.IO.File.OpenRead(filePath);
+            await using var stream = System.IO.File.OpenRead(filePath);
             await _fileDataAccess.SetAsDownloaded(operationId);
             return File(stream, "application/octet-stream", filename);            
         }
