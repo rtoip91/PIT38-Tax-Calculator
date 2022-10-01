@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime;
@@ -46,29 +47,43 @@ namespace TaxEtoro.BussinessLogic
             var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
             var operations = await _fileDataAccess.GetOperationsToProcess();
 
+
             if (!operations.Any())
             {
                 _logger.LogInformation("No pending operations detected");
                 return;
             }
 
-            foreach (var operation in operations)
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            do
             {
-                var filename = await _fileDataAccess.GetInputFileName(operation);
-                var file = directory.GetFiles(filename).FirstOrDefault();
-                if (file is null)
+                foreach (var operation in operations)
                 {
-                    continue;
+                    var filename = await _fileDataAccess.GetInputFileName(operation);
+                    var file = directory.GetFiles(filename).FirstOrDefault();
+                    if (file is null)
+                    {
+                        continue;
+                    }
+
+                    var fileProcessingTask = ProcessFile(directory, file, operation);
+                    var fileRemovalTask = RemoveFile(fileProcessingTask, file);
+
+                    tasks.Add(fileProcessingTask);
+                    tasks.Add(fileRemovalTask);
                 }
 
-                var fileProcessingTask = ProcessFile(directory, file, operation);
-                var fileRemovalTask = RemoveFile(fileProcessingTask, file);
+                await Task.WhenAll(tasks);
+                operations = await _fileDataAccess.GetOperationsToProcess();
 
-                tasks.Add(fileProcessingTask);
-                tasks.Add(fileRemovalTask);
-            }
+            } while (operations.Any());
 
-            await Task.WhenAll(tasks);
+            stopwatch.Stop();
+            var stopwatchResult = stopwatch.Elapsed;
+
+            _logger.LogInformation($"Calculation took {stopwatchResult:m\\:ss\\.fff}");
+
             _exchangeRatesLocker.ClearLockers();
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             GC.Collect();

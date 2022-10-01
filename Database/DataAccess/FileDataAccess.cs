@@ -78,7 +78,7 @@ namespace Database.DataAccess
         public async Task<IList<Guid>> GetOperationsToProcess()
         {
             await using var context = new ApplicationDbContext();
-            return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Select(f => f.OperationGuid)
+            return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(100).Select(f => f.OperationGuid)
                 .ToListAsync();
         }
 

@@ -26,15 +26,15 @@ namespace WebApi.Controllers
        
 
         [HttpPost(Name = "uploadInputFileStressTest")]
-        public Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence)
+        public async  Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence)
         {
 
             for (int i = 0; i < occurence; i++)
             {
-                _tasks.Add(UploadFile(inputExcelFile));
+                await UploadFile(inputExcelFile);
             }
 
-            return Task.FromResult<IActionResult>(Ok("Stress Testing !!!"));
+            return Ok("Stress Testing !!!");
         }
 
 

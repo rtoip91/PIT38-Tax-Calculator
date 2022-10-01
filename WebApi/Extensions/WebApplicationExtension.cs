@@ -12,8 +12,11 @@ namespace WebApi.Extensions
                 return;
             }
 
-            actionPerformer.PerformCalculationsAndWriteResultsPeriodically();
-            actionPerformer.ClearResultFilesPeriodically();
+            Task.Factory.StartNew(() => actionPerformer.PerformCalculationsAndWriteResultsPeriodically(), TaskCreationOptions.LongRunning);
+            Task.Factory.StartNew(() => actionPerformer.ClearResultFilesPeriodically(), TaskCreationOptions.LongRunning);
+
+
+            
         }
 
     }
