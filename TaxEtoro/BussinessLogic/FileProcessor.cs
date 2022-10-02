@@ -42,7 +42,7 @@ namespace TaxEtoro.BussinessLogic
 
         public async Task ProcessFiles()
         {
-            IList<Task> tasks = new List<Task>();
+          
 
             var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
             var operations = await _fileDataAccess.GetOperationsToProcess();
@@ -58,6 +58,7 @@ namespace TaxEtoro.BussinessLogic
 
             do
             {
+                IList<Task> tasks = new List<Task>();
                 foreach (var operation in operations)
                 {
                     var filename = await _fileDataAccess.GetInputFileName(operation);
