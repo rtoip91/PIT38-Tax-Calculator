@@ -6,7 +6,7 @@ using Database.Enums;
 namespace Database.Entities.InMemory
 {
     [Table("CfdCalculations")]
-    public class CfdEntity
+    public record CfdEntity
     {
         [Key] public int Id { get; set; }
 

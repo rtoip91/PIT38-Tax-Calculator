@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Database.Entities.InMemory
 {
     [Table("SoldCryptoCalculations")]
-    public class SoldCryptoEntity
+    public record SoldCryptoEntity
     {
         [Key] public int Id { get; set; }
         public long PositionId { get; set; }
