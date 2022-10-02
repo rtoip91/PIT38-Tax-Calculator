@@ -1,6 +1,6 @@
 ﻿namespace Database.Entities.InMemory
 {
-    public class IncomeByCountryEntity
+    public record IncomeByCountryEntity
     {
         public string Country { get; set; }
         public decimal Income { get; set; }
