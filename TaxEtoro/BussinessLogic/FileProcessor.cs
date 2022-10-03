@@ -42,7 +42,7 @@ namespace TaxEtoro.BussinessLogic
             _fileDataAccess = fileDataAccess;
             _logger = logger;
             _exchangeRatesLocker = exchangeRatesLocker;
-            _semaphore = new SemaphoreSlim(1);
+            _semaphore = new SemaphoreSlim(0);
         }
 
 
