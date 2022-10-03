@@ -75,7 +75,22 @@ namespace Database.DataAccess
             return true;
         }
 
-        public async Task<IList<Guid>> GetOperationsToProcess()
+        public async Task<List<Guid>> GetOperationsToProcessAsync()
+        {
+            await using var context = new ApplicationDbContext();
+            return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(100).Select(f => f.OperationGuid)
+                .ToListAsync();
+        }
+
+        public List<Guid> GetOperationsToProcess()
+        {
+            using var context = new ApplicationDbContext();
+            return  context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(100).Select(f => f.OperationGuid)
+                .ToList();
+        }
+
+
+        public async Task<IList<Guid>> GetOperationToProcess()
         {
             await using var context = new ApplicationDbContext();
             return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(100).Select(f => f.OperationGuid)

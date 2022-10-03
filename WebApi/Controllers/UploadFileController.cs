@@ -1,6 +1,8 @@
 ﻿using Database.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using TaxEtoro.Interfaces;
+using WebApi.Helpers;
 
 namespace WebApi.Controllers
 {
@@ -8,19 +10,23 @@ namespace WebApi.Controllers
     [ApiController]
     public sealed class UploadFileController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<UploadFileController> _logger;
-        private List<Task<IActionResult>> _tasks;
+        private readonly IFileUploadHelper _fileUploadHelper;
+        private readonly IFileDataAccess _fileDataAccess;
+        private readonly IConfiguration _configuration;
 
-        public UploadFileController(IConfiguration configuration,
+        public UploadFileController(IFileProcessor fileProcessor,
+            IFileUploadHelper fileUploadHelper,
+            IConfiguration configuration,
             IFileDataAccess fileDataAccess,
             ILogger<UploadFileController> logger)
         {
             _configuration = configuration;
+            _fileUploadHelper = fileUploadHelper;
             _fileDataAccess = fileDataAccess;
             _logger = logger;
-            _tasks = new List<Task<IActionResult>>();
+            _fileUploadHelper.Subscribe(fileProcessor);
+
         }
 
        
@@ -31,7 +37,7 @@ namespace WebApi.Controllers
 
             for (int i = 0; i < occurence; i++)
             {
-                await UploadFile(inputExcelFile);
+                await _fileUploadHelper.UploadFile(inputExcelFile);
             }
 
             return Ok("Stress Testing !!!");
@@ -47,24 +53,11 @@ namespace WebApi.Controllers
             [HttpPost(Name = "uploadInputFile")]
         public async Task<IActionResult> UploadFile(IFormFile inputExcelFile)
         {
-            long size = inputExcelFile.Length;
+            Guid? result = await _fileUploadHelper.UploadFile(inputExcelFile);
 
-            if (inputExcelFile.Length > 0)
+            if (result.HasValue)
             {
-                var guid = Guid.NewGuid();
-                string filename = await _fileDataAccess.AddNewFile(guid);
-
-                var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
-                    filename);
-
-                await using (var stream = System.IO.File.Create(filePath))
-                {
-                    await inputExcelFile.CopyToAsync(stream);
-                }
-
-                _logger.LogInformation($"Succesfuly uploaded a file {filename}");
-
-                return Ok(new { guid });
+                return Ok(new { result });
             }
 
             _logger.LogWarning("Wrong file provided");

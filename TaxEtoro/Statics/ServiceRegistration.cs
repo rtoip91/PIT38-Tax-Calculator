@@ -15,11 +15,11 @@ public static class TaxEtoroServiceRegistration
     public static void RegisterServices(IServiceCollection services)
     {       
         services.AddTransient<ITaxCalculations, TaxCalculations>();
-        services.AddTransient<IActionPerformer, ActionPerformer>();
+        services.AddSingleton<IActionPerformer, ActionPerformer>();
         services.AddTransient<IClosedPositionsDataAccess, ClosedPositionsDataAccess>();
         services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
         services.AddTransient<IFileWriter, FileWriter>();
-        services.AddTransient<IFileCleaner, FileCleaner>();
-        services.AddTransient<IFileProcessor, FileProcessor>();
+        services.AddSingleton<IFileCleaner, FileCleaner>();
+        services.AddSingleton<IFileProcessor, FileProcessor>();
     }
 }

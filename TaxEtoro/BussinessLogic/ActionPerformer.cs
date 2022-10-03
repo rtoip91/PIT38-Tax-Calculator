@@ -25,7 +25,7 @@ namespace TaxEtoro.BussinessLogic
 
         public async Task PerformCalculationsAndWriteResultsPeriodically()
         {
-            while (await _calculationsTimer.WaitForNextTickAsync())
+            while (true)
             {
                 await _fileProcessor.ProcessFiles();
             }

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime;
+using System.Threading;
 using System.Threading.Tasks;
 using Calculations.Dto;
 using Calculations.Interfaces;
@@ -15,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ResultsPresenter.Interfaces;
+using TaxCalculatingService.BussinessLogic;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
@@ -26,6 +28,8 @@ namespace TaxEtoro.BussinessLogic
         private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<FileProcessor> _logger;
         private readonly IExchangeRatesLocker _exchangeRatesLocker;
+        private readonly SemaphoreSlim _semaphore;
+
 
         public FileProcessor(IServiceProvider serviceProvider,
             IConfiguration configuration,
@@ -38,19 +42,37 @@ namespace TaxEtoro.BussinessLogic
             _fileDataAccess = fileDataAccess;
             _logger = logger;
             _exchangeRatesLocker = exchangeRatesLocker;
+            _semaphore = new SemaphoreSlim(1);
+        }
+
+
+        private async Task ProcessSingleFile(Guid operation)
+        {
+            var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
+            var filename = await _fileDataAccess.GetInputFileName(operation);
+            var file = directory.GetFiles(filename).FirstOrDefault();
+            if (file is null)
+            {
+                return;
+            }
+
+            var fileProcessingTask = ProcessFile(directory, file, operation);
+            var fileRemovalTask = RemoveFile(fileProcessingTask, file);
+
+            Task[] tasks = { fileProcessingTask, fileRemovalTask };
+
+            await Task.WhenAll(tasks);
         }
 
         public async Task ProcessFiles()
         {
-          
-
-            var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
-            var operations = await _fileDataAccess.GetOperationsToProcess();
-
+            IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
 
             if (!operations.Any())
             {
-                _logger.LogInformation("No pending operations detected");
+                _logger.LogInformation("No pending operations detected waiting for semaphore");
+                await _semaphore.WaitAsync();
+                await ProcessFiles();
                 return;
             }
 
@@ -61,22 +83,11 @@ namespace TaxEtoro.BussinessLogic
                 IList<Task> tasks = new List<Task>();
                 foreach (var operation in operations)
                 {
-                    var filename = await _fileDataAccess.GetInputFileName(operation);
-                    var file = directory.GetFiles(filename).FirstOrDefault();
-                    if (file is null)
-                    {
-                        continue;
-                    }
-
-                    var fileProcessingTask = ProcessFile(directory, file, operation);
-                    var fileRemovalTask = RemoveFile(fileProcessingTask, file);
-
-                    tasks.Add(fileProcessingTask);
-                    tasks.Add(fileRemovalTask);
+                    tasks.Add(ProcessSingleFile(operation));
                 }
 
                 await Task.WhenAll(tasks);
-                operations = await _fileDataAccess.GetOperationsToProcess();
+                operations = await _fileDataAccess.GetOperationsToProcessAsync();
 
             } while (operations.Any());
 
@@ -88,6 +99,9 @@ namespace TaxEtoro.BussinessLogic
             _exchangeRatesLocker.ClearLockers();
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             GC.Collect();
+
+            await ProcessFiles();
+
 
         }
 
@@ -142,6 +156,24 @@ namespace TaxEtoro.BussinessLogic
             var dtoString = JsonConvert.SerializeObject(dto);
             await _fileDataAccess.SetAsCalculated(operation, dtoString);
             return dto;
+        }
+
+        public void OnCompleted()
+        {
+        }
+
+        public void OnError(Exception error)
+        {
+            throw error;
+        }
+
+        public void OnNext(FileUploadedEvent value)
+        {
+            if (_semaphore.CurrentCount == 0)
+            {
+                _logger.LogInformation("Releasing the semaphore");
+                _semaphore.Release();
+            }
         }
     }
 }

@@ -6,7 +6,8 @@ namespace Database.DataAccess.Interfaces
 {
     public interface IFileDataAccess
     {
-        Task<IList<Guid>> GetOperationsToProcess();
+        List<Guid> GetOperationsToProcess();
+        Task<List<Guid>> GetOperationsToProcessAsync();
         Task<string> AddNewFile(Guid operationGuid);
         Task<string> GetCalculationResultFileName(Guid operationGuid);
         Task<string> GetInputFileName(Guid operationGuid);

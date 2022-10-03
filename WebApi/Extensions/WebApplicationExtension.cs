@@ -4,6 +4,10 @@ namespace WebApi.Extensions
 {
     internal static class WebApplicationExtension
     {
+
+        private static Task calculationTask;
+        private static Task clearResultTask;
+
         public static void RunPeriodicTasks(this WebApplication? webApplication)
         {
             var actionPerformer = webApplication?.Services.GetService<IActionPerformer>();
@@ -12,8 +16,10 @@ namespace WebApi.Extensions
                 return;
             }
 
-            Task.Factory.StartNew(() => actionPerformer.PerformCalculationsAndWriteResultsPeriodically(), TaskCreationOptions.LongRunning);
-            Task.Factory.StartNew(() => actionPerformer.ClearResultFilesPeriodically(), TaskCreationOptions.LongRunning);
+            var fileProcessor = webApplication?.Services.GetService<IFileProcessor>();
+
+            calculationTask = Task.Factory.StartNew(() => fileProcessor.ProcessFiles(), TaskCreationOptions.LongRunning);
+            clearResultTask= Task.Factory.StartNew(() => actionPerformer.ClearResultFilesPeriodically(), TaskCreationOptions.LongRunning);
 
 
             
