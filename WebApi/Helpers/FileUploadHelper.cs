@@ -36,7 +36,7 @@ namespace WebApi.Helpers
             if (inputExcelFile.Length > 0)
             {
                 var guid = Guid.NewGuid();
-                string filename = await _fileDataAccess.AddNewFile(guid);
+                string filename = await _fileDataAccess.AddNewFileAsync(guid);
 
                 var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
                     filename);

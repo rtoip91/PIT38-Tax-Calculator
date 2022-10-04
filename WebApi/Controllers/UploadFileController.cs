@@ -67,7 +67,7 @@ namespace WebApi.Controllers
         [HttpGet(Name = "getResultFile")]
         public async Task<IActionResult> GetResultFile(Guid operationId)
         {
-            var filename = await _fileDataAccess.GetCalculationResultFileName(operationId);
+            var filename = await _fileDataAccess.GetCalculationResultFileNameAsync(operationId);
             if(filename == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
@@ -80,7 +80,7 @@ namespace WebApi.Controllers
             }
 
             await using var stream = System.IO.File.OpenRead(filePath);
-            await _fileDataAccess.SetAsDownloaded(operationId);
+            await _fileDataAccess.SetAsDownloadedAsync(operationId);
             return File(stream, "application/octet-stream", filename);            
         }
     }

@@ -50,7 +50,7 @@ public sealed class FileWriter : IFileWriter
         await WriteDividendResultsToFile(calculationResultDto.DividendDto);
         await WritePitZgToFile();
         await CopyExcelFileToZip(inputFileData);
-        return await _fileDataAccess.GetCalculationResultFileName(_operationGuid);
+        return await _fileDataAccess.GetCalculationResultFileNameAsync(_operationGuid);
     }
 
     private void CreateDirectory()
@@ -65,7 +65,7 @@ public sealed class FileWriter : IFileWriter
 
     private async Task<FileStream> CreateOrUpdateZipFile()
     {
-        string fileName = await _fileDataAccess.GetCalculationResultFileName(_operationGuid);
+        string fileName = await _fileDataAccess.GetCalculationResultFileNameAsync(_operationGuid);
         string path = $"{_filePath}\\{fileName}";
 
         FileStream zipToOpen = new FileStream(path, FileMode.OpenOrCreate);
