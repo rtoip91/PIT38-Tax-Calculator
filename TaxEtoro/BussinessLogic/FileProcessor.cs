@@ -66,6 +66,8 @@ namespace TaxEtoro.BussinessLogic
 
         public async Task ProcessFiles()
         {
+            await ReduceSemaphore();
+
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
 
             if (!operations.Any())
@@ -80,14 +82,13 @@ namespace TaxEtoro.BussinessLogic
 
             do
             {
-                IList<Task> tasks = new List<Task>();
-                foreach (var operation in operations)
+                await Parallel.ForEachAsync(operations, async (operation,token) =>
                 {
-                    tasks.Add(ProcessSingleFile(operation));
-                }
+                    await ProcessSingleFile(operation);
+                });
 
-                await Task.WhenAll(tasks);
                 operations = await _fileDataAccess.GetOperationsToProcessAsync();
+
             } while (operations.Any());
 
             stopwatch.Stop();
@@ -99,12 +100,15 @@ namespace TaxEtoro.BussinessLogic
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             GC.Collect();
 
+            await ProcessFiles();
+        }
+
+        private async Task ReduceSemaphore()
+        {
             if (_semaphore.CurrentCount == 1)
             {
                 await _semaphore.WaitAsync();
             }
-
-            await ProcessFiles();
         }
 
         private void RemoveFile(FileInfo file)
