@@ -8,7 +8,7 @@ using Newtonsoft.Json.Converters;
 namespace Database.Entities.Database
 {
     [Table("File")]
-    public class FileEntity
+    public record FileEntity
     {
         [Key] public int Id { get; set; }
 

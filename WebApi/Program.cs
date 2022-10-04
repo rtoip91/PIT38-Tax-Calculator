@@ -4,6 +4,7 @@ using ExcelReader.Statics;
 using Serilog;
 using TaxEtoro.Statics;
 using WebApi.Extensions;
+using WebApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +31,7 @@ TaxEtoroServiceRegistration.RegisterServices(builder.Services);
 CalculationsServicesRegistration.RegisterServices(builder.Services);
 DatabaseServiceRegistration.RegisterServices(builder.Services);
 ExcelReaderServiceRegistration.RegisterServices(builder.Services);
+builder.Services.AddTransient<IFileUploadHelper, FileUploadHelper>();
 
 var app = builder.Build();
 

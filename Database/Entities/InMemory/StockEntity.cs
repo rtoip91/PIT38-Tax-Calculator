@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Database.Entities.InMemory
 {
     [Table("StockCalculations")]
-    public class StockEntity
+    public record StockEntity
     {
         [Key] public int Id { get; set; }
 

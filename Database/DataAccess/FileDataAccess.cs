@@ -11,7 +11,7 @@ namespace Database.DataAccess
 {
     public sealed class FileDataAccess : IFileDataAccess
     {
-        public async Task<string> AddNewFile(Guid operationGuid)
+        public async Task<string> AddNewFileAsync(Guid operationGuid)
         {
             await using var context = new ApplicationDbContext();
 
@@ -28,7 +28,7 @@ namespace Database.DataAccess
             return fileEntity.InputFileName;
         }
 
-        public async Task<string> GetCalculationResultFileName(Guid operationGuid)
+        public async Task<string> GetCalculationResultFileNameAsync(Guid operationGuid)
         {
             await using var context = new ApplicationDbContext();
 
@@ -42,7 +42,7 @@ namespace Database.DataAccess
             return fileEntity.CalculationResultFileName;
         }
 
-        public async Task<string> GetInputFileName(Guid operationGuid)
+        public async Task<string> GetInputFileNameAsync(Guid operationGuid)
         {
             await using var context = new ApplicationDbContext();
 
@@ -56,11 +56,11 @@ namespace Database.DataAccess
             return fileEntity.InputFileName;
         }
 
-        public async Task<bool> SetAsCalculated(Guid operationGuid, string calculationResultJson)
+        public async Task<bool> SetAsCalculatedAsync(Guid operationGuid, string calculationResultJson)
         {
             await using var context = new ApplicationDbContext();
 
-            var fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+            var fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid && f.Status==FileStatus.InProgress);
             if (fileEntity == null)
             {
                 return false;
@@ -75,14 +75,29 @@ namespace Database.DataAccess
             return true;
         }
 
-        public async Task<IList<Guid>> GetOperationsToProcess()
+        public async Task<List<Guid>> GetOperationsToProcessAsync()
         {
             await using var context = new ApplicationDbContext();
-            return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Select(f => f.OperationGuid)
+            return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(50).Select(f => f.OperationGuid)
                 .ToListAsync();
         }
 
-        public async Task<IList<string>> GetCalculationResultFilesToDelete()
+        public List<Guid> GetOperationsToProcess()
+        {
+            using var context = new ApplicationDbContext();
+            return  context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(50).Select(f => f.OperationGuid)
+                .ToList();
+        }
+
+
+        public async Task<IList<Guid>> GetOperationToProcess()
+        {
+            await using var context = new ApplicationDbContext();
+            return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(100).Select(f => f.OperationGuid)
+                .ToListAsync();
+        }
+
+        public async Task<IList<string>> GetCalculationResultFilesToDeleteAsync()
         {
             
             await using var context = new ApplicationDbContext();
@@ -115,7 +130,7 @@ namespace Database.DataAccess
             return resultFilesToDelete;
         }
 
-        public async Task<bool> SetAsDownloaded(Guid operationGuid)
+        public async Task<bool> SetAsDownloadedAsync(Guid operationGuid)
         {
             await using var context = new ApplicationDbContext();
 
@@ -132,7 +147,7 @@ namespace Database.DataAccess
             return true;
         }
 
-        public async Task<bool> SetAsDeleted(string fileName)
+        public async Task<bool> SetAsDeletedAsync(string fileName)
         {
             await using var context = new ApplicationDbContext();
 
@@ -143,6 +158,41 @@ namespace Database.DataAccess
             }
 
             fileEntity.Status = FileStatus.Deleted;
+            fileEntity.StatusChangeDate = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+
+        public async Task<bool> SetAsDeletedAsync(Guid operationGuid)
+        {
+            await using var context = new ApplicationDbContext();
+
+            var fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+            if (fileEntity == null)
+            {
+                return false;
+            }
+            
+            fileEntity.Status = FileStatus.Deleted;
+            fileEntity.StatusChangeDate = DateTime.UtcNow;
+
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        public async Task<bool> SetAsInProgressAsync(Guid operationGuid)
+        {
+            await using var context = new ApplicationDbContext();
+
+            var fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+            if (fileEntity == null)
+            {
+                return false;
+            }
+
+            fileEntity.Status = FileStatus.InProgress;
             fileEntity.StatusChangeDate = DateTime.UtcNow;
 
             await context.SaveChangesAsync();

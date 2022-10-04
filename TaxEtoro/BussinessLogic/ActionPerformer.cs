@@ -1,5 +1,4 @@
-﻿using Database.DataAccess.Interfaces;
-using System;
+﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
 using TaxEtoro.Interfaces;
@@ -26,7 +25,7 @@ namespace TaxEtoro.BussinessLogic
 
         public async Task PerformCalculationsAndWriteResultsPeriodically()
         {
-            while (await _calculationsTimer.WaitForNextTickAsync())
+            while (true)
             {
                 await _fileProcessor.ProcessFiles();
             }

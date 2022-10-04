@@ -1,49 +1,63 @@
 ﻿using Database.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using TaxEtoro.Interfaces;
+using WebApi.Helpers;
+
 namespace WebApi.Controllers
 {
     [Route("api/file/[action]")]
     [ApiController]
     public sealed class UploadFileController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
-        private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<UploadFileController> _logger;
-        public UploadFileController(IConfiguration configuration,
+        private readonly IFileUploadHelper _fileUploadHelper;
+        private readonly IFileDataAccess _fileDataAccess;
+        private readonly IConfiguration _configuration;
+
+        public UploadFileController(IFileProcessor fileProcessor,
+            IFileUploadHelper fileUploadHelper,
+            IConfiguration configuration,
             IFileDataAccess fileDataAccess,
             ILogger<UploadFileController> logger)
         {
             _configuration = configuration;
+            _fileUploadHelper = fileUploadHelper;
             _fileDataAccess = fileDataAccess;
             _logger = logger;
+            _fileUploadHelper.Subscribe(fileProcessor);
+
         }
 
+       
+
+        [HttpPost(Name = "uploadInputFileStressTest")]
+        public async  Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence)
+        {
+
+            for (int i = 0; i < occurence; i++)
+            {
+                await _fileUploadHelper.UploadFile(inputExcelFile);
+            }
+
+            return Ok("Stress Testing !!!");
+        }
+
+
+
         /// <summary>
-        /// Posts the excel input file
-        /// </summary>
-        /// <param name="inputExcelFile">Excel input file</param>
-        /// <returns>File upload result</returns>
-        [HttpPost(Name = "uploadInputFile")]
+            /// Posts the excel input file
+            /// </summary>
+            /// <param name="inputExcelFile">Excel input file</param>
+            /// <returns>File upload result</returns>
+            [HttpPost(Name = "uploadInputFile")]
         public async Task<IActionResult> UploadFile(IFormFile inputExcelFile)
         {
-            long size = inputExcelFile.Length;
+            Guid? result = await _fileUploadHelper.UploadFile(inputExcelFile);
 
-            if (inputExcelFile.Length > 0)
+            if (result.HasValue)
             {
-                var guid = Guid.NewGuid();
-                string filename = await _fileDataAccess.AddNewFile(guid);
-
-                var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
-                    filename);
-
-                await using (var stream = System.IO.File.Create(filePath))
-                {
-                    await inputExcelFile.CopyToAsync(stream);
-                }
-
-                _logger.LogInformation($"Succesfuly uploaded a file {filename}");
-
-                return Ok(new { guid });
+                return Ok(new { result });
             }
 
             _logger.LogWarning("Wrong file provided");
@@ -53,7 +67,7 @@ namespace WebApi.Controllers
         [HttpGet(Name = "getResultFile")]
         public async Task<IActionResult> GetResultFile(Guid operationId)
         {
-            var filename = await _fileDataAccess.GetCalculationResultFileName(operationId);
+            var filename = await _fileDataAccess.GetCalculationResultFileNameAsync(operationId);
             if(filename == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
@@ -65,8 +79,8 @@ namespace WebApi.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
             }
 
-            var stream = System.IO.File.OpenRead(filePath);
-            await _fileDataAccess.SetAsDownloaded(operationId);
+            await using var stream = System.IO.File.OpenRead(filePath);
+            await _fileDataAccess.SetAsDownloadedAsync(operationId);
             return File(stream, "application/octet-stream", filename);            
         }
     }

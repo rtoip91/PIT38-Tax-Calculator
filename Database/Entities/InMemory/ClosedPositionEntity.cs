@@ -7,7 +7,7 @@ using Database.Enums;
 namespace Database.Entities.InMemory
 {
     [Table("ClosedPositions")]
-    public class ClosedPositionEntity
+    public record ClosedPositionEntity
     {
         [Key] public long? PositionId { get; set; }
 

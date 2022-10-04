@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime;
+using System.Threading;
 using System.Threading.Tasks;
 using Calculations.Dto;
 using Calculations.Interfaces;
@@ -13,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ResultsPresenter.Interfaces;
+using TaxCalculatingService.BussinessLogic;
 using TaxEtoro.Interfaces;
 
 namespace TaxEtoro.BussinessLogic
@@ -24,6 +28,9 @@ namespace TaxEtoro.BussinessLogic
         private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<FileProcessor> _logger;
         private readonly IExchangeRatesLocker _exchangeRatesLocker;
+        private readonly object _lock;
+        private readonly SemaphoreSlim _semaphore;
+
 
         public FileProcessor(IServiceProvider serviceProvider,
             IConfiguration configuration,
@@ -36,60 +43,91 @@ namespace TaxEtoro.BussinessLogic
             _fileDataAccess = fileDataAccess;
             _logger = logger;
             _exchangeRatesLocker = exchangeRatesLocker;
+            _semaphore = new SemaphoreSlim(0);
+            _lock = new object();
+        }
+
+
+        private async Task ProcessSingleFile(Guid operation)
+        {
+            var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
+            var filename = await _fileDataAccess.GetInputFileNameAsync(operation);
+            var file = directory.GetFiles(filename).FirstOrDefault();
+            if (file is null)
+            {
+                _logger.LogWarning($"File {filename} was not found, marking as deleted.");
+                await _fileDataAccess.SetAsDeletedAsync(operation);
+                return;
+            }
+
+            await ProcessFile(directory, file, operation).ContinueWith( _ => RemoveFile(file));
+
         }
 
         public async Task ProcessFiles()
         {
-            IList<Task> tasks = new List<Task>();
-
-            var directory = FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
-            var operations = await _fileDataAccess.GetOperationsToProcess();
+            IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
 
             if (!operations.Any())
             {
-                _logger.LogInformation("No pending operations detected");
+                _logger.LogInformation("No pending operations detected waiting for new operation");
+                await _semaphore.WaitAsync();
+                await ProcessFiles();
                 return;
             }
 
-            foreach (var operation in operations)
+            Stopwatch stopwatch = Stopwatch.StartNew();
+
+            do
             {
-                var filename = await _fileDataAccess.GetInputFileName(operation);
-                var file = directory.GetFiles(filename).FirstOrDefault();
-                if (file is null)
+                IList<Task> tasks = new List<Task>();
+                foreach (var operation in operations)
                 {
-                    continue;
+                    tasks.Add(ProcessSingleFile(operation));
                 }
 
-                var fileProcessingTask = ProcessFile(directory, file, operation);
-                var fileRemovalTask = RemoveFile(fileProcessingTask, file);
+                await Task.WhenAll(tasks);
+                operations = await _fileDataAccess.GetOperationsToProcessAsync();
+            } while (operations.Any());
 
-                tasks.Add(fileProcessingTask);
-                tasks.Add(fileRemovalTask);
+            stopwatch.Stop();
+            var stopwatchResult = stopwatch.Elapsed;
+
+            _logger.LogInformation($"Calculation took {stopwatchResult:m\\:ss\\.fff}");
+
+            _exchangeRatesLocker.ClearLockers();
+            GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
+            GC.Collect();
+
+            if (_semaphore.CurrentCount == 1)
+            {
+                await _semaphore.WaitAsync();
             }
 
-            await Task.WhenAll(tasks).ContinueWith(_ =>
-            {
-                _exchangeRatesLocker.ClearLockers();
-            });
+            await ProcessFiles();
         }
 
-        private Task RemoveFile(Task task, FileInfo file)
+        private void RemoveFile(FileInfo file)
         {
-            var fileRemoval = task.ContinueWith(_ =>
-            {
-                file.Delete();
-                _logger.LogInformation($"File: {file.Name} was deleted");
-            });
-            return fileRemoval;
+            file.Delete();
+            _logger.LogInformation($"File: {file.Name} was deleted");
         }
 
         private Task ProcessFile(DirectoryInfo directory, FileInfo file, Guid operation)
         {
             var task = Task.Run(async () =>
             {
-                await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
-                var dto = await Calculate(directory, file, scope, operation);
-                await PresentCalculationResults(dto, file, scope, operation);
+                try
+                {
+                    await _fileDataAccess.SetAsInProgressAsync(operation);
+                    await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
+                    var dto = await Calculate(directory, file, scope, operation);
+                    await PresentCalculationResults(dto, file, scope, operation);
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, $"Error during processing file {file.FullName}");
+                }
             });
             return task;
         }
@@ -122,8 +160,28 @@ namespace TaxEtoro.BussinessLogic
         {
             var dto = await PerformCalculations(directory.FullName, file.Name, scope);
             var dtoString = JsonConvert.SerializeObject(dto);
-            await _fileDataAccess.SetAsCalculated(operation, dtoString);
+            await _fileDataAccess.SetAsCalculatedAsync(operation, dtoString);
             return dto;
+        }
+
+        public void OnCompleted()
+        {
+        }
+
+        public void OnError(Exception error)
+        {
+            throw error;
+        }
+
+        public void OnNext(FileUploadedEvent value)
+        {
+            lock (_lock)
+            {
+                if (_semaphore.CurrentCount == 0)
+                {
+                    _semaphore.Release();
+                }
+            }
         }
     }
 }

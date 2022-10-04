@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
+using TaxCalculatingService.BussinessLogic;
 
 namespace TaxEtoro.Interfaces
 {
-    public interface IFileProcessor
+    public interface IFileProcessor : IObserver<FileUploadedEvent>
     {
         Task ProcessFiles();
     }

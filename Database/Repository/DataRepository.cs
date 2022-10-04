@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime;
 using Database.Entities.InMemory;
 
 namespace Database.Repository
@@ -40,7 +41,7 @@ namespace Database.Repository
             PurchasedCryptoCalculations = null;
             SoldCryptoCalculations = null;
             DividendsCalculations = null;
-            CfdCalculations = null;
+            CfdCalculations = null;           
         }
     }
 }

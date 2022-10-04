@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Database.Entities.Database
 {
     [Table("ExchangeRates")]
-    public class ExchangeRateEntity
+    public record ExchangeRateEntity
     {
         [Key] public int Id { get; set; }
 

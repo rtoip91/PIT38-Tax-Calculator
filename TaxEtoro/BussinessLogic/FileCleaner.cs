@@ -26,7 +26,7 @@ namespace TaxEtoro.BussinessLogic
 
         public async Task CleanCalculationResultFiles()
         {
-            var fileNames = await _fileDataAccess.GetCalculationResultFilesToDelete();
+            var fileNames = await _fileDataAccess.GetCalculationResultFilesToDeleteAsync();
             if(!fileNames.Any())
             {
                 _logger.LogInformation("No result files to be deleted");
@@ -39,20 +39,20 @@ namespace TaxEtoro.BussinessLogic
 
                 if(!fileInfo.Exists)
                 {
-                    await _fileDataAccess.SetAsDeleted(fileName);
-                    _logger.LogInformation($"File:{fileName} is already deleted");
+                    await _fileDataAccess.SetAsDeletedAsync(fileName);
+                    _logger.LogInformation($"Result file:{fileName} is already deleted");
                     return;
                 }
 
                 try
                 {
                     fileInfo.Delete();
-                    await _fileDataAccess.SetAsDeleted(fileName);
-                    _logger.LogInformation($"File:{fileName} was deleted");
+                    await _fileDataAccess.SetAsDeletedAsync(fileName);
+                    _logger.LogInformation($"Result file:{fileName} was deleted");
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogError(ex, $"Deletion of file {fileName} failed.");
+                    _logger.LogError(ex, $"Deletion of result file {fileName} failed.");
                 }               
 
             }
