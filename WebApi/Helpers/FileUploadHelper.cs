@@ -1,5 +1,4 @@
 ﻿using Database.DataAccess.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using TaxCalculatingService.BussinessLogic;
 using WebApi.Controllers;
 
@@ -64,18 +63,18 @@ namespace WebApi.Helpers
             return null;
         }
 
-        private class SubscriptionToken : IDisposable
+        private sealed class SubscriptionToken : IDisposable
         {
-            private FileUploadHelper fileUploadHelper;
-            public IObserver<FileUploadedEvent> Observer;
+            private readonly FileUploadHelper _fileUploadHelper;
+            public readonly IObserver<FileUploadedEvent> Observer;
             public SubscriptionToken(FileUploadHelper fileUploadHelper, IObserver<FileUploadedEvent> observer)
             {
-                this.fileUploadHelper = fileUploadHelper;
+                this._fileUploadHelper = fileUploadHelper;
                 Observer = observer;
             }
             public void Dispose()
             {
-                fileUploadHelper._subscriptions.Remove(this);
+                _fileUploadHelper._subscriptions.Remove(this);
             }
         }
     }
