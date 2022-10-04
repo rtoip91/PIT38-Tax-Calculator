@@ -78,14 +78,14 @@ namespace Database.DataAccess
         public async Task<List<Guid>> GetOperationsToProcessAsync()
         {
             await using var context = new ApplicationDbContext();
-            return await context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(50).Select(f => f.OperationGuid)
-                .ToListAsync();
+            return context.FileEntities.AsParallel().Where(f => f.Status == FileStatus.Added).Take(100)
+                .Select(f => f.OperationGuid).ToList();
         }
 
         public List<Guid> GetOperationsToProcess()
         {
             using var context = new ApplicationDbContext();
-            return  context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(50).Select(f => f.OperationGuid)
+            return  context.FileEntities.Where(f => f.Status == FileStatus.Added).Take(100).Select(f => f.OperationGuid)
                 .ToList();
         }
 
