@@ -104,8 +104,8 @@ namespace Database.DataAccess
             IList<string> resultFilesToDelete = new List<string>();
             var now = DateTime.UtcNow;
 
-            var downloadedFiles = context.FileEntities.Where(f => f.Status == FileStatus.Downloaded).ToList();
-            var calculatedFiles = context.FileEntities.Where(f => f.Status == FileStatus.Calculated).ToList();
+            var downloadedFiles = context.FileEntities.AsParallel().Where(f => f.Status == FileStatus.Downloaded).ToList();
+            var calculatedFiles = context.FileEntities.AsParallel().Where(f => f.Status == FileStatus.Calculated).ToList();
 
             foreach (var downloadedFile in downloadedFiles)
             {
