@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using TaxCalculatingService.BussinessLogic;
+﻿using TaxCalculatingService.BussinessLogic;
 
 namespace WebApi.Helpers
 {
