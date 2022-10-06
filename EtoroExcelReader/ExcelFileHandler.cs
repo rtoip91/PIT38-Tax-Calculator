@@ -32,21 +32,32 @@ namespace ExcelReader
                 throw new Exception("Wrong file type");
             }
 
-            using ExcelPackage package = new ExcelPackage();
-            await package.LoadAsync(fileInfo);
+            try
+            {
+                using ExcelPackage package = new ExcelPackage();
+                await package.LoadAsync(fileInfo);
 
-            ExtractedDataDto extractedDataDto = new ExtractedDataDto();
+                ExtractedDataDto extractedDataDto = new ExtractedDataDto();
 
-            DataTable closedPositionsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
-            DataTable transactionReportsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
-            DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.Dividends);
+                DataTable closedPositionsDataTable =
+                    await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
+                DataTable transactionReportsDataTable =
+                    await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
+                DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.Dividends);
 
-            Task extractClosedPositions = ExtractClosedPositionsAsync(closedPositionsDataTable, extractedDataDto, fileName);
-            Task extractTransactionReports = ExtractTransactionReportsAsync(transactionReportsDataTable, extractedDataDto, fileName);
-            Task extractDividends = ExtractDividendsAsync(dividendsDataTable, extractedDataDto, fileName);
+                Task extractClosedPositions =
+                    ExtractClosedPositionsAsync(closedPositionsDataTable, extractedDataDto, fileName);
+                Task extractTransactionReports =
+                    ExtractTransactionReportsAsync(transactionReportsDataTable, extractedDataDto, fileName);
+                Task extractDividends = ExtractDividendsAsync(dividendsDataTable, extractedDataDto, fileName);
 
-            await Task.WhenAll(extractClosedPositions, extractTransactionReports, extractDividends);
-            return extractedDataDto;
+                await Task.WhenAll(extractClosedPositions, extractTransactionReports, extractDividends);
+                return extractedDataDto;
+            }
+            catch (Exception)
+            {
+                throw new Exception("Wrong file content");
+            }
         }
 
         private async Task<DataTable> CreateDataTableAsync(ExcelPackage package, int worksheetId)

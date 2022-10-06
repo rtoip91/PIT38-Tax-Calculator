@@ -34,7 +34,7 @@ namespace TaxEtoro.BussinessLogic
                 return;
             }
 
-            await Parallel.ForEachAsync(fileNames, async (filename, _) => { await DeleteFile(filename); });
+            await Parallel.ForEachAsync(fileNames, async (filename, _) => await DeleteFile(filename));
         }
 
         private async Task DeleteFile(string fileName)
