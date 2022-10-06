@@ -18,7 +18,7 @@ namespace TaxEtoro.BussinessLogic
             IFileProcessor fileProcessor)
         {
             _calculationsTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
-            _fileCleanTimer = new PeriodicTimer(TimeSpan.FromMinutes(10));
+            _fileCleanTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
             _fileCleaner = fileCleaner;
             _fileProcessor = fileProcessor;
         }      
