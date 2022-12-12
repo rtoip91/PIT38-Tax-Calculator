@@ -40,7 +40,7 @@ namespace WebApi.Helpers
                 var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
                     filename);
 
-                await using (var stream = System.IO.File.Create(filePath))
+                await using (var stream = File.Create(filePath))
                 {
                     await inputExcelFile.CopyToAsync(stream);
                 }
