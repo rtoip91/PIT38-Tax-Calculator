@@ -16,10 +16,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ResultsPresenter.Interfaces;
-using TaxCalculatingService.BussinessLogic;
 using TaxEtoro.Interfaces;
 
-namespace TaxEtoro.BussinessLogic
+namespace TaxCalculatingService.BussinessLogic
 {
     internal sealed class FileProcessor : IFileProcessor
     {
@@ -30,7 +29,6 @@ namespace TaxEtoro.BussinessLogic
         private readonly IExchangeRatesLocker _exchangeRatesLocker;
         private readonly object _lock;
         private readonly SemaphoreSlim _semaphore;
-
 
         public FileProcessor(IServiceProvider serviceProvider,
             IConfiguration configuration,
@@ -46,7 +44,6 @@ namespace TaxEtoro.BussinessLogic
             _semaphore = new SemaphoreSlim(0);
             _lock = new object();
         }
-
 
         private async Task ProcessSingleFile(Guid operation)
         {
@@ -64,8 +61,12 @@ namespace TaxEtoro.BussinessLogic
 
         }
 
-        public async Task ProcessFiles()
+        public async Task ProcessFiles(CancellationToken token)
         {
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
             await ReduceSemaphore();
 
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
@@ -74,7 +75,7 @@ namespace TaxEtoro.BussinessLogic
             {
                 _logger.LogInformation("No pending operations detected waiting for new operation");
                 await _semaphore.WaitAsync();
-                await ProcessFiles();
+                await ProcessFiles(token);
                 return;
             }
 
@@ -82,7 +83,7 @@ namespace TaxEtoro.BussinessLogic
 
             do
             {
-                await Parallel.ForEachAsync(operations, async (operation,token) =>
+                await Parallel.ForEachAsync(operations, async (operation,cancellationToken) =>
                 {
                     await ProcessSingleFile(operation);
                 });
@@ -100,7 +101,7 @@ namespace TaxEtoro.BussinessLogic
             GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
             GC.Collect();
 
-            await ProcessFiles();
+            await ProcessFiles(token);
         }
 
         private async Task ReduceSemaphore()

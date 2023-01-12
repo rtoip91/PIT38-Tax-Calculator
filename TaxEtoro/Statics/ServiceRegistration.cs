@@ -7,6 +7,8 @@ using TaxEtoro.BussinessLogic;
 using TaxEtoro.Interfaces;
 using ResultsPresenter;
 using ResultsPresenter.Interfaces;
+using TaxCalculatingService.BussinessLogic;
+using TaxCalculatingService.Interfaces;
 
 namespace TaxEtoro.Statics;
 

@@ -43,18 +43,16 @@ namespace Calculations
 
             DateTime newDate = date.AddDays(subtractDays);
 
-            var locker = _exchangeRatesLocker.GetLocker(newDate);
+            SemaphoreSlim locker = _exchangeRatesLocker.GetLocker(newDate);
 
             if (!bankHoliday)
             {
                 await locker.WaitAsync();
             }
 
-            ExchangeRateEntity entity;
-
             try
             {
-                entity = await GetRateForDay(currencyCode, newDate);
+                ExchangeRateEntity entity = await GetRateForDay(currencyCode, newDate);
                 return entity;
             }
             catch (BankHolidayException)
@@ -83,9 +81,8 @@ namespace Calculations
 
         private async Task<ExchangeRateEntity> HandleBankHoliday(string currencyCode, DateTime holidayDate)
         {
-            DateTime holidayDay = holidayDate;
             ExchangeRateEntity entity = await GetRateForPreviousDayBankHolidayHandling(currencyCode, holidayDate, true);
-            entity.Date = holidayDay;
+            entity.Date = holidayDate;
             return await _exchangeRatesDataAccess.MakeCopyAndSaveToDb(entity);
         }
 
@@ -117,7 +114,7 @@ namespace Calculations
 
             if (resp.StatusCode == HttpStatusCode.ServiceUnavailable)
             {
-                throw new Exception("Serwer NBP nie odpowiada");
+                throw new Exception("NBP server is not responding");
             }
 
             string result = await resp.Content.ReadAsStringAsync();
@@ -133,9 +130,11 @@ namespace Calculations
                 throw;
             }
             
-            ExchangeRateEntity entity = new ExchangeRateEntity();
+            ExchangeRateEntity entity = new ExchangeRateEntity
+            {
+                Code = currencyCode
+            };
 
-            entity.Code = currencyCode;
             if (exchangeRates != null)
             {
                 entity.Currency = exchangeRates.Currency;
@@ -147,7 +146,7 @@ namespace Calculations
                 }
             }
 
-            _logger.LogInformation($"Succesfuly recived exchange rate from api {entity.Code} [{entity.Date.ToShortDateString()}]");
+            _logger.LogInformation($"Successfully received exchange rate from api {entity.Code} [{entity.Date.ToShortDateString()}]");
             return entity;
         }
     }
