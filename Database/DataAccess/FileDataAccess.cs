@@ -111,7 +111,7 @@ public sealed class FileDataAccess : IFileDataAccess
             if (timeSpan.Days >= 7) resultFilesToDelete.Add(deletedFile);
         }
         
-        context.RemoveRange(deletedFiles);
+        context.FileEntities.RemoveRange(resultFilesToDelete);
     }
     
     
