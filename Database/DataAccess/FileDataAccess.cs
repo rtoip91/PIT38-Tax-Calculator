@@ -98,6 +98,23 @@ public sealed class FileDataAccess : IFileDataAccess
             .ToListAsync();
     }
 
+    public async Task RemoveDataAboutDeletedFiles()
+    {
+        await using var context = new ApplicationDbContext();
+        DateTime now = DateTime.UtcNow;
+        var deletedFiles = context.FileEntities.AsParallel().Where(f => f.Status == FileStatus.Deleted).ToList();
+        IList<FileEntity> resultFilesToDelete = new List<FileEntity>();
+        
+        foreach (FileEntity deletedFile in deletedFiles)
+        {
+            TimeSpan timeSpan = now - deletedFile.StatusChangeDate;
+            if (timeSpan.Days >= 7) resultFilesToDelete.Add(deletedFile);
+        }
+        
+        context.RemoveRange(deletedFiles);
+    }
+    
+    
     public async Task<IList<string>> GetCalculationResultFilesToDeleteAsync()
     {
         await using var context = new ApplicationDbContext();
@@ -118,7 +135,7 @@ public sealed class FileDataAccess : IFileDataAccess
         {
             TimeSpan timeSpan = now - calculatedFile.StatusChangeDate;
 
-            if (timeSpan.Days >= 2) resultFilesToDelete.Add(calculatedFile.CalculationResultFileName);
+            if (timeSpan.Days >= 3) resultFilesToDelete.Add(calculatedFile.CalculationResultFileName);
         }
 
         return resultFilesToDelete;

@@ -114,7 +114,7 @@ namespace Calculations
 
             if (resp.StatusCode == HttpStatusCode.ServiceUnavailable)
             {
-                throw new Exception("NBP server is not responding");
+                throw new HttpRequestException("NBP server is not responding");
             }
 
             string result = await resp.Content.ReadAsStringAsync();

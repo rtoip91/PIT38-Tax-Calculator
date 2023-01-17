@@ -46,12 +46,16 @@ public sealed class FileWriter : IFileWriter
     {
         CreateDirectory();
         _operationGuid = operationId;
-        await WriteCfdResultsToFile(calculationResultDto.CdfDto);
-        await WriteStockResultsToFile(calculationResultDto.StockDto);
-        await WriteCryptoResultsToFile(calculationResultDto.CryptoDto);
-        await WriteDividendResultsToFile(calculationResultDto.DividendDto);
-        await WritePitZgToFile();
-        await CopyExcelFileToZip(inputFileData);
+        
+        await using FileStream zipFile = await CreateOrUpdateZipFile();
+        using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
+
+        await WriteCfdResultsToFile(calculationResultDto.CdfDto, archive);
+        await WriteStockResultsToFile(calculationResultDto.StockDto, archive);
+        await WriteCryptoResultsToFile(calculationResultDto.CryptoDto, archive);
+        await WriteDividendResultsToFile(calculationResultDto.DividendDto, archive);
+        await WritePitZgToFile(archive);
+        await CopyExcelFileToZip(inputFileData,archive);
         return await GetFileName();
     }
 
@@ -85,17 +89,13 @@ public sealed class FileWriter : IFileWriter
         return zipToOpen;
     }
 
-    private async Task CopyExcelFileToZip(FileInfo file)
+    private async Task CopyExcelFileToZip(FileInfo file, ZipArchive archive)
     {
-        await using FileStream zipFile = await CreateOrUpdateZipFile();
-        using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         archive.CreateEntryFromFile(file.FullName, Constants.Constants.EtoroExcelFile);
     }
 
-    private async Task WritePitZgToFile()
+    private async Task WritePitZgToFile( ZipArchive archive)
     {
-        await using FileStream zipFile = await CreateOrUpdateZipFile();
-        using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry pitZgEntry = CreateZipFileEntry(archive, Constants.Constants.PitZgFileName);
         await using var sw = new StreamWriter(pitZgEntry.Open());
 
@@ -116,10 +116,8 @@ public sealed class FileWriter : IFileWriter
     }
 
 
-    private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto)
+    private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto, ZipArchive archive)
     {
-        await using FileStream zipFile = await CreateOrUpdateZipFile();
-        using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry stockEntry = CreateZipFileEntry(archive, Constants.Constants.StockCalculationsFileName);
         await using var sw = new StreamWriter(stockEntry.Open());
 
@@ -134,10 +132,8 @@ public sealed class FileWriter : IFileWriter
         foreach (StockEntity stockEntity in stockEntities) await sw.WriteLineAsync(stockEntity.ToString());
     }
 
-    private async Task WriteCryptoResultsToFile(CryptoDto cryptoDto)
+    private async Task WriteCryptoResultsToFile(CryptoDto cryptoDto, ZipArchive archive)
     {
-        await using FileStream zipFile = await CreateOrUpdateZipFile();
-        using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry cryptoEntry = CreateZipFileEntry(archive, Constants.Constants.CryptoCalculationsFileName);
         await using var sw = new StreamWriter(cryptoEntry.Open());
 
@@ -163,10 +159,8 @@ public sealed class FileWriter : IFileWriter
             await sw.WriteLineAsync(soldCryptoEntity.ToString());
     }
 
-    private async Task WriteDividendResultsToFile(DividendCalculatorDto dividendCalculatorDto)
+    private async Task WriteDividendResultsToFile(DividendCalculatorDto dividendCalculatorDto, ZipArchive archive)
     {
-        await using FileStream zipFile = await CreateOrUpdateZipFile();
-        using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry dividendsEntry = CreateZipFileEntry(archive, Constants.Constants.DividendsCalculationsFileName);
         await using var sw = new StreamWriter(dividendsEntry.Open());
         IList<DividendCalculationsEntity> dividendCalculations = _dividendCalculationsDataAccess.GetEntities();
@@ -181,11 +175,9 @@ public sealed class FileWriter : IFileWriter
             await sw.WriteLineAsync(dividend.ToString());
     }
 
-    private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto)
+    private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto, ZipArchive archive)
     {
-        await using FileStream zipFile = await CreateOrUpdateZipFile();
         IList<CfdEntity> cfdEntities = _cfdEntityDataAccess.GetCfdEntities();
-        using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
         ZipArchiveEntry cfdEntry = CreateZipFileEntry(archive, Constants.Constants.CfdCalculationsFileName);
 
         await using var sw = new StreamWriter(cfdEntry.Open());
