@@ -27,6 +27,10 @@ namespace TaxEtoro.BussinessLogic
         public async Task CleanCalculationResultFiles()
         {
             _logger.LogInformation("Triggering the calculation result file cleaning");
+           
+            var numberOfOldData = await _fileDataAccess.RemoveOldDataAboutDeletedFiles();
+            _logger.LogInformation($"Removed {numberOfOldData} data about old deleted files from the database.");
+            
             var fileNames = await _fileDataAccess.GetCalculationResultFilesToDeleteAsync();
             if (!fileNames.Any())
             {

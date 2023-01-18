@@ -98,45 +98,26 @@ public sealed class FileDataAccess : IFileDataAccess
             .ToListAsync();
     }
 
-    public async Task RemoveDataAboutDeletedFiles()
+    public async Task<int> RemoveOldDataAboutDeletedFiles()
     {
         await using var context = new ApplicationDbContext();
-        DateTime now = DateTime.UtcNow;
-        var deletedFiles = context.FileEntities.AsParallel().Where(f => f.Status == FileStatus.Deleted).ToList();
-        IList<FileEntity> resultFilesToDelete = new List<FileEntity>();
-        
-        foreach (FileEntity deletedFile in deletedFiles)
-        {
-            TimeSpan timeSpan = now - deletedFile.StatusChangeDate;
-            if (timeSpan.Days >= 7) resultFilesToDelete.Add(deletedFile);
-        }
-        
-        context.FileEntities.RemoveRange(resultFilesToDelete);
+        var filesToDelete = context.FileEntities.AsParallel().Where(f =>
+            f.Status == FileStatus.Deleted && 
+            f.StatusChangeDate <= DateTime.UtcNow.Date.AddDays(-7)).ToList();
+
+        context.FileEntities.RemoveRange(filesToDelete);
+        return await context.SaveChangesAsync();
     }
     
     
     public async Task<IList<string>> GetCalculationResultFilesToDeleteAsync()
     {
         await using var context = new ApplicationDbContext();
-        IList<string> resultFilesToDelete = new List<string>();
-        DateTime now = DateTime.UtcNow;
 
-        var downloadedFiles = context.FileEntities.AsParallel().Where(f => f.Status == FileStatus.Downloaded).ToList();
-        var calculatedFiles = context.FileEntities.AsParallel().Where(f => f.Status == FileStatus.Calculated).ToList();
-
-        foreach (FileEntity downloadedFile in downloadedFiles)
-        {
-            TimeSpan timeSpan = now - downloadedFile.StatusChangeDate;
-
-            if (timeSpan.Days >= 1) resultFilesToDelete.Add(downloadedFile.CalculationResultFileName);
-        }
-
-        foreach (FileEntity calculatedFile in calculatedFiles)
-        {
-            TimeSpan timeSpan = now - calculatedFile.StatusChangeDate;
-
-            if (timeSpan.Days >= 3) resultFilesToDelete.Add(calculatedFile.CalculationResultFileName);
-        }
+        var resultFilesToDelete =  context.FileEntities.AsParallel().Where(f => 
+            (f.Status == FileStatus.Downloaded && f.StatusChangeDate <=  DateTime.UtcNow.Date.AddDays(-1))
+            || (f.Status == FileStatus.Calculated && f.StatusChangeDate <=  DateTime.UtcNow.Date.AddDays(-3)))
+            .Select(f=>f.CalculationResultFileName).ToList();
 
         return resultFilesToDelete;
     }

@@ -18,4 +18,5 @@ public interface IFileDataAccess
     Task<bool> SetAsDeletedAsync(Guid operationGuid);
     Task<bool> SetAsInProgressAsync(Guid operationGuid);
     Task<IList<string>> GetCalculationResultFilesToDeleteAsync();
+    Task<int> RemoveOldDataAboutDeletedFiles();
 }
