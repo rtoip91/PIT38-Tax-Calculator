@@ -28,5 +28,7 @@ namespace Database.Entities.InMemory
         public decimal RealizedEquity { get; set; }
 
         public int NWA { get; set; }
+        
+        public bool IsCryptocurrency { get; set; }
     }
 }

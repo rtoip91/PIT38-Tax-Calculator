@@ -1,6 +1,6 @@
-﻿namespace ExcelReader.Dictionatries
+﻿namespace ExcelReader.Dictionaries.V2021
 {
-    internal static class TransactionReportsColumns
+    internal static class TransactionReportsColumnsV2021
     {
         internal const int Date = 0;
         internal const int Type = 1;

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Data;
-using ExcelReader.Dictionatries;
+using ExcelReader.Dictionaries.V2021;
 using ExcelReader.ExtensionMethods;
 
 namespace ExcelReader.Dto
@@ -9,14 +9,14 @@ namespace ExcelReader.Dto
     {
         public DividendDto(DataRow row)
         {
-            DateOfPayment = row[DividendsColumns.DateOfPayment].ToDate();
-            InstrumentName = row[DividendsColumns.InstrumentName].ToString();
-            NetDividendReceived = row[DividendsColumns.NetDividendReceived].ToDecimal();
-            WithholdingTaxRate = row[DividendsColumns.WithholdingTaxRate].ToDecimal();
-            WithholdingTaxAmount = row[DividendsColumns.WithholdingTaxAmount].ToDecimal();
-            PositionId = row[DividendsColumns.PositionId].ToLong();
-            PositionType = row[DividendsColumns.PositionType].ToString();
-            ISIN = row[DividendsColumns.ISIN].ToIso3166Symbol();
+            DateOfPayment = row[DividendsColumnsV2021.DateOfPayment].ToDate();
+            InstrumentName = row[DividendsColumnsV2021.InstrumentName].ToString();
+            NetDividendReceived = row[DividendsColumnsV2021.NetDividendReceived].ToDecimal();
+            WithholdingTaxRate = row[DividendsColumnsV2021.WithholdingTaxRate].ToDecimal();
+            WithholdingTaxAmount = row[DividendsColumnsV2021.WithholdingTaxAmount].ToDecimal();
+            PositionId = row[DividendsColumnsV2021.PositionId].ToLong();
+            PositionType = row[DividendsColumnsV2021.PositionType].ToString();
+            ISIN = row[DividendsColumnsV2021.ISIN].ToIso3166Symbol();
         }
 
         public DateTime DateOfPayment { get; }

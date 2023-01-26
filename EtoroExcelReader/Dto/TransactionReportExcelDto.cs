@@ -1,7 +1,7 @@
-﻿using ExcelReader.Dictionatries;
-using ExcelReader.ExtensionMethods;
+﻿using ExcelReader.ExtensionMethods;
 using System;
 using System.Data;
+using ExcelReader.Dictionaries.V2021;
 
 namespace EtoroExcelReader.Dto
 {
@@ -9,23 +9,23 @@ namespace EtoroExcelReader.Dto
     {
         public TransactionReportExcelDto(DataRow row)
         {
-            Date = DateTime.Parse(row[TransactionReportsColumns.Date].ToString());
+            Date = DateTime.Parse(row[TransactionReportsColumnsV2021.Date].ToString());
 
-            AccountBalance = row[TransactionReportsColumns.AccountBalance].ToDecimal();
+            AccountBalance = row[TransactionReportsColumnsV2021.AccountBalance].ToDecimal();
 
-            Type = row[TransactionReportsColumns.Type].ToString();
+            Type = row[TransactionReportsColumnsV2021.Type].ToString();
 
-            Details = row[TransactionReportsColumns.Details].ToString();
+            Details = row[TransactionReportsColumnsV2021.Details].ToString();
 
-            PositionId = row[TransactionReportsColumns.PositionId].ToLong();
+            PositionId = row[TransactionReportsColumnsV2021.PositionId].ToLong();
 
-            Amount = row[TransactionReportsColumns.Amount].ToDecimal();
+            Amount = row[TransactionReportsColumnsV2021.Amount].ToDecimal();
 
-            RealizedEquityChange = row[TransactionReportsColumns.RealizedEquityChange].ToDecimal();
+            RealizedEquityChange = row[TransactionReportsColumnsV2021.RealizedEquityChange].ToDecimal();
 
-            RealizedEquity = row[TransactionReportsColumns.RealizedEquity].ToDecimal();
+            RealizedEquity = row[TransactionReportsColumnsV2021.RealizedEquity].ToDecimal();
 
-            NWA = row[TransactionReportsColumns.NWA].ToInt();
+            NWA = row[TransactionReportsColumnsV2021.NWA].ToInt();
         }
 
         public DateTime Date { get; }
@@ -45,5 +45,7 @@ namespace EtoroExcelReader.Dto
         public decimal RealizedEquity { get; }
 
         public int NWA { get; }
+        
+        public bool IsCryptoCurrency { get; }
     }
 }

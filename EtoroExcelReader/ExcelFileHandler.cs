@@ -3,7 +3,7 @@ using System.Data;
 using System.IO;
 using System.Threading.Tasks;
 using EtoroExcelReader.Dto;
-using ExcelReader.Dictionatries;
+using ExcelReader.Dictionaries.V2021;
 using ExcelReader.Dto;
 using ExcelReader.Interfaces;
 using ExcelReader.Statics;
@@ -40,10 +40,10 @@ namespace ExcelReader
                 ExtractedDataDto extractedDataDto = new ExtractedDataDto();
 
                 DataTable closedPositionsDataTable =
-                    await CreateDataTableAsync(package, ExcelSpreadsheets.ClosedPositions);
+                    await CreateDataTableAsync(package, ExcelSpreadsheetsV2021.ClosedPositions);
                 DataTable transactionReportsDataTable =
-                    await CreateDataTableAsync(package, ExcelSpreadsheets.TransactionReports);
-                DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheets.Dividends);
+                    await CreateDataTableAsync(package, ExcelSpreadsheetsV2021.TransactionReports);
+                DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheetsV2021.Dividends);
 
                 Task extractClosedPositions =
                     ExtractClosedPositionsAsync(closedPositionsDataTable, extractedDataDto, fileName);

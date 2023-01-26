@@ -1,8 +1,8 @@
-﻿using ExcelReader.Dictionatries;
-using ExcelReader.ExtensionMethods;
+﻿using ExcelReader.ExtensionMethods;
 using System;
 using System.Data;
 using Database.Enums;
+using ExcelReader.Dictionaries.V2021;
 
 namespace EtoroExcelReader.Dto
 {
@@ -10,43 +10,43 @@ namespace EtoroExcelReader.Dto
     {
         public ClosedPositionExcelDto(DataRow row)
         {
-            PositionId = row[ClosedPositionsColumns.PositionId].ToLong();
+            PositionId = row[ClosedPositionsColumnsV2021.PositionId].ToLong();
 
-            TransactionType = row[ClosedPositionsColumns.Operation].ToTransactionType();
+            TransactionType = row[ClosedPositionsColumnsV2021.Operation].ToTransactionType();
 
-            Operation = row[ClosedPositionsColumns.Operation].OperationToString();
+            Operation = row[ClosedPositionsColumnsV2021.Operation].OperationToString();
 
-            CopiedInvestor = row[ClosedPositionsColumns.CopiedInvestor].ToString();
+            CopiedInvestor = row[ClosedPositionsColumnsV2021.CopiedInvestor].ToString();
 
-            Amount = row[ClosedPositionsColumns.Amount].ToDecimal();
+            Amount = row[ClosedPositionsColumnsV2021.Amount].ToDecimal();
 
-            OpeningRate = row[ClosedPositionsColumns.OpeningRate].ToDecimal();
+            OpeningRate = row[ClosedPositionsColumnsV2021.OpeningRate].ToDecimal();
 
-            ClosingRate = row[ClosedPositionsColumns.ClosingRate].ToDecimal();
+            ClosingRate = row[ClosedPositionsColumnsV2021.ClosingRate].ToDecimal();
 
-            Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
+            Leverage = row[ClosedPositionsColumnsV2021.Leverage].ToInt();
 
             Units = Math.Round((decimal)(Amount * Leverage / OpeningRate), 6, MidpointRounding.AwayFromZero);
 
-            Spread = row[ClosedPositionsColumns.Spread].ToDecimal();
+            Spread = row[ClosedPositionsColumnsV2021.Spread].ToDecimal();
 
-            Profit = row[ClosedPositionsColumns.Profit].ToDecimal();
+            Profit = row[ClosedPositionsColumnsV2021.Profit].ToDecimal();
 
-            OpeningDate = row[ClosedPositionsColumns.OpeningDate].ToDate();
+            OpeningDate = row[ClosedPositionsColumnsV2021.OpeningDate].ToDate();
 
-            ClosingDate = row[ClosedPositionsColumns.ClosingDate].ToDate();
+            ClosingDate = row[ClosedPositionsColumnsV2021.ClosingDate].ToDate();
 
-            TakeProfitRate = row[ClosedPositionsColumns.TakeProfitRate].ToDecimal();
+            TakeProfitRate = row[ClosedPositionsColumnsV2021.TakeProfitRate].ToDecimal();
 
-            StopLossRate = row[ClosedPositionsColumns.StopLossRate].ToDecimal();
+            StopLossRate = row[ClosedPositionsColumnsV2021.StopLossRate].ToDecimal();
 
-            FeesAndDividends = row[ClosedPositionsColumns.FeesAndDividends].ToDecimal();
+            FeesAndDividends = row[ClosedPositionsColumnsV2021.FeesAndDividends].ToDecimal();
 
-            IsReal = row[ClosedPositionsColumns.IsReal].ToString();
+            IsReal = row[ClosedPositionsColumnsV2021.IsReal].ToString();
 
-            Leverage = row[ClosedPositionsColumns.Leverage].ToInt();
+            Leverage = row[ClosedPositionsColumnsV2021.Leverage].ToInt();
 
-            ISIN = row[ClosedPositionsColumns.ISIN].ToIso3166Symbol();
+            ISIN = row[ClosedPositionsColumnsV2021.ISIN].ToIso3166Symbol();
         }
 
         public long? PositionId { get; }
