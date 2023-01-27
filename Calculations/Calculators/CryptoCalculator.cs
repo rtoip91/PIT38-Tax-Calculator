@@ -127,9 +127,8 @@ namespace Calculations.Calculators
         {
             IList<string> cryptoList = Dictionaries.Dictionaries.CryptoCurrenciesDictionary.Keys.ToList();
 
-            foreach (var crypto in cryptoList)
-            {
-                var transReports = _transactionReportsDataAccess.GetUnsoldCryptoTransactions(crypto);
+           
+                var transReports = _transactionReportsDataAccess.GetUnsoldCryptoTransactions();
                 foreach (var transaction in transReports)
                 {
                     PurchasedCryptoEntity purchasedCryptoEntity = new PurchasedCryptoEntity
@@ -139,8 +138,10 @@ namespace Calculations.Calculators
                         PositionId = transaction.PositionId ?? 0,
                         TotalValue = transaction.Amount
                     };
+                    
+                    
 
-                    purchasedCryptoEntity.Name = GetCryptoCurrencyName(crypto);
+                    purchasedCryptoEntity.Name = GetCryptoCurrencyName(transaction);
                     ExchangeRateEntity purchasedExchangeRate =
                         await _exchangeRates.GetRateForPreviousDay(purchasedCryptoEntity.CurrencySymbol,
                             purchasedCryptoEntity.PurchaseDate);
@@ -150,14 +151,16 @@ namespace Calculations.Calculators
                         (purchasedCryptoEntity.TotalValue * purchasedCryptoEntity.ExchangeRate).RoundDecimal();
                     purchasedCryptoEntities.Add(purchasedCryptoEntity);
                 }
-            }
+            
         }
 
-        private string GetCryptoCurrencyName(string crypto)
+        private string GetCryptoCurrencyName(TransactionReportEntity transactionReport)
         {
+            string? name = transactionReport.Details.Split('/').FirstOrDefault();
+            
             var result =
-                Dictionaries.Dictionaries.CryptoCurrenciesDictionary.TryGetValue(crypto, out string cryptoName);
-            return result ? $"Kupno {cryptoName}" : $"Kupno {crypto}";
+                Dictionaries.Dictionaries.CryptoCurrenciesDictionary.TryGetValue(name, out string cryptoName);
+            return result ? $"Kupno {cryptoName}" : $"Kupno {transactionReport.Details}";
         }
     }
 }

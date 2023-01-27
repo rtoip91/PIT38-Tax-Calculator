@@ -11,6 +11,6 @@ namespace Database.DataAccess.Interfaces
     public interface ITransactionReportsDataAccess
     {
         void AddTransactionReports(IList<TransactionReportEntity> transactionReports);
-        IList<TransactionReportEntity> GetUnsoldCryptoTransactions(string cryptoName);
+        IList<TransactionReportEntity> GetUnsoldCryptoTransactions();
     }
 }

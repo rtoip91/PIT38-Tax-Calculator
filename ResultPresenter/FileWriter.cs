@@ -75,7 +75,7 @@ public sealed class FileWriter : IFileWriter
 
         if (!Directory.Exists(path))
         {
-            DirectoryInfo info = Directory.CreateDirectory(path);
+            Directory.CreateDirectory(path);
         }
     }
 
@@ -89,9 +89,10 @@ public sealed class FileWriter : IFileWriter
         return zipToOpen;
     }
 
-    private async Task CopyExcelFileToZip(FileInfo file, ZipArchive archive)
+    private Task CopyExcelFileToZip(FileInfo file, ZipArchive archive)
     {
         archive.CreateEntryFromFile(file.FullName, Constants.Constants.EtoroExcelFile);
+        return Task.CompletedTask;
     }
 
     private async Task WritePitZgToFile( ZipArchive archive)

@@ -1,6 +1,9 @@
 ﻿using ExcelReader.ExtensionMethods;
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using Calculations.Dictionaries;
 using ExcelReader.Dictionaries.V2021;
 
 namespace EtoroExcelReader.Dto
@@ -26,6 +29,18 @@ namespace EtoroExcelReader.Dto
             RealizedEquity = row[TransactionReportsColumnsV2021.RealizedEquity].ToDecimal();
 
             NWA = row[TransactionReportsColumnsV2021.NWA].ToInt();
+
+            IsCryptoCurrency = false;
+
+            if (Details != null && Type != null)
+            {
+                if(Type.ToLower().Contains("Otwarta pozycja".ToLower()))
+                { 
+                    string name = Details.Split('/').FirstOrDefault();
+                    var result =  Dictionaries.CryptoCurrenciesDictionary.TryGetValue(name, out _);
+                    IsCryptoCurrency = result;
+                }
+            }
         }
 
         public DateTime Date { get; }

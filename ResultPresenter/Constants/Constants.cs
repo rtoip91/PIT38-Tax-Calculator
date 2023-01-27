@@ -7,5 +7,5 @@ internal static class Constants
     public const string CryptoCalculationsFileName = "Kryptowaluty.txt";
     public const string DividendsCalculationsFileName = "Dywidendy.txt";
     public const string PitZgFileName = "PitZG.txt";
-    public const string EtoroExcelFile = "Wyciąg_operacji.xlsx";
+    public const string EtoroExcelFile = "Wyciąg operacji.xlsx";
 }
