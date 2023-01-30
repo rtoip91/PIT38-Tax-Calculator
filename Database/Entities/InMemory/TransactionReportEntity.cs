@@ -11,8 +11,6 @@ namespace Database.Entities.InMemory
 
         public DateTime Date { get; set; }
 
-        public decimal AccountBalance { get; set; }
-
         public string Type { get; set; }
 
         public string Details { get; set; }
@@ -23,12 +21,6 @@ namespace Database.Entities.InMemory
 
         public decimal Amount { get; set; }
 
-        public decimal RealizedEquityChange { get; set; }
-
-        public decimal RealizedEquity { get; set; }
-
-        public int NWA { get; set; }
-        
         public bool IsCryptocurrency { get; set; }
     }
 }

@@ -25,7 +25,9 @@ namespace Database.DataAccess
 
         public IList<TransactionReportEntity> GetUnsoldCryptoTransactions()
         {
-            return _importRepository.TransactionReports.Where(c=>c.IsCryptocurrency).ToList();
+            return _importRepository.TransactionReports.Where(c=>c.IsCryptocurrency
+                                                                 && c.Type.ToLower().Contains("Otwarta pozycja".ToLower()))
+                .ToList();
         }
     }
 }

@@ -2,9 +2,10 @@
 using System.Data;
 using System.IO;
 using System.Threading.Tasks;
-using EtoroExcelReader.Dto;
+using Database.Entities.InMemory;
 using ExcelReader.Dictionaries.V2021;
 using ExcelReader.Dto;
+using ExcelReader.Factory;
 using ExcelReader.Interfaces;
 using ExcelReader.Statics;
 using Microsoft.Extensions.Logging;
@@ -16,10 +17,12 @@ namespace ExcelReader
     internal sealed class ExcelFileHandler : IExcelFileHandler
     {
         private readonly ILogger<ExcelFileHandler> _logger;
+        private readonly IRowToEntityConverter _converter;
 
-        public ExcelFileHandler(ILogger<ExcelFileHandler> logger)
+        public ExcelFileHandler(ILogger<ExcelFileHandler> logger, IConverterFactory converterFactory)
         {
             _logger = logger;
+            _converter = converterFactory.GetConverter();
         }
         public async Task<ExtractedDataDto> ExtractDataFromExcel(string directory, string fileName)
         {
@@ -89,7 +92,7 @@ namespace ExcelReader
             {
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    ClosedPositionExcelDto closedPosition = new ClosedPositionExcelDto(row);
+                    ClosedPositionEntity closedPosition = _converter.ToClosedPositionEntity(row);
                     extractedData.ClosedPositions.Add(closedPosition);
                 }
 
@@ -105,8 +108,8 @@ namespace ExcelReader
             {
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    DividendDto closedPosition = new DividendDto(row);
-                    extractedData.Dividends.Add(closedPosition);
+                    DividendEntity dividend = _converter.ToDividendEntity(row);
+                    extractedData.Dividends.Add(dividend);
                 }
 
                 _logger.LogDebug("[{FileName}] added {RowsCount} dividend positions", fileName, dataTable.Rows.Count);
@@ -121,7 +124,7 @@ namespace ExcelReader
             {
                 foreach (DataRow row in dataTable.Rows)
                 {
-                    TransactionReportExcelDto transactionReport = new TransactionReportExcelDto(row);
+                    TransactionReportEntity transactionReport = _converter.ToTransactionReportEntity(row);
                     extractedData.TransactionReports.Add(transactionReport);
                 }
 
