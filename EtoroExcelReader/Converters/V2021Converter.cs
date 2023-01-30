@@ -7,7 +7,7 @@ using ExcelReader.ExtensionMethods;
 
 namespace ExcelReader.Converters;
 
-internal class V2021Converter : IRowToEntityConverter
+internal sealed class V2021Converter : IRowToEntityConverter
 {
     public ClosedPositionEntity ToClosedPositionEntity(DataRow row)
     {
