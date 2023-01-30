@@ -1,5 +1,6 @@
 ﻿using ExcelReader.Factory;
 using ExcelReader.Interfaces;
+using ExcelReader.Validators;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace ExcelReader.Statics
@@ -12,6 +13,7 @@ namespace ExcelReader.Statics
             services.AddTransient<IExcelFileHandler, ExcelFileHandler>();
             services.AddTransient<IExtractedDataProcessor, ExtractedDataProcessor>();
             services.AddTransient<IConverterFactory, ConverterFactory>();
+            services.AddTransient<IExcelStreamValidator, ExcelStreamValidator>();
         }
     }
 }
