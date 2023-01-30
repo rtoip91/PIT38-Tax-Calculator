@@ -1,7 +1,7 @@
 using System.Data;
 using Database.Entities.InMemory;
 
-namespace ExcelReader.Interfaces;
+namespace ExcelReader.Converters;
 
 internal interface IRowToEntityConverter
 {

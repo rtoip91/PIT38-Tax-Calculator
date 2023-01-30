@@ -4,7 +4,6 @@ using System.Linq;
 using Database.Entities.InMemory;
 using ExcelReader.Dictionaries.V2021;
 using ExcelReader.ExtensionMethods;
-using ExcelReader.Interfaces;
 
 namespace ExcelReader.Converters;
 
@@ -26,7 +25,6 @@ internal class V2021Converter : IRowToEntityConverter
             IsReal = row[ClosedPositionsColumnsV2021.IsReal].ToString(),
             ISIN = row[ClosedPositionsColumnsV2021.ISIN].ToIso3166Symbol()
         };
-
 
         closedPositionEntity.Units = Math.Round((decimal)(closedPositionEntity.Amount * closedPositionEntity.Leverage / closedPositionEntity.OpeningRate), 6, MidpointRounding.AwayFromZero);
 
