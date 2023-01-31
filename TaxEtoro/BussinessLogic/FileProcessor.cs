@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using Calculations.Dto;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
+using Database.Enums;
+using ExcelReader.Dto;
 using ExcelReader.Interfaces;
 using ExcelReader.Statics;
 using Microsoft.Extensions.Configuration;
@@ -49,16 +51,16 @@ internal sealed class FileProcessor : IFileProcessor
     {
         DirectoryInfo directory =
             FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
-        var filename = await _fileDataAccess.GetInputFileNameAsync(operation);
-        FileInfo file = directory.GetFiles(filename).FirstOrDefault();
+        var fileEntity = await _fileDataAccess.GetInputFileDataAsync(operation);
+        FileInfo file = directory.GetFiles(fileEntity.InputFileName).FirstOrDefault();
         if (file is null)
         {
-            _logger.LogWarning($"File {filename} was not found, marking as deleted.");
+            _logger.LogWarning("File {FileEntityInputFileName} was not found, marking as deleted.", fileEntity.InputFileName);
             await _fileDataAccess.SetAsDeletedAsync(operation);
             return;
         }
 
-        await ProcessFile(directory, file, operation).ContinueWith(_ => RemoveFile(file));
+        await ProcessFile(directory, file, operation, fileEntity.FileVersion).ContinueWith(_ => RemoveFile(file));
     }
 
     public async Task ProcessFiles(CancellationToken token)
@@ -110,7 +112,7 @@ internal sealed class FileProcessor : IFileProcessor
         _logger.LogInformation($"File: {file.Name} was deleted");
     }
 
-    private Task ProcessFile(DirectoryInfo directory, FileInfo file, Guid operation)
+    private Task ProcessFile(DirectoryInfo directory, FileInfo file, Guid operation, FileVersion fileVersion)
     {
         Task task = Task.Run(async () =>
         {
@@ -118,6 +120,8 @@ internal sealed class FileProcessor : IFileProcessor
             {
                 await _fileDataAccess.SetAsInProgressAsync(operation);
                 await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
+                var versionData = scope.ServiceProvider.GetService<ICurrentVersionData>();
+                versionData.FileVersion = fileVersion;
                 CalculationResultDto dto = await Calculate(directory, file, scope, operation);
                 await PresentCalculationResults(dto, file, scope, operation);
             }

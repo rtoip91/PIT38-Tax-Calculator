@@ -35,8 +35,6 @@ namespace WebApi.Helpers
 
         public async Task<Guid?> UploadFile(IFormFile inputExcelFile)
         {
-            long size = inputExcelFile.Length;
-
             if (inputExcelFile.Length > 0)
             {
                 var fileVersion = await _excelStreamValidator.ValidateFileVersion(inputExcelFile.OpenReadStream());
@@ -47,7 +45,7 @@ namespace WebApi.Helpers
                 }
 
                 var guid = Guid.NewGuid();
-                string filename = await _fileDataAccess.AddNewFileAsync(guid);
+                string filename = await _fileDataAccess.AddNewFileAsync(guid,fileVersion);
 
                 var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
                     filename);
@@ -57,7 +55,7 @@ namespace WebApi.Helpers
                     await inputExcelFile.CopyToAsync(stream);
                 }
 
-                _logger.LogInformation($"Successfully uploaded a file {filename}");
+                _logger.LogInformation("Successfully uploaded a file {Filename}", filename);
 
 
                 foreach (var sub in _subscriptions)

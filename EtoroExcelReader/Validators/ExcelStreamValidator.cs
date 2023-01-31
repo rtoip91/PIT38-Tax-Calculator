@@ -8,7 +8,7 @@ using OfficeOpenXml;
 
 namespace ExcelReader.Validators;
 
-public class ExcelStreamValidator : IExcelStreamValidator
+public sealed class ExcelStreamValidator : IExcelStreamValidator
 {
     private readonly IVersionData _versionData = new VersionData();
 
@@ -34,16 +34,16 @@ public class ExcelStreamValidator : IExcelStreamValidator
                 for (int i = 0; i < package.Workbook.Worksheets.Count; i++)
                 {
                     ExcelWorksheet worksheet = package.Workbook.Worksheets[i];
-                    string currentName = worksheet.Name.Trim();
-                    string expectedName = excelData.SpreadSheets[i];
+                    string currentWorksheetName = worksheet.Name.Trim();
+                    string expectedWorksheetName = excelData.SpreadSheets[i];
 
-                    if (currentName != expectedName)
+                    if (currentWorksheetName != expectedWorksheetName)
                     {
                         result = false;
                         break;
                     }
 
-                    var columns = excelData.ColumnNames[expectedName];
+                    var columns = excelData.ColumnNames[expectedWorksheetName];
                     if (columns == null)
                     {
                         continue;
@@ -52,7 +52,7 @@ public class ExcelStreamValidator : IExcelStreamValidator
                     for (int j = 1; j <= columns.Count; j++)
                     {
                         var currentColumnName = worksheet.Cells[1, j].Value.ToString()?.Trim();
-                        var expectedColumnName = excelData.ColumnNames[expectedName][j - 1];
+                        var expectedColumnName = excelData.ColumnNames[expectedWorksheetName][j - 1];
 
                         if (currentColumnName != expectedColumnName)
                         {

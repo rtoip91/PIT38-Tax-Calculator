@@ -11,7 +11,7 @@ namespace Database.DataAccess;
 
 public sealed class FileDataAccess : IFileDataAccess
 {
-    public async Task<string> AddNewFileAsync(Guid operationGuid)
+    public async Task<string> AddNewFileAsync(Guid operationGuid, FileVersion fileVersion)
     {
         await using var context = new ApplicationDbContext();
 
@@ -21,6 +21,7 @@ public sealed class FileDataAccess : IFileDataAccess
         fileEntity.CalculationResultFileName = $"{fileEntity.OperationGuid}.zip";
         fileEntity.Status = FileStatus.Added;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
+        fileEntity.FileVersion = fileVersion;
 
         await context.FileEntities.AddAsync(fileEntity);
         await context.SaveChangesAsync();
@@ -39,7 +40,7 @@ public sealed class FileDataAccess : IFileDataAccess
         return fileEntity.CalculationResultFileName;
     }
 
-    public async Task<string> GetInputFileNameAsync(Guid operationGuid)
+    public async Task<FileEntity> GetInputFileDataAsync(Guid operationGuid)
     {
         await using var context = new ApplicationDbContext();
 
@@ -47,7 +48,7 @@ public sealed class FileDataAccess : IFileDataAccess
 
         if (fileEntity is null) return null;
 
-        return fileEntity.InputFileName;
+        return fileEntity;
     }
 
     public async Task<bool> SetAsCalculatedAsync(Guid operationGuid, string calculationResultJson)
