@@ -20,7 +20,6 @@ public sealed class FileWriter : IFileWriter
     private string _fileName;
     private Guid _operationGuid;
 
-
     public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
         IStockEntityDataAccess stockEntityDataAccess,
         ISoldCryptoEntityDataAccess soldCryptoEntityDataAccess,
@@ -37,7 +36,6 @@ public sealed class FileWriter : IFileWriter
         _dividendCalculationsDataAccess = dividendCalculationsDataAccess;
         _incomeByCountryDataAccess = incomeByCountryDataAccess;
         _fileDataAccess = fileDataAccess;
-
         _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
@@ -46,7 +44,7 @@ public sealed class FileWriter : IFileWriter
     {
         CreateDirectory();
         _operationGuid = operationId;
-        
+
         await using FileStream zipFile = await CreateOrUpdateZipFile();
         using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
 
@@ -55,7 +53,7 @@ public sealed class FileWriter : IFileWriter
         await WriteCryptoResultsToFile(calculationResultDto.CryptoDto, archive);
         await WriteDividendResultsToFile(calculationResultDto.DividendDto, archive);
         await WritePitZgToFile(archive);
-        await CopyExcelFileToZip(inputFileData,archive);
+        await CopyExcelFileToZip(inputFileData, archive);
         return await GetFileName();
     }
 
@@ -95,7 +93,7 @@ public sealed class FileWriter : IFileWriter
         return Task.CompletedTask;
     }
 
-    private async Task WritePitZgToFile( ZipArchive archive)
+    private async Task WritePitZgToFile(ZipArchive archive)
     {
         ZipArchiveEntry pitZgEntry = CreateZipFileEntry(archive, Constants.Constants.PitZgFileName);
         await using var sw = new StreamWriter(pitZgEntry.Open());
