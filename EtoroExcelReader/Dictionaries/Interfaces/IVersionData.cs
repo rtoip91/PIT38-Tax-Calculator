@@ -3,7 +3,7 @@ using Database.Enums;
 
 namespace ExcelReader.Dictionaries.Interfaces;
 
-internal interface IVersionData
+public interface IVersionData
 {
     IReadOnlyDictionary<FileVersion,IExcelData> Versions { get; }
 }

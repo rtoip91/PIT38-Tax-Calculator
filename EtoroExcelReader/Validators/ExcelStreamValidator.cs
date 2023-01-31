@@ -10,7 +10,12 @@ namespace ExcelReader.Validators;
 
 public sealed class ExcelStreamValidator : IExcelStreamValidator
 {
-    private readonly IVersionData _versionData = new VersionData();
+    private readonly IVersionData _versionData;
+
+    public ExcelStreamValidator(IVersionData versionData)
+    {
+        _versionData = versionData;
+    }
 
     public async Task<FileVersion> ValidateFileVersion(Stream excelFileStream)
     {

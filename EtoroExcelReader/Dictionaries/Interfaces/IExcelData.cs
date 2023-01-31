@@ -2,7 +2,7 @@
 
 namespace ExcelReader.Dictionaries.Interfaces;
 
-internal interface IExcelData
+public interface IExcelData
 {
     public IReadOnlyDictionary<int,string> SpreadSheets { get;}
     public IReadOnlyDictionary<string,IList<string>> ColumnNames { get; }

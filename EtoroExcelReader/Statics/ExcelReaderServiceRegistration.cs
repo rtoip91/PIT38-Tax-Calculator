@@ -1,4 +1,6 @@
-﻿using ExcelReader.Dto;
+﻿using ExcelReader.Dictionaries;
+using ExcelReader.Dictionaries.Interfaces;
+using ExcelReader.Dto;
 using ExcelReader.Factory;
 using ExcelReader.Interfaces;
 using ExcelReader.Validators;
@@ -16,6 +18,7 @@ namespace ExcelReader.Statics
             services.AddTransient<IConverterFactory, ConverterFactory>();
             services.AddTransient<IExcelStreamValidator, ExcelStreamValidator>();
             services.AddScoped<ICurrentVersionData, CurrentVersionData>();
+            services.AddSingleton<IVersionData, VersionData>();
         }
     }
 }

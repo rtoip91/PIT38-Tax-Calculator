@@ -13,8 +13,7 @@ internal sealed class ConverterFactory : IConverterFactory
     {
         _currentFileVersion = currentVersionData.FileVersion;
     }
-    
-    
+
     public IRowToEntityConverter GetConverter()
     {
         if (_currentFileVersion == FileVersion.V2021A || _currentFileVersion == FileVersion.V2021)
