@@ -23,7 +23,7 @@ internal sealed class V2021Converter : IRowToEntityConverter
             OpeningDate = row[ClosedPositionsColumnsV2021.OpeningDate].ToDate(),
             ClosingDate = row[ClosedPositionsColumnsV2021.ClosingDate].ToDate(),
             IsReal = row[ClosedPositionsColumnsV2021.IsReal].ToString(),
-            ISIN = row[ClosedPositionsColumnsV2021.ISIN].ToIso3166Symbol()
+            ISIN = row[ClosedPositionsColumnsV2021.ISIN].ToCountryName()
         };
 
         closedPositionEntity.Units = Math.Round((decimal)(closedPositionEntity.Amount * closedPositionEntity.Leverage / closedPositionEntity.OpeningRate), 6, MidpointRounding.AwayFromZero);
@@ -68,7 +68,7 @@ internal sealed class V2021Converter : IRowToEntityConverter
             WithholdingTaxAmount = row[DividendsColumnsV2021.WithholdingTaxAmount].ToDecimal(),
             PositionId = row[DividendsColumnsV2021.PositionId].ToLong(),
             PositionType = row[DividendsColumnsV2021.PositionType].ToString(),
-            ISIN = row[DividendsColumnsV2021.ISIN].ToIso3166Symbol(),
+            ISIN = row[DividendsColumnsV2021.ISIN].ToCountryName(),
         };
 
         return dividendEntity;

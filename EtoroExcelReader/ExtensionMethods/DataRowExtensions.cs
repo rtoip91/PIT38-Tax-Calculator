@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Globalization;
+using System.Linq;
 using Database.Enums;
+using ExcelReader.Converters;
 
 namespace ExcelReader.ExtensionMethods
 {
@@ -20,10 +22,12 @@ namespace ExcelReader.ExtensionMethods
             return decimal.Parse(value, ChooseProvider(value));
         }
 
-        internal static string ToIso3166Symbol(this object item)
+        internal static string ToCountryName(this object item)
         {
             string value = item.ToString();
-            return string.IsNullOrWhiteSpace(value) ? CyprusIsoCode : value.Substring(0, 2);
+            var isoCode = string.IsNullOrWhiteSpace(value) ? CyprusIsoCode : value.Substring(0, 2);
+            Country countryData = Country.List.First(c => c.TwoLetterCode == isoCode);
+            return countryData.Name;
         }
 
         internal static TransactionType ToTransactionType(this object item)
