@@ -42,9 +42,16 @@ namespace Calculations.Calculators
                     DividendReceived = dividend.NetDividendReceived + dividend.WithholdingTaxAmount,
                     PositionId = dividend.PositionId
                 };
-                RegionInfo regionInfo = new RegionInfo(dividend.ISIN);
-
-                dividendCalculations.Country = regionInfo.EnglishName;
+                
+                if (dividend.ISIN != "AN")
+                {
+                    RegionInfo regionInfo = new RegionInfo(dividend.ISIN);
+                    dividendCalculations.Country = regionInfo.EnglishName;
+                }
+                else
+                {
+                    dividendCalculations.Country = "Netherlands Antilles";
+                }
 
                 ExchangeRateEntity exchangeRateEntity =
                     await _exchangeRates.GetRateForPreviousDay(dividendCalculations.Currency, dividend.DateOfPayment);

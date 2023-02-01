@@ -16,11 +16,11 @@ internal sealed class ConverterFactory : IConverterFactory
 
     public IRowToEntityConverter GetConverter()
     {
-        if (_currentFileVersion == FileVersion.V2021A || _currentFileVersion == FileVersion.V2021)
+        return _currentFileVersion switch
         {
-            return new V2021Converter();
-        }
-
-        return null;
+            FileVersion.V2021 => new V2021Converter(),
+            FileVersion.V2022 => new V2022Converter(),
+            _ => null
+        };
     }
 }

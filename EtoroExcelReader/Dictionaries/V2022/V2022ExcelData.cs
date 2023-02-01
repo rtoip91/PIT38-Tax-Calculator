@@ -1,14 +1,14 @@
 ﻿using System.Collections.Generic;
 using ExcelReader.Dictionaries.Interfaces;
 
-namespace ExcelReader.Dictionaries.V2021;
+namespace ExcelReader.Dictionaries.V2022;
 
-public sealed class V2021ExcelData : IExcelData
+public sealed class V2022ExcelData : IExcelData
 {
     public IReadOnlyDictionary<int, string> SpreadSheets { get; }
     public IReadOnlyDictionary<string, IList<string>> ColumnNames { get; }
 
-    public V2021ExcelData()
+    public V2022ExcelData()
     {
         List<string> closedPositions = new List<string>
         {
@@ -38,10 +38,12 @@ public sealed class V2021ExcelData : IExcelData
             "Rodzaj",
             "Szczegóły",
             "Kwota",
+            "Jednostki",
             "Zmiana zrealizowanego kapitału",
             "Kapitał zrealizowany",
             "Saldo",
             "Identyfikator pozycji",
+            "Typ aktywa",
             "Kwota niepodl. wypłacie"
         };
 

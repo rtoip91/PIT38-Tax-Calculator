@@ -3,12 +3,12 @@ using ExcelReader.Dictionaries.Interfaces;
 
 namespace ExcelReader.Dictionaries.V2021;
 
-public class V2021aExcelData : IExcelData
+public sealed class V2021AExcelData : IExcelData
 {
     public IReadOnlyDictionary<int, string> SpreadSheets { get; }
     public IReadOnlyDictionary<string, IList<string>> ColumnNames { get; }
 
-    public V2021aExcelData()
+    public V2021AExcelData()
     {
         
         List<string> closedPositions = new List<string>
