@@ -1,6 +1,6 @@
-﻿namespace ExcelReader.Dictionatries
+﻿namespace ExcelReader.Dictionaries.V2021
 {
-    internal static class ClosedPositionsColumns
+    internal static class ClosedPositionsColumnsV2021
     {
         internal const int PositionId = 0;
         internal const int Operation = 1;

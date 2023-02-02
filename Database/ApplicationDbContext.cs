@@ -13,13 +13,11 @@ namespace Database
 
         public ApplicationDbContext()
         {
-            MigrateDatabase();
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-            MigrateDatabase();
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -27,7 +25,7 @@ namespace Database
             optionsBuilder.UseSqlite("DataSource=TaxCalculator.db;");
         }
 
-        private void MigrateDatabase()
+        internal void MigrateDatabase()
         {
             lock (locker)
             {

@@ -1,10 +1,9 @@
 ﻿using System.Threading.Tasks;
 
-namespace TaxEtoro.Interfaces
+namespace TaxCalculatingService.Interfaces
 {
     public interface IActionPerformer
     {
-        public Task PerformCalculationsAndWriteResultsPeriodically();
         public Task ClearResultFilesPeriodically();
     }
 

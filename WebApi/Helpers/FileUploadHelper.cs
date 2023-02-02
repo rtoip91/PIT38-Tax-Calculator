@@ -1,4 +1,6 @@
 ﻿using Database.DataAccess.Interfaces;
+using Database.Enums;
+using ExcelReader.Validators;
 using TaxCalculatingService.BussinessLogic;
 using WebApi.Controllers;
 
@@ -9,14 +11,17 @@ namespace WebApi.Helpers
         private readonly IConfiguration _configuration;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly ILogger<UploadFileController> _logger;
+        private readonly IExcelStreamValidator _excelStreamValidator;
 
         public FileUploadHelper(IConfiguration configuration,
             IFileDataAccess fileDataAccess,
-            ILogger<UploadFileController> logger)
+            ILogger<UploadFileController> logger,
+            IExcelStreamValidator excelStreamValidator)
         {
             _configuration = configuration;
             _fileDataAccess = fileDataAccess;
             _logger = logger;
+            _excelStreamValidator = excelStreamValidator;
         }
 
         private readonly HashSet<SubscriptionToken> _subscriptions = new();
@@ -30,12 +35,17 @@ namespace WebApi.Helpers
 
         public async Task<Guid?> UploadFile(IFormFile inputExcelFile)
         {
-            long size = inputExcelFile.Length;
-
             if (inputExcelFile.Length > 0)
             {
+                var fileVersion = await _excelStreamValidator.ValidateFileVersion(inputExcelFile.OpenReadStream());
+                if (fileVersion == FileVersion.Unsupported)
+                {
+                    _logger.LogWarning("Wrong file provided");
+                    return null;
+                }
+
                 var guid = Guid.NewGuid();
-                string filename = await _fileDataAccess.AddNewFileAsync(guid);
+                string filename = await _fileDataAccess.AddNewFileAsync(guid,fileVersion);
 
                 var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
                     filename);
@@ -45,7 +55,7 @@ namespace WebApi.Helpers
                     await inputExcelFile.CopyToAsync(stream);
                 }
 
-                _logger.LogInformation($"Succesfuly uploaded a file {filename}");
+                _logger.LogInformation("Successfully uploaded a file {Filename}", filename);
 
 
                 foreach (var sub in _subscriptions)

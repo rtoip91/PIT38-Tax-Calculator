@@ -1,6 +1,6 @@
-﻿namespace ExcelReader.Dictionatries
+﻿namespace ExcelReader.Dictionaries.V2021
 {
-    internal static class DividendsColumns
+    internal static class DividendsColumnsV2021
     {
         internal const int DateOfPayment = 0;
         internal const int InstrumentName = 1;

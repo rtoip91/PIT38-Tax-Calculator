@@ -15,7 +15,7 @@ namespace Database.Migrations
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
-            modelBuilder.HasAnnotation("ProductVersion", "6.0.6");
+            modelBuilder.HasAnnotation("ProductVersion", "7.0.2");
 
             modelBuilder.Entity("Database.Entities.Database.ExchangeRateEntity", b =>
                 {
@@ -51,6 +51,9 @@ namespace Database.Migrations
 
                     b.Property<string>("CalculationResultJson")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("FileVersion")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("InputFileName")
                         .HasColumnType("TEXT");

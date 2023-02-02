@@ -24,5 +24,7 @@ namespace Database.Entities.Database
         public DateTime StatusChangeDate { get; set; }
 
         public Guid OperationGuid { get; set; }
+        
+        public FileVersion FileVersion { get; set; }
     }
 }

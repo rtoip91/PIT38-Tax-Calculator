@@ -14,9 +14,7 @@ namespace Database.Entities.InMemory
         public string Operation { get; set; }
 
         public TransactionType TransactionType { get; set; }
-
-        public string CopiedInvestor { get; set; }
-
+        
         public decimal? Amount { get; set; }
 
         public decimal? Units { get; set; }
@@ -24,20 +22,9 @@ namespace Database.Entities.InMemory
         public decimal? OpeningRate { get; set; }
 
         public decimal? ClosingRate { get; set; }
-
-        public decimal? Spread { get; set; }
-
-        public decimal? Profit { get; set; }
-
         public DateTime OpeningDate { get; set; }
 
         public DateTime ClosingDate { get; set; }
-
-        public decimal? TakeProfitRate { get; set; }
-
-        public decimal? StopLossRate { get; set; }
-
-        public decimal? FeesAndDividends { get; set; }
 
         public string IsReal { get; set; }
 

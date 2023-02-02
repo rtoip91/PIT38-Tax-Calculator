@@ -1,8 +1,6 @@
-﻿using System.Globalization;
-using Calculations.Dto;
+﻿using Calculations.Dto;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
-using Database.Entities;
 using Calculations.Extensions;
 using Database.Entities.Database;
 using Database.Entities.InMemory;
@@ -40,12 +38,11 @@ namespace Calculations.Calculators
                     PurchaseDate = stockClosedPosition.OpeningDate,
                     SellDate = stockClosedPosition.ClosingDate,
                     CurrencySymbol = "USD",
-                    PositionId = stockClosedPosition.PositionId ?? 0
+                    PositionId = stockClosedPosition.PositionId ?? 0,
+                    Country = stockClosedPosition.ISIN
+                    
                 };
-
-                RegionInfo regionInfo = new RegionInfo(stockClosedPosition.ISIN);
-                stockEntity.Country = regionInfo.EnglishName;
-
+                
                 stockEntity.OpeningUnitValue = (stockClosedPosition.OpeningRate ?? 0).RoundDecimal(4);
                 stockEntity.ClosingUnitValue = (stockClosedPosition.ClosingRate ?? 0).RoundDecimal(4);
                 stockEntity.Units = stockClosedPosition.Units ?? 0;

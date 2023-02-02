@@ -9,6 +9,10 @@ namespace Database
     {
         public static void RegisterServices(IServiceCollection services)
         {
+            using ( var dbContext = new ApplicationDbContext())
+            {
+                dbContext.MigrateDatabase();
+            }
             services.AddTransient<IExchangeRatesDataAccess, ExchangeRatesDataAccess>();
             services.AddTransient<ICfdEntityDataAccess, CfdEntityDataAccess>();
             services.AddTransient<IPurchasedCryptoEntityDataAccess, PurchasedCryptoEntityDataAccess>();

@@ -1,19 +1,12 @@
 ﻿using System.Collections.Generic;
-using EtoroExcelReader.Dto;
+using Database.Entities.InMemory;
 
 namespace ExcelReader.Dto
 {
-    public record ExtractedDataDto
+    public sealed record ExtractedDataDto()
     {
-        public ExtractedDataDto()
-        {
-            ClosedPositions = new List<ClosedPositionExcelDto>();
-            TransactionReports = new List<TransactionReportExcelDto>();
-            Dividends = new List<DividendDto>();
-        }
-
-        public IList<ClosedPositionExcelDto> ClosedPositions { get;}
-        public IList<TransactionReportExcelDto> TransactionReports { get; }
-        public IList<DividendDto> Dividends { get; }
+        public IList<ClosedPositionEntity> ClosedPositions { get;} = new List<ClosedPositionEntity>();
+        public IList<TransactionReportEntity> TransactionReports { get; } = new List<TransactionReportEntity>();
+        public IList<DividendEntity> Dividends { get; } = new List<DividendEntity>();
     }
 }

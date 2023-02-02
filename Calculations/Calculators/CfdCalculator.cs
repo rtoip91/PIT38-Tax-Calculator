@@ -46,11 +46,9 @@ namespace Calculations.Calculators
                     CurrencySymbol = "USD",
                     PositionId = cfdClosedPosition.PositionId ?? 0,
                     Leverage = cfdClosedPosition.Leverage,
-                    TransactionType = cfdClosedPosition.TransactionType
+                    TransactionType = cfdClosedPosition.TransactionType,
+                    Country = cfdClosedPosition.ISIN
                 };
-
-                RegionInfo regionInfo = new RegionInfo(cfdClosedPosition.ISIN);
-                cfdEntity.Country = regionInfo.EnglishName;
 
                 ExchangeRateEntity exchangeRate =
                     await _exchangeRates.GetRateForPreviousDay(cfdEntity.CurrencySymbol, cfdEntity.SellDate);

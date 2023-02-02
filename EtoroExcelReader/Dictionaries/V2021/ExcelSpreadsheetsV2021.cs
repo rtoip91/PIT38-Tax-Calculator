@@ -1,6 +1,6 @@
-﻿namespace ExcelReader.Dictionatries
+﻿namespace ExcelReader.Dictionaries.V2021
 {
-    internal static class ExcelSpreadsheets
+    internal static class ExcelSpreadsheetsV2021
     {
         internal const int ClosedPositions = 1;
         internal const int TransactionReports = 2;
