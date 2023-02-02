@@ -25,7 +25,7 @@ namespace ExcelReader.ExtensionMethods
         internal static string ToCountryName(this object item)
         {
             string value = item.ToString();
-            var isoCode = string.IsNullOrWhiteSpace(value) ? CyprusIsoCode : value.Substring(0, 2);
+            var isoCode = string.IsNullOrWhiteSpace(value) ? CyprusIsoCode : value.Substring(0, 2).ToUpper();
             Country countryData = Country.List.First(c => c.TwoLetterCode == isoCode);
             return countryData.Name;
         }

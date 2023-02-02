@@ -1,5 +1,4 @@
-﻿using TaxCalculatingService.Interfaces;
-using TaxEtoro.Interfaces;
+﻿using TaxEtoro.Interfaces;
 
 namespace WebApi.Extensions
 {
@@ -13,11 +12,8 @@ namespace WebApi.Extensions
         
         public static void RunPeriodicTasks(this WebApplication? webApplication)
         {
-            var actionPerformer = webApplication?.Services.GetService<IActionPerformer>();
             var fileProcessor = webApplication?.Services.GetService<IFileProcessor>();
-
             calculationTask = Task.Factory.StartNew(() => fileProcessor.ProcessFiles(CancellationTokenSource.Token), TaskCreationOptions.LongRunning);
-            clearResultTask= Task.Factory.StartNew(() => actionPerformer.ClearResultFilesPeriodically(), TaskCreationOptions.LongRunning);
         }
         
         
