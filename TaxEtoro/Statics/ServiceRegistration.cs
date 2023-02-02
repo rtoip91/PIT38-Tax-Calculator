@@ -3,12 +3,12 @@ using Calculations.Interfaces;
 using Database.DataAccess;
 using Database.DataAccess.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
-using TaxEtoro.Interfaces;
 using ResultsPresenter;
 using ResultsPresenter.Interfaces;
 using TaxCalculatingService.BussinessLogic;
+using TaxCalculatingService.Interfaces;
 
-namespace TaxEtoro.Statics;
+namespace TaxCalculatingService.Statics;
 
 public static class TaxEtoroServiceRegistration
 {
@@ -19,6 +19,7 @@ public static class TaxEtoroServiceRegistration
         services.AddTransient<ITransactionReportsDataAccess, TransactionReportsDataAccess>();
         services.AddTransient<IFileWriter, FileWriter>();
         services.AddSingleton<IFileProcessor, FileProcessor>();
-        services.AddHostedService<FileCleaner>();
+        services.AddHostedService<FileCleaningService>();
+        services.AddHostedService<FileProcessingService>();
     }
 }

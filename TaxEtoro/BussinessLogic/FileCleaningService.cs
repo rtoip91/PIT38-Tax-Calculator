@@ -7,21 +7,20 @@ using Database.DataAccess.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using TaxEtoro.Interfaces;
 
 namespace TaxCalculatingService.BussinessLogic
 {
-    internal sealed class FileCleaner : BackgroundService
+    internal sealed class FileCleaningService : BackgroundService
     {
         private readonly string _filePath;
         private readonly IFileDataAccess _fileDataAccess;
-        private readonly ILogger<FileCleaner> _logger;
+        private readonly ILogger<FileCleaningService> _logger;
         
         private readonly PeriodicTimer _fileCleanTimer;
 
-        public FileCleaner(IConfiguration configuration,
+        public FileCleaningService(IConfiguration configuration,
             IFileDataAccess fileDataAccess,
-            ILogger<FileCleaner> logger)
+            ILogger<FileCleaningService> logger)
         {
             _filePath = configuration.GetValue<string>("ResultStorageFolder");
             _fileDataAccess = fileDataAccess;

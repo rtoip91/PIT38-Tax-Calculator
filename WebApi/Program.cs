@@ -2,8 +2,7 @@ using Calculations.Statics;
 using Database;
 using ExcelReader.Statics;
 using Serilog;
-using TaxEtoro.Statics;
-using WebApi.Extensions;
+using TaxCalculatingService.Statics;
 using WebApi.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -47,7 +46,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.RunPeriodicTasks();
 
 app.Run();

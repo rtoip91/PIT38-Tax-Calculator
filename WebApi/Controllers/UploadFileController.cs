@@ -1,7 +1,7 @@
 ﻿using Database.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using TaxEtoro.Interfaces;
+using TaxCalculatingService.Interfaces;
 using WebApi.Helpers;
 
 namespace WebApi.Controllers
