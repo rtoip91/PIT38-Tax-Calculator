@@ -1,27 +1,31 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using TaxEtoro.Interfaces;
 
 namespace TaxCalculatingService.BussinessLogic
 {
-    internal sealed class FileCleaner : IFileCleaner
+    internal sealed class FileCleaningService : BackgroundService
     {
         private readonly string _filePath;
         private readonly IFileDataAccess _fileDataAccess;
-        private readonly ILogger<FileCleaner> _logger;
+        private readonly ILogger<FileCleaningService> _logger;
+        
+        private readonly PeriodicTimer _fileCleanTimer;
 
-        public FileCleaner(IConfiguration configuration,
+        public FileCleaningService(IConfiguration configuration,
             IFileDataAccess fileDataAccess,
-            ILogger<FileCleaner> logger)
+            ILogger<FileCleaningService> logger)
         {
             _filePath = configuration.GetValue<string>("ResultStorageFolder");
             _fileDataAccess = fileDataAccess;
             _logger = logger;
+            _fileCleanTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
         }
 
         public async Task CleanCalculationResultFiles()
@@ -63,6 +67,15 @@ namespace TaxCalculatingService.BussinessLogic
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Deletion of result file {FileName} failed", fileName);
+            }
+        }
+
+        protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+        {
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await _fileCleanTimer.WaitForNextTickAsync(stoppingToken);
+                await CleanCalculationResultFiles();
             }
         }
     }

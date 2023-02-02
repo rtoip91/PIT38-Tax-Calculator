@@ -21,4 +21,8 @@
     <ProjectReference Include="..\TaxEtoro\TaxCalculatingService.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions" />
+  </ItemGroup>
+
 </Project>

@@ -1,7 +1,7 @@
 ﻿using Database.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
-using TaxEtoro.Interfaces;
+using TaxCalculatingService.Interfaces;
 using WebApi.Helpers;
 
 namespace WebApi.Controllers
@@ -26,15 +26,11 @@ namespace WebApi.Controllers
             _fileDataAccess = fileDataAccess;
             _logger = logger;
             _fileUploadHelper.Subscribe(fileProcessor);
-
         }
 
-       
-
         [HttpPost(Name = "uploadInputFileStressTest")]
-        public async  Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence)
+        public async Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence)
         {
-
             for (int i = 0; i < occurence; i++)
             {
                 await _fileUploadHelper.UploadFile(inputExcelFile);
@@ -44,13 +40,12 @@ namespace WebApi.Controllers
         }
 
 
-
         /// <summary>
-            /// Posts the excel input file
-            /// </summary>
-            /// <param name="inputExcelFile">Excel input file</param>
-            /// <returns>File upload result</returns>
-            [HttpPost(Name = "uploadInputFile")]
+        /// Posts the excel input file
+        /// </summary>
+        /// <param name="inputExcelFile">Excel input file</param>
+        /// <returns>File upload result</returns>
+        [HttpPost(Name = "uploadInputFile")]
         public async Task<IActionResult> UploadFile(IFormFile inputExcelFile)
         {
             Guid? result = await _fileUploadHelper.UploadFile(inputExcelFile);
@@ -68,7 +63,7 @@ namespace WebApi.Controllers
         public async Task<IActionResult> GetResultFile(Guid operationId)
         {
             var filename = await _fileDataAccess.GetCalculationResultFileNameAsync(operationId);
-            if(filename == null)
+            if (filename == null)
             {
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
             }
@@ -81,7 +76,7 @@ namespace WebApi.Controllers
 
             await using var stream = System.IO.File.OpenRead(filePath);
             await _fileDataAccess.SetAsDownloadedAsync(operationId);
-            return File(stream, "application/octet-stream", filename);            
+            return File(stream, "application/octet-stream", filename);
         }
     }
 }

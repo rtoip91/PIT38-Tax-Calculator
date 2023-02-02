@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TaxCalculatingService.BussinessLogic;
 
-namespace TaxEtoro.Interfaces
+namespace TaxCalculatingService.Interfaces
 {
     public interface IFileProcessor : IObserver<FileUploadedEvent>
     {

@@ -18,7 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using ResultsPresenter.Interfaces;
-using TaxEtoro.Interfaces;
+using TaxCalculatingService.Interfaces;
 
 namespace TaxCalculatingService.BussinessLogic;
 
@@ -47,7 +47,7 @@ internal sealed class FileProcessor : IFileProcessor
         _lock = new object();
     }
 
-    private async Task ProcessSingleFile(Guid operation)
+    private async Task ProcessSingleFile(Guid operation, CancellationToken token)
     {
         DirectoryInfo directory =
             FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
@@ -55,25 +55,26 @@ internal sealed class FileProcessor : IFileProcessor
         FileInfo file = directory.GetFiles(fileEntity.InputFileName).FirstOrDefault();
         if (file is null)
         {
-            _logger.LogWarning("File {FileEntityInputFileName} was not found, marking as deleted.", fileEntity.InputFileName);
+            _logger.LogWarning("File {FileEntityInputFileName} was not found, marking as deleted.",
+                fileEntity.InputFileName);
             await _fileDataAccess.SetAsDeletedAsync(operation);
             return;
         }
 
-        await ProcessFile(directory, file, operation, fileEntity.FileVersion).ContinueWith(_ => RemoveFile(file));
+        await ProcessFile(directory, file, operation, fileEntity.FileVersion).ContinueWith(_ => RemoveFile(file), token);
     }
 
     public async Task ProcessFiles(CancellationToken token)
     {
         if (token.IsCancellationRequested) return;
 
-        await ReduceSemaphore();
+        await ReduceSemaphore(token);
         var numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
 
         if (numberOfOperations == 0)
         {
             _logger.LogInformation("No pending operations detected waiting for new operation");
-            await _semaphore.WaitAsync();
+            await _semaphore.WaitAsync(token);
             await ProcessFiles(token);
             return;
         }
@@ -84,7 +85,7 @@ internal sealed class FileProcessor : IFileProcessor
         {
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
             await Parallel.ForEachAsync(operations,
-                async (operation, _) => { await ProcessSingleFile(operation); });
+                async (operation, cancellationToken) => { await ProcessSingleFile(operation,cancellationToken); });
 
             numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
         } while (numberOfOperations > 0);
@@ -101,9 +102,9 @@ internal sealed class FileProcessor : IFileProcessor
         await ProcessFiles(token);
     }
 
-    private async Task ReduceSemaphore()
+    private async Task ReduceSemaphore(CancellationToken token)
     {
-        if (_semaphore.CurrentCount == 1) await _semaphore.WaitAsync();
+        if (_semaphore.CurrentCount == 1) await _semaphore.WaitAsync(token);
     }
 
     private void RemoveFile(FileInfo file)
@@ -182,3 +183,4 @@ internal sealed class FileProcessor : IFileProcessor
         }
     }
 }
+
