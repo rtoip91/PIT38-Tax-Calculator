@@ -77,11 +77,23 @@ namespace Calculations.Calculators
             }
         }
 
+        private string SoldOperationName(string name)
+        {
+            int index = name.IndexOf(" ", StringComparison.Ordinal);
+            return $"Sprzedaż{name.Substring(index)}";
+        }
+        
+        private string PurchasedOperationName(string name)
+        {
+            int index = name.IndexOf(" ", StringComparison.Ordinal);
+            return $"Kupno{name.Substring(index)}";
+        }
+
         private async Task<SoldCryptoEntity> CreateSoldCryptoEntity(ClosedPositionEntity cryptoClosedPosition)
         {
             SoldCryptoEntity soldCryptoEntity = new SoldCryptoEntity
             {
-                Name = cryptoClosedPosition.Operation.Replace("Kupno", "Sprzedaż"),
+                Name = SoldOperationName(cryptoClosedPosition.Operation),
                 SellDate = cryptoClosedPosition.ClosingDate,
                 CurrencySymbol = "USD",
                 PositionId = cryptoClosedPosition.PositionId ?? 0,
@@ -103,7 +115,7 @@ namespace Calculations.Calculators
         {
             PurchasedCryptoEntity purchasedCryptoEntity = new PurchasedCryptoEntity
             {
-                Name = cryptoClosedPosition.Operation,
+                Name = PurchasedOperationName(cryptoClosedPosition.Operation),
                 PurchaseDate = cryptoClosedPosition.OpeningDate,
                 CurrencySymbol = "USD",
                 PositionId = cryptoClosedPosition.PositionId ?? 0,
