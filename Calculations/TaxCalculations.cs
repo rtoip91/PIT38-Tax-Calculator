@@ -12,7 +12,7 @@ public sealed class TaxCalculations : ITaxCalculations
         _calculator = calculator;       
     }
 
-    public async Task<CalculationResultDto> CalculateTaxes()
+    public async Task<CalculationResultDto?> CalculateTaxes()
     {
         var result = await _calculator.Calculate<CalculationResultDto>();
         return result;

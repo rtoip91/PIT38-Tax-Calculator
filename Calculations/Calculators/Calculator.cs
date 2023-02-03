@@ -22,7 +22,7 @@ namespace Calculations.Calculators
             _dividendCalculator = dividendCalculator;
         }
 
-        public async Task<T> Calculate<T>() where T : CalculationResultDto
+        public async Task<T?> Calculate<T>() where T : CalculationResultDto
         {
             var calculationResultDto = new CalculationResultDto();
 

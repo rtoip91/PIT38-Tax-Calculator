@@ -10,7 +10,6 @@ namespace WebApi.Controllers
     [ApiController]
     public sealed class UploadFileController : ControllerBase
     {
-        private readonly ILogger<UploadFileController> _logger;
         private readonly IFileUploadHelper _fileUploadHelper;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly IConfiguration _configuration;
@@ -18,13 +17,11 @@ namespace WebApi.Controllers
         public UploadFileController(IFileProcessor fileProcessor,
             IFileUploadHelper fileUploadHelper,
             IConfiguration configuration,
-            IFileDataAccess fileDataAccess,
-            ILogger<UploadFileController> logger)
+            IFileDataAccess fileDataAccess)
         {
             _configuration = configuration;
             _fileUploadHelper = fileUploadHelper;
             _fileDataAccess = fileDataAccess;
-            _logger = logger;
             _fileUploadHelper.Subscribe(fileProcessor);
         }
 
@@ -55,7 +52,6 @@ namespace WebApi.Controllers
                 return Ok(new { result });
             }
 
-            _logger.LogWarning("Wrong file provided");
             return StatusCode(StatusCodes.Status400BadRequest, "Incorrect file to upload");
         }
 

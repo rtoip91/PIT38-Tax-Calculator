@@ -2,7 +2,6 @@
 using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
-using Database.Entities;
 using Database.Entities.Database;
 using Database.Entities.InMemory;
 
@@ -29,7 +28,7 @@ namespace Calculations.Calculators
             _transactionReportsDataAccess = transactionReportsDataAccess;
         }
 
-        public async Task<T> Calculate<T>() where T : CryptoDto
+        public async Task<T?> Calculate<T>() where T : CryptoDto
         {
             IList<PurchasedCryptoEntity> purchasedCryptoEntities = new List<PurchasedCryptoEntity>();
             IList<SoldCryptoEntity> soldCryptoEntities = new List<SoldCryptoEntity>();
@@ -82,7 +81,7 @@ namespace Calculations.Calculators
             int index = name.IndexOf(" ", StringComparison.Ordinal);
             return $"Sprzedaż{name.Substring(index)}";
         }
-        
+
         private string PurchasedOperationName(string name)
         {
             int index = name.IndexOf(" ", StringComparison.Ordinal);

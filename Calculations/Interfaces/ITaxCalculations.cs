@@ -4,6 +4,6 @@ namespace Calculations.Interfaces
 {
     public interface ITaxCalculations
     {
-        public Task<CalculationResultDto> CalculateTaxes();
+        public Task<CalculationResultDto?> CalculateTaxes();
     }
 }
