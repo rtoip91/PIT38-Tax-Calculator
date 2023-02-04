@@ -42,10 +42,9 @@ internal sealed class V2022Converter : IRowToEntityConverter
             Amount = row[TransactionReportsColumnsV2022.Amount].ToDecimal(),
             IsCryptocurrency = false
         };
-
-
-        var transactionType = row[TransactionReportsColumnsV2022.IsReal].ToString()?.Trim();
-        if (transactionType == "Kryptoaktywa")
+        
+        var transactionType = row[TransactionReportsColumnsV2022.IsReal].ToString();
+        if (transactionType != null && transactionType.Contains("Kryptoaktywa"))
         {
             transactionReportEntity.IsCryptocurrency = true;
         }
