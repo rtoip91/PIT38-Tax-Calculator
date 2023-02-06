@@ -30,10 +30,19 @@ namespace ExcelReader.ExtensionMethods
                 return CyprusIsoCode;
             }
 
-            var isoCode = value.AsSpan(0, 2);
-            var isoString = isoCode.ToString();
-            Country countryData = Country.List.First(c => c.TwoLetterCode == isoString);
-            return countryData.Name;
+            var isoString = value.Substring(0, 2);
+            try
+            {
+                Country countryData = Country.List.First(c => c.TwoLetterCode == isoString);
+                return countryData.Name;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Unsupported code {isoString}",isoString);
+                throw;
+            }
+           
         }
 
         internal static TransactionType ToTransactionType(this object item)

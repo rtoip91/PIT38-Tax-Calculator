@@ -4,8 +4,8 @@ internal record Country
 {
     public string Name { get; }
     public string TwoLetterCode { get; }
-    public string ThreeLetterCode { get; }
-    public string NumericCode { get; }
+    private string ThreeLetterCode { get; }
+    private string NumericCode { get; }
 
     private Country(string name, string twoLetterCode, string threeLetterCode, string numericCode)
     {
@@ -251,7 +251,7 @@ internal record Country
          new Country("Ukraina", "UA", "UKR", "804"),
          new Country("Zjednoczone Emiraty Arabskie", "AE", "ARE", "784"),
          new Country("Zjednoczone Królestwo Wielkiej Brytanii i Irlandii Północnej", "GB", "GBR", "826"),
-         new Country("Stany Zjednoczone Ameryki", "USA", "USA", "840"),
+         new Country("Stany Zjednoczone Ameryki", "US", "USA", "840"),
          new Country("Dalekomorskie Wyspy Mniejsze Stanów Zjednoczonych", "UM", "UMI", "581"),
          new Country("Urugwaj", "UY", "URY", "858"),
          new Country("Uzbekistan", "UZ", "UZB", "860"),
