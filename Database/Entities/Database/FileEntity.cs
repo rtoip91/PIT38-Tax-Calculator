@@ -3,11 +3,14 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Text.Json.Serialization;
 using Database.Enums;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json.Converters;
 
 namespace Database.Entities.Database
 {
     [Table("File")]
+    [Index(nameof(OperationGuid), IsUnique = true)]
+    [Index(nameof(OperationGuid), nameof(Status), IsUnique = false)]
     public record FileEntity
     {
         [Key] public int Id { get; set; }
@@ -24,7 +27,7 @@ namespace Database.Entities.Database
         public DateTime StatusChangeDate { get; set; }
 
         public Guid OperationGuid { get; set; }
-        
+
         public FileVersion FileVersion { get; set; }
     }
 }
