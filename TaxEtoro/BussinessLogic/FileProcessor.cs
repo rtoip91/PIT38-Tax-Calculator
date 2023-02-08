@@ -63,13 +63,17 @@ internal sealed class FileProcessor : IFileProcessor
             return;
         }
 
-        await ProcessFile(directory, file, operation, fileEntity.FileVersion).ContinueWith(_ => RemoveFile(file), token);
+        await ProcessFile(directory, file, operation, fileEntity.FileVersion)
+            .ContinueWith(_ => RemoveFile(file), token);
     }
 
     public async Task ProcessFiles(CancellationToken token)
     {
-        if (token.IsCancellationRequested) return;
-
+        if (token.IsCancellationRequested)
+        {
+            return;
+        }
+        
         await ReduceSemaphore(token);
         var numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
 
@@ -81,16 +85,16 @@ internal sealed class FileProcessor : IFileProcessor
             return;
         }
 
-
         if (!_stopwatch.IsRunning)
         {
             _stopwatch.Restart();
         }
-
+        
         do
         {
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
-            await Parallel.ForEachAsync(operations, token, async (operation, cancellationToken) => { await ProcessSingleFile(operation,cancellationToken); });
+            await Parallel.ForEachAsync(operations, token,
+                async (operation, cancellationToken) => { await ProcessSingleFile(operation, cancellationToken); });
 
             numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
         } while (numberOfOperations > 0);
@@ -188,4 +192,3 @@ internal sealed class FileProcessor : IFileProcessor
         }
     }
 }
-

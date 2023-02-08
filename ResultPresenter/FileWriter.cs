@@ -115,7 +115,7 @@ public sealed class FileWriter : IFileWriter
     }
 
 
-    private async Task WriteStockResultsToFile(StockCalculatorDto stockCalculatorDto, ZipArchive archive)
+    private async Task WriteStockResultsToFile(StockCalculatorDto? stockCalculatorDto, ZipArchive archive)
     {
         ZipArchiveEntry stockEntry = CreateZipFileEntry(archive, Constants.Constants.StockCalculationsFileName);
         await using var sw = new StreamWriter(stockEntry.Open());
@@ -131,7 +131,7 @@ public sealed class FileWriter : IFileWriter
         foreach (StockEntity stockEntity in stockEntities) await sw.WriteLineAsync(stockEntity.ToString());
     }
 
-    private async Task WriteCryptoResultsToFile(CryptoDto cryptoDto, ZipArchive archive)
+    private async Task WriteCryptoResultsToFile(CryptoDto? cryptoDto, ZipArchive archive)
     {
         ZipArchiveEntry cryptoEntry = CreateZipFileEntry(archive, Constants.Constants.CryptoCalculationsFileName);
         await using var sw = new StreamWriter(cryptoEntry.Open());
@@ -158,7 +158,7 @@ public sealed class FileWriter : IFileWriter
             await sw.WriteLineAsync(soldCryptoEntity.ToString());
     }
 
-    private async Task WriteDividendResultsToFile(DividendCalculatorDto dividendCalculatorDto, ZipArchive archive)
+    private async Task WriteDividendResultsToFile(DividendCalculatorDto? dividendCalculatorDto, ZipArchive archive)
     {
         ZipArchiveEntry dividendsEntry = CreateZipFileEntry(archive, Constants.Constants.DividendsCalculationsFileName);
         await using var sw = new StreamWriter(dividendsEntry.Open());
@@ -174,7 +174,7 @@ public sealed class FileWriter : IFileWriter
             await sw.WriteLineAsync(dividend.ToString());
     }
 
-    private async Task WriteCfdResultsToFile(CfdCalculatorDto cfdCalculatorDto, ZipArchive archive)
+    private async Task WriteCfdResultsToFile(CfdCalculatorDto? cfdCalculatorDto, ZipArchive archive)
     {
         IList<CfdEntity> cfdEntities = _cfdEntityDataAccess.GetCfdEntities();
         ZipArchiveEntry cfdEntry = CreateZipFileEntry(archive, Constants.Constants.CfdCalculationsFileName);

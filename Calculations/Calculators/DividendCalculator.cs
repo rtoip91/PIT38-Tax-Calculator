@@ -23,7 +23,7 @@ namespace Calculations.Calculators
             _dividendCalculationsDataAccess = dividendCalculationsDataAccess;
         }
 
-        public async Task<T> Calculate<T>() where T : DividendCalculatorDto
+        public async Task<T?> Calculate<T>() where T : DividendCalculatorDto
         {
             decimal sum = 0;
             decimal taxPaid = 0;

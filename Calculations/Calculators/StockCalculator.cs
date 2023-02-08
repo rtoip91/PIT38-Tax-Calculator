@@ -25,7 +25,7 @@ namespace Calculations.Calculators
             _incomeByCountryDataAccess = incomeByCountryDataAccess;
         }
 
-        public async Task<T> Calculate<T>() where T : StockCalculatorDto
+        public async Task<T?> Calculate<T>() where T : StockCalculatorDto
         {
             IList<StockEntity> stockEntities = new List<StockEntity>();
             var stockClosedPositions = _closedPositionDataAccess.GetStockPositions();
@@ -40,9 +40,8 @@ namespace Calculations.Calculators
                     CurrencySymbol = "USD",
                     PositionId = stockClosedPosition.PositionId ?? 0,
                     Country = stockClosedPosition.ISIN
-                    
                 };
-                
+
                 stockEntity.OpeningUnitValue = (stockClosedPosition.OpeningRate ?? 0).RoundDecimal(4);
                 stockEntity.ClosingUnitValue = (stockClosedPosition.ClosingRate ?? 0).RoundDecimal(4);
                 stockEntity.Units = stockClosedPosition.Units ?? 0;

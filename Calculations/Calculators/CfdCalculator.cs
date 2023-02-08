@@ -28,7 +28,7 @@ namespace Calculations.Calculators
             _incomeByCountryDataAccess = incomeByCountryDataAccess;
         }
 
-        public async Task<T> Calculate<T>() where T : CfdCalculatorDto
+        public async Task<T?> Calculate<T>() where T : CfdCalculatorDto
         {
             var cfdClosedPositions = _closedPositionsDataAccess.GetCfdPositions();
             IList<CfdEntity> cfdEntities = new List<CfdEntity>();

@@ -24,36 +24,58 @@ namespace ExcelReader.ExtensionMethods
 
         internal static string ToCountryName(this object item)
         {
-            string value = item.ToString();
-            var isoCode = string.IsNullOrWhiteSpace(value) ? CyprusIsoCode : value.Substring(0, 2).ToUpper();
-            Country countryData = Country.List.First(c => c.TwoLetterCode == isoCode);
-            return countryData.Name;
+            var value = item.ToString();
+            if (string.IsNullOrEmpty(value))
+            {
+                return CyprusIsoCode;
+            }
+
+            var isoString = value.Substring(0, 2);
+            try
+            {
+                Country countryData = Country.List.First(c => c.TwoLetterCode == isoString);
+                return countryData.Name;
+
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Unsupported code {isoString}",isoString);
+                throw;
+            }
+           
         }
 
         internal static TransactionType ToTransactionType(this object item)
         {
-            string value = item.ToString();
-            if (value != null && value.Substring(0, 4).Contains("Sell"))
+            var value = item.ToString().AsSpan();
+            if (value != null)
             {
-                return TransactionType.Short;
+                if (value.Length >= 8 && value.Slice(0, 8).Equals("Sprzedaj", StringComparison.Ordinal))
+                {
+                    return TransactionType.Short;
+                }
+
+                if (value.Length >= 4 && value.Slice(0, 4).Equals("Sell", StringComparison.Ordinal))
+                {
+                    return TransactionType.Short;
+                }
             }
 
             return TransactionType.Long;
         }
 
-
         internal static string OperationToString(this object item)
         {
             string value = item.ToString();
 
-            if (value != null && value.Substring(0, 4).Contains("Buy"))
+            if (value.AsSpan(0, 3).Equals("Buy", StringComparison.Ordinal))
             {
-                value = value.Replace("Buy", "Kupno");
+                value = value.Replace("Buy", "Kup");
             }
 
-            if (value != null && value.Substring(0, 4).Contains("Sell"))
+            if (value.AsSpan(0, 4).Equals("Sell", StringComparison.Ordinal))
             {
-                value = value.Replace("Sell", "Sprzedaż");
+                value = value.Replace("Sell", "Sprzedaj");
             }
 
             return value;
