@@ -13,7 +13,7 @@ internal sealed class V2022Converter : IRowToEntityConverter
         ClosedPositionEntity closedPositionEntity = new ClosedPositionEntity
         {
             PositionId = row[ClosedPositionsColumnsV2022.PositionId].ToLong(),
-            TransactionType = row[ClosedPositionsColumnsV2022.Operation].ToTransactionType(),
+            OperationType = row[ClosedPositionsColumnsV2022.Operation].ToOperationType(),
             Operation = row[ClosedPositionsColumnsV2022.Operation].OperationToString(),
             Amount = row[ClosedPositionsColumnsV2022.Amount].ToDecimal(),
             OpeningRate = row[ClosedPositionsColumnsV2022.OpeningRate].ToDecimal(),

@@ -37,6 +37,9 @@ namespace Database.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Code", "Date")
+                        .IsUnique();
+
                     b.ToTable("ExchangeRates");
                 });
 
@@ -68,6 +71,11 @@ namespace Database.Migrations
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("OperationGuid")
+                        .IsUnique();
+
+                    b.HasIndex("OperationGuid", "Status");
 
                     b.ToTable("File");
                 });

@@ -103,22 +103,22 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
         var filesToDelete = context.FileEntities.AsParallel().Where(f =>
-            f.Status == FileStatus.Deleted && 
+            f.Status == FileStatus.Deleted &&
             f.StatusChangeDate <= DateTime.UtcNow.Date.AddDays(-7)).ToList();
 
         context.FileEntities.RemoveRange(filesToDelete);
         return await context.SaveChangesAsync();
     }
-    
-    
+
+
     public async Task<IList<string>> GetCalculationResultFilesToDeleteAsync()
     {
         await using var context = new ApplicationDbContext();
 
-        var resultFilesToDelete =  context.FileEntities.AsParallel().Where(f => 
-            (f.Status == FileStatus.Downloaded && f.StatusChangeDate <=  DateTime.UtcNow.Date.AddDays(-1))
-            || (f.Status == FileStatus.Calculated && f.StatusChangeDate <=  DateTime.UtcNow.Date.AddDays(-3)))
-            .Select(f=>f.CalculationResultFileName).ToList();
+        var resultFilesToDelete = context.FileEntities.AsParallel().Where(f =>
+                (f.Status == FileStatus.Downloaded && f.StatusChangeDate <= DateTime.UtcNow.Date.AddDays(-1))
+                || (f.Status == FileStatus.Calculated && f.StatusChangeDate <= DateTime.UtcNow.Date.AddDays(-3)))
+            .Select(f => f.CalculationResultFileName).ToList();
 
         return resultFilesToDelete;
     }
@@ -150,7 +150,6 @@ public sealed class FileDataAccess : IFileDataAccess
         await context.SaveChangesAsync();
         return true;
     }
-
 
     public async Task<bool> SetAsDeletedAsync(Guid operationGuid)
     {

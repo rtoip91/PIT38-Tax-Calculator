@@ -8,8 +8,9 @@ namespace Database
     {
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
         public DbSet<FileEntity> FileEntities { get; set; }
+        public DbSet<CryptocurrencyEntity> CryptocurrencyEntities { get; set; }
         private static bool _isMigrated;
-        private static readonly object locker = new();
+        private readonly object _locker = new();
 
         public ApplicationDbContext()
         {
@@ -27,7 +28,7 @@ namespace Database
 
         internal void MigrateDatabase()
         {
-            lock (locker)
+            lock (_locker)
             {
                 if (!_isMigrated)
                 {

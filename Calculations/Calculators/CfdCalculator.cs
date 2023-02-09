@@ -46,7 +46,7 @@ namespace Calculations.Calculators
                     CurrencySymbol = "USD",
                     PositionId = cfdClosedPosition.PositionId ?? 0,
                     Leverage = cfdClosedPosition.Leverage,
-                    TransactionType = cfdClosedPosition.TransactionType,
+                    TransactionType = cfdClosedPosition.OperationType,
                     Country = cfdClosedPosition.ISIN
                 };
 

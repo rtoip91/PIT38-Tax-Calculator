@@ -24,6 +24,7 @@ namespace Database
             services.AddTransient<IDividendCalculationsDataAccess, DividendCalculationsDataAccess>();
             services.AddTransient<IIncomeByCountryDataAccess, IncomeByCountryDataAccess>();
             services.AddTransient<IFileDataAccess, FileDataAccess>();
+            services.AddTransient<ICryptocurrencyDataAccess, CryptocurrencyDataAccess>();
             services.AddScoped<IDataRepository, DataRepository>();
         }
     }

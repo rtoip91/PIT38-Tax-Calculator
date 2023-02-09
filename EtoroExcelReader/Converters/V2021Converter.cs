@@ -14,7 +14,7 @@ internal sealed class V2021Converter : IRowToEntityConverter
         ClosedPositionEntity closedPositionEntity = new ClosedPositionEntity
         {
             PositionId = row[ClosedPositionsColumnsV2021.PositionId].ToLong(),
-            TransactionType = row[ClosedPositionsColumnsV2021.Operation].ToTransactionType(),
+            OperationType = row[ClosedPositionsColumnsV2021.Operation].ToOperationType(),
             Operation = row[ClosedPositionsColumnsV2021.Operation].OperationToString(),
             Amount = row[ClosedPositionsColumnsV2021.Amount].ToDecimal(),
             OpeningRate = row[ClosedPositionsColumnsV2021.OpeningRate].ToDecimal(),
