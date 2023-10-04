@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,12 @@
     <ProjectReference Include="..\Calculations\Calculations.csproj" />
     <ProjectReference Include="..\EtoroExcelReader\ExcelReader.csproj" />
     <ProjectReference Include="..\TaxEtoro\TaxCalculatingService.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\TaxEtoro\.dockerignore">
+      <Link>.dockerignore</Link>
+    </Content>
   </ItemGroup>
 
 </Project>
