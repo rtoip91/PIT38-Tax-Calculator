@@ -5,7 +5,7 @@ using TaxCalculatingService.BussinessLogic;
 
 namespace TaxCalculatingService.Interfaces
 {
-    public interface IFileProcessor : IObserver<FileUploadedEvent>
+    public interface IFileProcessor
     {
         Task ProcessFiles(CancellationToken token);
     }

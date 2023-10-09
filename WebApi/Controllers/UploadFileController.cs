@@ -14,7 +14,7 @@ namespace WebApi.Controllers
         private readonly IFileDataAccess _fileDataAccess;
         private readonly IConfiguration _configuration;
 
-        public UploadFileController(IFileProcessor fileProcessor,
+        public UploadFileController(
             IFileUploadHelper fileUploadHelper,
             IConfiguration configuration,
             IFileDataAccess fileDataAccess)
@@ -22,7 +22,6 @@ namespace WebApi.Controllers
             _configuration = configuration;
             _fileUploadHelper = fileUploadHelper;
             _fileDataAccess = fileDataAccess;
-            _fileUploadHelper.Subscribe(fileProcessor);
         }
 
         [HttpPost(Name = "uploadInputFileStressTest")]

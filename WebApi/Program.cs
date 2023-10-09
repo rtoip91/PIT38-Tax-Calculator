@@ -1,14 +1,11 @@
-using Calculations.Statics;
-using Database;
-using ExcelReader.Statics;
 using Serilog;
-using TaxCalculatingService.Statics;
-using WebApi.Helpers;
+using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.RegisterApplicationServices();
 
 var logger = new LoggerConfiguration()
   .MinimumLevel.Override("Microsoft.AspNetCore",Serilog.Events.LogEventLevel.Warning)
@@ -26,11 +23,7 @@ builder.Logging.AddSerilog(logger);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-TaxEtoroServiceRegistration.RegisterServices(builder.Services);
-CalculationsServicesRegistration.RegisterServices(builder.Services);
-DatabaseServiceRegistration.RegisterServices(builder.Services);
-ExcelReaderServiceRegistration.RegisterServices(builder.Services);
-builder.Services.AddTransient<IFileUploadHelper, FileUploadHelper>();
+
 
 var app = builder.Build();
 

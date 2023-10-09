@@ -29,8 +29,6 @@ internal sealed class FileProcessor : IFileProcessor
     private readonly IFileDataAccess _fileDataAccess;
     private readonly ILogger<FileProcessor> _logger;
     private readonly IExchangeRatesLocker _exchangeRatesLocker;
-    private readonly object _lock;
-    private readonly SemaphoreSlim _semaphore;
     private readonly Stopwatch _stopwatch;
 
     public FileProcessor(IServiceProvider serviceProvider,
@@ -44,8 +42,6 @@ internal sealed class FileProcessor : IFileProcessor
         _fileDataAccess = fileDataAccess;
         _logger = logger;
         _exchangeRatesLocker = exchangeRatesLocker;
-        _semaphore = new SemaphoreSlim(0);
-        _lock = new object();
         _stopwatch = new Stopwatch();
     }
 
@@ -73,15 +69,13 @@ internal sealed class FileProcessor : IFileProcessor
         {
             return;
         }
-        
-        await ReduceSemaphore(token);
+
+
         var numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
 
         if (numberOfOperations == 0)
         {
             _logger.LogInformation("No pending operations detected waiting for new operation");
-            await _semaphore.WaitAsync(token);
-            await ProcessFiles(token);
             return;
         }
 
@@ -89,7 +83,7 @@ internal sealed class FileProcessor : IFileProcessor
         {
             _stopwatch.Restart();
         }
-        
+
         do
         {
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
@@ -105,15 +99,6 @@ internal sealed class FileProcessor : IFileProcessor
         _logger.LogInformation($"Calculation took {stopwatchResult:m\\:ss\\.fff}");
 
         _exchangeRatesLocker.ClearLockers();
-        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-        GC.Collect();
-
-        await ProcessFiles(token);
-    }
-
-    private async Task ReduceSemaphore(CancellationToken token)
-    {
-        if (_semaphore.CurrentCount == 1) await _semaphore.WaitAsync(token);
     }
 
     private void RemoveFile(FileInfo file)
@@ -173,22 +158,5 @@ internal sealed class FileProcessor : IFileProcessor
         var dtoString = JsonConvert.SerializeObject(dto);
         await _fileDataAccess.SetAsCalculatedAsync(operation, dtoString);
         return dto;
-    }
-
-    public void OnCompleted()
-    {
-    }
-
-    public void OnError(Exception error)
-    {
-        throw error;
-    }
-
-    public void OnNext(FileUploadedEvent value)
-    {
-        lock (_lock)
-        {
-            if (_semaphore.CurrentCount == 0) _semaphore.Release();
-        }
     }
 }
