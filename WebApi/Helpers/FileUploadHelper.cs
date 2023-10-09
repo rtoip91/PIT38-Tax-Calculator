@@ -1,8 +1,6 @@
 ﻿using Database.DataAccess.Interfaces;
 using Database.Enums;
 using ExcelReader.Validators;
-using TaxCalculatingService.BussinessLogic;
-using WebApi.Controllers;
 
 namespace WebApi.Helpers
 {
@@ -10,12 +8,12 @@ namespace WebApi.Helpers
     {
         private readonly IConfiguration _configuration;
         private readonly IFileDataAccess _fileDataAccess;
-        private readonly ILogger<UploadFileController> _logger;
+        private readonly ILogger<FileUploadHelper> _logger;
         private readonly IExcelStreamValidator _excelStreamValidator;
 
         public FileUploadHelper(IConfiguration configuration,
             IFileDataAccess fileDataAccess,
-            ILogger<UploadFileController> logger,
+            ILogger<FileUploadHelper> logger,
             IExcelStreamValidator excelStreamValidator)
         {
             _configuration = configuration;

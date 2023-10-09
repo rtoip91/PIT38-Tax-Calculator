@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using Calculations.Dto;
@@ -30,6 +29,8 @@ internal sealed class FileProcessor : IFileProcessor
     private readonly ILogger<FileProcessor> _logger;
     private readonly IExchangeRatesLocker _exchangeRatesLocker;
     private readonly Stopwatch _stopwatch;
+    private readonly ManualResetEventSlim _pause;
+    private readonly object _locker;
 
     public FileProcessor(IServiceProvider serviceProvider,
         IConfiguration configuration,
@@ -43,6 +44,8 @@ internal sealed class FileProcessor : IFileProcessor
         _logger = logger;
         _exchangeRatesLocker = exchangeRatesLocker;
         _stopwatch = new Stopwatch();
+        _pause = new ManualResetEventSlim(true);
+        _locker = new object();
     }
 
     private async Task ProcessSingleFile(Guid operation, CancellationToken token)
@@ -88,7 +91,11 @@ internal sealed class FileProcessor : IFileProcessor
         {
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
             await Parallel.ForEachAsync(operations, token,
-                async (operation, cancellationToken) => { await ProcessSingleFile(operation, cancellationToken); });
+                async (operation, cancellationToken) =>
+                {
+                    _pause.Wait(cancellationToken);
+                    await ProcessSingleFile(operation, cancellationToken);
+                });
 
             numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
         } while (numberOfOperations > 0);
@@ -99,6 +106,35 @@ internal sealed class FileProcessor : IFileProcessor
         _logger.LogInformation($"Calculation took {stopwatchResult:m\\:ss\\.fff}");
 
         _exchangeRatesLocker.ClearLockers();
+    }
+
+    public void PauseProcessing()
+    {
+        lock (_locker)
+        {
+            if (_pause.IsSet) ;
+            {
+                _logger.LogInformation("Pausing processing");
+                if (_stopwatch.IsRunning)
+                {
+                    _stopwatch.Stop();
+                }
+                _pause.Reset();
+            }
+        }
+    }
+
+    public void ResumeProcessing()
+    {
+        lock (_locker)
+        {
+            if (!_pause.IsSet)
+            {
+                _logger.LogInformation("Resuming processing");
+                _pause.Set();
+                _stopwatch.Start();
+            }
+        }
     }
 
     private void RemoveFile(FileInfo file)

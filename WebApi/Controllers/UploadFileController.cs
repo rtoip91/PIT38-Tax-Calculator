@@ -13,24 +13,34 @@ namespace WebApi.Controllers
         private readonly IFileUploadHelper _fileUploadHelper;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly IConfiguration _configuration;
+        private readonly IFileProcessingControl _fileProcessingControl;
 
         public UploadFileController(
             IFileUploadHelper fileUploadHelper,
             IConfiguration configuration,
-            IFileDataAccess fileDataAccess)
+            IFileDataAccess fileDataAccess,
+            IFileProcessor fileProcessor)
         {
             _configuration = configuration;
             _fileUploadHelper = fileUploadHelper;
             _fileDataAccess = fileDataAccess;
+            _fileProcessingControl = fileProcessor;
         }
 
         [HttpPost(Name = "uploadInputFileStressTest")]
-        public async Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence)
+        public async Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence, CancellationToken token)
         {
+            _fileProcessingControl.PauseProcessing();
+            
             for (int i = 0; i < occurence; i++)
             {
-                await _fileUploadHelper.UploadFile(inputExcelFile);
+                if (!token.IsCancellationRequested)
+                {
+                    await _fileUploadHelper.UploadFile(inputExcelFile);
+                }
             }
+            
+            _fileProcessingControl.ResumeProcessing();
 
             return Ok("Stress Testing !!!");
         }
@@ -40,10 +50,15 @@ namespace WebApi.Controllers
         /// Posts the excel input file
         /// </summary>
         /// <param name="inputExcelFile">Excel input file</param>
+        /// <param name="token">Cancellation token</param>
         /// <returns>File upload result</returns>
         [HttpPost(Name = "uploadInputFile")]
-        public async Task<IActionResult> UploadFile(IFormFile inputExcelFile)
+        public async Task<IActionResult> UploadFile(IFormFile inputExcelFile, CancellationToken token)
         {
+            if (token.IsCancellationRequested)
+            {
+                return StatusCode(StatusCodes.Status403Forbidden, "Cancellation requested");
+            }
             Guid? result = await _fileUploadHelper.UploadFile(inputExcelFile);
 
             if (result.HasValue)
