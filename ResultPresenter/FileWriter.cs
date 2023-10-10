@@ -69,7 +69,7 @@ public sealed class FileWriter : IFileWriter
 
     private void CreateDirectory()
     {
-        var path = $"{_filePath}\\";
+        var path = $"{_filePath}";
 
         if (!Directory.Exists(path))
         {
@@ -80,7 +80,7 @@ public sealed class FileWriter : IFileWriter
     private async Task<FileStream> CreateOrUpdateZipFile()
     {
         var fileName = await GetFileName();
-        var path = $"{_filePath}\\{fileName}";
+        var path = $"{_filePath}/{fileName}";
 
         var zipToOpen = new FileStream(path, FileMode.OpenOrCreate);
 
