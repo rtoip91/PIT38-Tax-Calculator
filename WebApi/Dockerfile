@@ -3,8 +3,8 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-VOLUME /var/ExcelFiles
-VOLUME /var/ResultFiles
+RUN mkdir -p /var/ExcelFiles
+RUN mkdir -p /var/ResultFiles
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
