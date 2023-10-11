@@ -49,6 +49,7 @@ internal sealed class FileProcessor : IFileProcessor
         DirectoryInfo directory =
             FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
         var fileEntity = await _fileDataAccess.GetInputFileDataAsync(operation);
+        
         FileInfo file = directory.GetFiles(fileEntity.InputFileName).FirstOrDefault();
         if (file is null)
         {

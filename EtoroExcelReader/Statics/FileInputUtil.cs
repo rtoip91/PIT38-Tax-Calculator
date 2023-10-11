@@ -13,25 +13,12 @@ namespace ExcelReader.Statics
         /// <returns></returns>
         public static FileInfo GetFileInfo(string directory, string file)
         {
-            var rootDir = GetRootDirectory().FullName;
-            return new FileInfo(Path.Combine(rootDir, directory, file));
-        }
-
-        public static DirectoryInfo GetRootDirectory()
-        {
-            var currentDir = AppDomain.CurrentDomain.BaseDirectory;
-            while (!currentDir.EndsWith("bin"))
-            {
-                currentDir = Directory.GetParent(currentDir).FullName.TrimEnd('\\');
-            }
-
-            return new DirectoryInfo(currentDir).Parent;
+            return new FileInfo(Path.Combine( directory, file));
         }
 
         public static DirectoryInfo GetDirectory(string directory)
         {
-            var rootDir = GetRootDirectory().FullName;
-            return new DirectoryInfo(Path.Combine(rootDir, directory));
+            return new DirectoryInfo(directory);
         }
     }
 }

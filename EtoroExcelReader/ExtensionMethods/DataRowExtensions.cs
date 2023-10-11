@@ -35,14 +35,12 @@ namespace ExcelReader.ExtensionMethods
             {
                 Country countryData = Country.List.First(c => c.TwoLetterCode == isoString);
                 return countryData.Name;
-
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Unsupported code {isoString}",isoString);
+                Console.WriteLine($"Unsupported code {isoString}", isoString);
                 throw;
             }
-           
         }
 
         internal static TransactionType ToTransactionType(this object item)
@@ -106,7 +104,7 @@ namespace ExcelReader.ExtensionMethods
         internal static DateTime ToDate(this object item)
         {
             string value = item.ToString();
-            return DateTime.Parse(value);
+            return DateTime.Parse(value, new CultureInfo("pl-PL"));
         }
 
         private static CultureInfo ChooseProvider(string value)
