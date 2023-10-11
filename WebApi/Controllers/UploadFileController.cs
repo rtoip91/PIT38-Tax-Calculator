@@ -13,25 +13,21 @@ namespace WebApi.Controllers
         private readonly IFileUploadHelper _fileUploadHelper;
         private readonly IFileDataAccess _fileDataAccess;
         private readonly IConfiguration _configuration;
-        private readonly IFileProcessingControl _fileProcessingControl;
 
         public UploadFileController(
             IFileUploadHelper fileUploadHelper,
             IConfiguration configuration,
-            IFileDataAccess fileDataAccess,
-            IFileProcessor fileProcessor)
+            IFileDataAccess fileDataAccess)
         {
             _configuration = configuration;
             _fileUploadHelper = fileUploadHelper;
             _fileDataAccess = fileDataAccess;
-            _fileProcessingControl = fileProcessor;
         }
 
         [HttpPost(Name = "uploadInputFileStressTest")]
-        public async Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence, CancellationToken token)
+        public async Task<IActionResult> UploadFileStressTest(IFormFile inputExcelFile, int occurence,
+            CancellationToken token)
         {
-            _fileProcessingControl.PauseProcessing();
-            
             for (int i = 0; i < occurence; i++)
             {
                 if (!token.IsCancellationRequested)
@@ -39,8 +35,6 @@ namespace WebApi.Controllers
                     await _fileUploadHelper.UploadFile(inputExcelFile);
                 }
             }
-            
-            _fileProcessingControl.ResumeProcessing();
 
             return Ok("Stress Testing !!!");
         }
@@ -59,6 +53,7 @@ namespace WebApi.Controllers
             {
                 return StatusCode(StatusCodes.Status403Forbidden, "Cancellation requested");
             }
+
             Guid? result = await _fileUploadHelper.UploadFile(inputExcelFile);
 
             if (result.HasValue)

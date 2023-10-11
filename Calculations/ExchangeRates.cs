@@ -27,7 +27,7 @@ namespace Calculations
             _logger = logger;
         }
 
-        private async Task<ExchangeRateEntity> GetRateForPreviousDayBankHolidayHandling(string currencyCode, DateTime date, bool bankHoliday = false)
+        private async Task<ExchangeRateEntity> GetRateForDayBeforeBankHoliday(string currencyCode, DateTime date, bool bankHoliday = false)
         {
             double subtractDays = -1;
 
@@ -76,12 +76,12 @@ namespace Calculations
 
         public async Task<ExchangeRateEntity> GetRateForPreviousDay(string currencyCode, DateTime date)
         {
-            return await GetRateForPreviousDayBankHolidayHandling(currencyCode, date);
+            return await GetRateForDayBeforeBankHoliday(currencyCode, date);
         }
 
         private async Task<ExchangeRateEntity> HandleBankHoliday(string currencyCode, DateTime holidayDate)
         {
-            ExchangeRateEntity entity = await GetRateForPreviousDayBankHolidayHandling(currencyCode, holidayDate, true);
+            ExchangeRateEntity entity = await GetRateForDayBeforeBankHoliday(currencyCode, holidayDate, true);
             entity.Date = holidayDate;
             return await _exchangeRatesDataAccess.MakeCopyAndSaveToDb(entity);
         }
