@@ -14,7 +14,9 @@ COPY ["../Database/Database.csproj", "../Database/"]
 COPY ["../EtoroExcelReader/ExcelReader.csproj", "../EtoroExcelReader/"]
 COPY ["TaxCalculatingService.csproj", "./"]
 COPY ["../ResultPresenter/ResultsPresenter.csproj", "../ResultPresenter/"]
+ENV ASPNETCORE_URLS=https://+:443;http://+:80
 ENV ASPNETCORE_ENVIRONMENT=Development
+
 
 RUN dotnet restore "../WebApi/WebApi.csproj"
 COPY . .

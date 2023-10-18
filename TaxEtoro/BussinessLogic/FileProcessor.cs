@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Calculations.Dto;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
+using Database.Entities.Database;
 using Database.Enums;
 using ExcelReader.Dto;
 using ExcelReader.Interfaces;
@@ -46,12 +47,9 @@ internal sealed class FileProcessor : IFileProcessor
 
     private async Task ProcessSingleFile(Guid operation, CancellationToken token)
     {
-        DirectoryInfo directory =
-            FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
         var fileEntity = await _fileDataAccess.GetInputFileDataAsync(operation);
-        
-        FileInfo file = directory.GetFiles(fileEntity.InputFileName).FirstOrDefault();
-        if (file is null)
+
+        if (fileEntity.InputFileContent == null)
         {
             _logger.LogWarning("File {FileEntityInputFileName} was not found, marking as deleted.",
                 fileEntity.InputFileName);
@@ -59,8 +57,8 @@ internal sealed class FileProcessor : IFileProcessor
             return;
         }
 
-        await ProcessFile(directory, file, operation, fileEntity.FileVersion)
-            .ContinueWith(_ => RemoveFile(file), token);
+        await ProcessFile(fileEntity, operation)
+            .ContinueWith(async _ => await RemoveFile(fileEntity), token);
     }
 
     public async Task ProcessFiles(CancellationToken token)
@@ -101,60 +99,61 @@ internal sealed class FileProcessor : IFileProcessor
         _exchangeRatesLocker.ClearLockers();
     }
 
-    private void RemoveFile(FileInfo file)
+    private async Task RemoveFile(FileEntity file)
     {
-        file.Delete();
-        _logger.LogInformation($"File: {file.Name} was deleted");
+        await _fileDataAccess.RemoveFileContentAsync(file.InputFileName);
+        _logger.LogInformation($"File: {file.InputFileName} was deleted");
     }
 
-    private Task ProcessFile(DirectoryInfo directory, FileInfo file, Guid operation, FileVersion fileVersion)
+    private Task ProcessFile(FileEntity fileEntity, Guid operation)
     {
         Task task = Task.Run(async () =>
         {
             try
             {
+                var fileContent = new MemoryStream(fileEntity.InputFileContent);
                 await _fileDataAccess.SetAsInProgressAsync(operation);
                 await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
                 var versionData = scope.ServiceProvider.GetService<ICurrentVersionData>();
-                versionData.FileVersion = fileVersion;
-                CalculationResultDto dto = await Calculate(directory, file, scope, operation);
-                await PresentCalculationResults(dto, file, scope, operation);
+                versionData.FileVersion = fileEntity.FileVersion;
+                CalculationResultDto dto = await Calculate(fileEntity.InputFileName, fileContent, scope, operation);
+                await PresentCalculationResults(dto, fileContent, scope, operation);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Error during processing file {file.FullName}");
+                _logger.LogError(e, $"Error during processing file {fileEntity.InputFileName} ");
             }
         });
         return task;
     }
 
-    private async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
+    private async Task<CalculationResultDto> PerformCalculations(string fileName, MemoryStream fileContent,
         AsyncServiceScope scope)
     {
         var reader = scope.ServiceProvider.GetService<IExcelDataExtractor>();
         var taxCalculations = scope.ServiceProvider.GetService<ITaxCalculations>();
 
         _logger.LogInformation($"Started processing of the file {fileName}");
-        await reader.ImportDataFromExcel(directory, fileName);
+        await reader.ImportDataFromExcel(fileContent);
         CalculationResultDto result = await taxCalculations.CalculateTaxes();
 
         return result;
     }
 
-    private async Task PresentCalculationResults(CalculationResultDto result, FileInfo file,
+    private async Task PresentCalculationResults(CalculationResultDto result, MemoryStream fileContent,
         AsyncServiceScope scope, Guid operationGuid)
     {
         var fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
 
-        var fileName = await fileWriter.PresentData(operationGuid, file, result);
+        var fileName = await fileWriter.PresentData(operationGuid, fileContent, result);
 
         _logger.LogInformation($"Created results in {fileName}");
     }
 
-    private async Task<CalculationResultDto> Calculate(DirectoryInfo directory, FileInfo file,
+    private async Task<CalculationResultDto> Calculate(string fileName, MemoryStream fileContent,
         AsyncServiceScope scope, Guid operation)
     {
-        CalculationResultDto dto = await PerformCalculations(directory.FullName, file.Name, scope);
+        CalculationResultDto dto = await PerformCalculations(fileName, fileContent, scope);
         var dtoString = JsonConvert.SerializeObject(dto);
         await _fileDataAccess.SetAsCalculatedAsync(operation, dtoString);
         return dto;

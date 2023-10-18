@@ -1,9 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 
 namespace ExcelReader.Interfaces
 {
     public interface IExcelDataExtractor
     {
-        public Task<bool> ImportDataFromExcel(string directory, string fileName);
+        public Task<bool> ImportDataFromExcel(MemoryStream fileContent);
     }
 }

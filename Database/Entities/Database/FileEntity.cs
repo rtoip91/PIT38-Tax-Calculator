@@ -16,11 +16,15 @@ namespace Database.Entities.Database
         [Key] public int Id { get; set; }
 
         public string InputFileName { get; set; }
+        
+        public byte[] InputFileContent { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public FileStatus Status { get; set; }
 
         public string CalculationResultFileName { get; set; }
+        
+        public byte[] CalculationResultFileContent { get; set; }
 
         public string CalculationResultJson { get; set; }
 

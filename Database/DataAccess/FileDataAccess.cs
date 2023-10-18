@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
@@ -11,7 +12,7 @@ namespace Database.DataAccess;
 
 public sealed class FileDataAccess : IFileDataAccess
 {
-    public async Task<string> AddNewFileAsync(Guid operationGuid, FileVersion fileVersion)
+    public async Task<string> AddNewFileAsync(Guid operationGuid, FileVersion fileVersion,  MemoryStream fileContent)
     {
         await using var context = new ApplicationDbContext();
 
@@ -22,6 +23,7 @@ public sealed class FileDataAccess : IFileDataAccess
         fileEntity.Status = FileStatus.Added;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
         fileEntity.FileVersion = fileVersion;
+        fileEntity.InputFileContent = fileContent.ToArray();
 
         await context.FileEntities.AddAsync(fileEntity);
         await context.SaveChangesAsync();
@@ -146,6 +148,23 @@ public sealed class FileDataAccess : IFileDataAccess
 
         fileEntity.Status = FileStatus.Deleted;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
+        fileEntity.InputFileContent = null;
+
+        await context.SaveChangesAsync();
+        return true;
+    }
+    
+    public async Task<bool> RemoveFileContentAsync(string fileName)
+    {
+        await using var context = new ApplicationDbContext();
+
+        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.InputFileName == fileName);
+        if (fileEntity == null)
+        {
+            return false;
+        }
+       
+        fileEntity.InputFileContent = null;
 
         await context.SaveChangesAsync();
         return true;
@@ -161,6 +180,7 @@ public sealed class FileDataAccess : IFileDataAccess
 
         fileEntity.Status = FileStatus.Deleted;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
+        fileEntity.InputFileContent = null;
 
         await context.SaveChangesAsync();
         return true;

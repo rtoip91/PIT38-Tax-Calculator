@@ -33,21 +33,22 @@ namespace WebApi.Helpers
                     return null;
                 }
 
-                var guid = Guid.NewGuid();
-                string filename = await _fileDataAccess.AddNewFileAsync(guid,fileVersion);
+           
 
-                var filePath = Path.Combine(_configuration["InputFileStorageFolder"],
-                    filename);
+                //var filePath = Path.Combine(_configuration["InputFileStorageFolder"],filename);
                 
                 
 
-                await using (var stream = File.Create(filePath))
+                await using (var stream = new MemoryStream())
                 {
                     await inputExcelFile.CopyToAsync(stream);
+                    var guid = Guid.NewGuid();
+                    string filename = await _fileDataAccess.AddNewFileAsync(guid,fileVersion, stream);
+                    _logger.LogInformation("Successfully uploaded a file {Filename}", filename);
+                    return guid;
                 }
 
-                _logger.LogInformation("Successfully uploaded a file {Filename}", filename);
-                return guid;
+               
             }
 
             _logger.LogWarning("Wrong file provided");

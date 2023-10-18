@@ -1,8 +1,8 @@
-﻿  postgres:
+﻿services:
+  postgres:
     restart: unless-stopped
     image: postgres:16-alpine
-    container_name: postgres
-    env_file: postgres.env
+    container_name: postgres  
     ports:
       - 5432:5432
     volumes:

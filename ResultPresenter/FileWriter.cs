@@ -39,7 +39,7 @@ public sealed class FileWriter : IFileWriter
         _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
-    public async Task<string> PresentData(Guid operationId, FileInfo inputFileData,
+    public async Task<string> PresentData(Guid operationId,  MemoryStream inputFileContent,
         CalculationResultDto calculationResultDto)
     {
         CreateDirectory();
@@ -53,7 +53,7 @@ public sealed class FileWriter : IFileWriter
         await WriteCryptoResultsToFile(calculationResultDto.CryptoDto, archive);
         await WriteDividendResultsToFile(calculationResultDto.DividendDto, archive);
         await WritePitZgToFile(archive);
-        await CopyExcelFileToZip(inputFileData, archive);
+        await CopyExcelFileToZip(inputFileContent, archive);
         return await GetFileName();
     }
 
@@ -87,9 +87,14 @@ public sealed class FileWriter : IFileWriter
         return zipToOpen;
     }
 
-    private Task CopyExcelFileToZip(FileInfo file, ZipArchive archive)
+    private Task CopyExcelFileToZip(MemoryStream inputFileContent, ZipArchive archive)
     {
-        archive.CreateEntryFromFile(file.FullName, Constants.Constants.EtoroExcelFile);
+        var entry = archive.CreateEntry(Constants.Constants.EtoroExcelFile, CompressionLevel.Fastest);
+        using (var entryStream = entry.Open())
+        {
+            inputFileContent.CopyTo(entryStream);
+        }
+        
         return Task.CompletedTask;
     }
 
