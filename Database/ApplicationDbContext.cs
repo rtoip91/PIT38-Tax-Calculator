@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Database.Entities.Database;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,18 +14,13 @@ namespace Database
 
         public ApplicationDbContext()
         {
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
         {
-        }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.UseIdentityColumns();
-            modelBuilder.Entity<FileEntity>().Property(b => b.Id).UseIdentityAlwaysColumn();
-            modelBuilder.Entity<ExchangeRateEntity>().Property(b => b.Id).UseIdentityAlwaysColumn();
+            AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
