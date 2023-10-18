@@ -20,28 +20,15 @@ namespace Database.Repository
             CfdCalculations = new List<CfdEntity>();
         }
 
-        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get; private set; }
-        public IList<ClosedPositionEntity> ClosedPositions { get; private set; }
-        public IList<TransactionReportEntity> TransactionReports { get; private set; }
-        public IList<DividendEntity> Dividends { get; private set; }
-        public IList<StockEntity> StockCalculations { get; private set; }
-        public IList<PurchasedCryptoEntity> PurchasedCryptoCalculations { get; private set; }
-        public IList<SoldCryptoEntity> SoldCryptoCalculations { get; private set; }
-        public IList<DividendCalculationsEntity> DividendsCalculations { get; private set; }
-        public IList<CfdEntity> CfdCalculations { get; private set; }
+        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get; }
+        public IList<ClosedPositionEntity> ClosedPositions { get; }
+        public IList<TransactionReportEntity> TransactionReports { get; }
+        public IList<DividendEntity> Dividends { get; }
+        public IList<StockEntity> StockCalculations { get; }
+        public IList<PurchasedCryptoEntity> PurchasedCryptoCalculations { get; }
+        public IList<SoldCryptoEntity> SoldCryptoCalculations { get; }
+        public IList<DividendCalculationsEntity> DividendsCalculations { get; }
+        public IList<CfdEntity> CfdCalculations { get; }
         public Guid OperationGuid { get; set; }
-
-        public void Dispose()
-        {
-            IncomeByCountryEntities = null;
-            ClosedPositions = null;
-            TransactionReports = null;
-            Dividends = null;
-            StockCalculations = null;
-            PurchasedCryptoCalculations = null;
-            SoldCryptoCalculations = null;
-            DividendsCalculations = null;
-            CfdCalculations = null;           
-        }
     }
 }

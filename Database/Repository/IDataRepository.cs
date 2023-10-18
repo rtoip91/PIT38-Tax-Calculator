@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using Database.Entities;
 using Database.Entities.InMemory;
 
 namespace Database.Repository
 {
-    public interface IDataRepository : IDisposable
+    public interface IDataRepository
     {
         IList<IncomeByCountryEntity> IncomeByCountryEntities { get; }
         IList<ClosedPositionEntity> ClosedPositions { get; }

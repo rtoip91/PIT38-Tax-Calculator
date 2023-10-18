@@ -20,9 +20,16 @@ namespace Database
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.UseIdentityColumns();
+            modelBuilder.Entity<FileEntity>().Property(b => b.Id).UseIdentityAlwaysColumn();
+            modelBuilder.Entity<ExchangeRateEntity>().Property(b => b.Id).UseIdentityAlwaysColumn();
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("DataSource=TaxCalculator.db;");
+            optionsBuilder.UseNpgsql(@"Host=172.17.0.2;Username=postgres;Password=docker;Database=postgres");
         }
 
         internal void MigrateDatabase()
