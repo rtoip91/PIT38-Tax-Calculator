@@ -25,7 +25,7 @@ namespace TaxCalculatingService.BussinessLogic
             _filePath = configuration.GetValue<string>("ResultStorageFolder");
             _fileDataAccess = fileDataAccess;
             _logger = logger;
-            _fileCleanTimer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+            _fileCleanTimer = new PeriodicTimer(TimeSpan.FromHours(1));
         }
 
         public async Task CleanCalculationResultFiles()
