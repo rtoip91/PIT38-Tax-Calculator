@@ -2,17 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Calculations.Dto;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
 using Database.Entities.Database;
-using Database.Enums;
 using ExcelReader.Dto;
 using ExcelReader.Interfaces;
-using ExcelReader.Statics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -111,7 +108,7 @@ internal sealed class FileProcessor : IFileProcessor
         {
             try
             {
-                var fileContent = new MemoryStream(fileEntity.InputFileContent);
+                using var fileContent = new MemoryStream(fileEntity.InputFileContent);
                 await _fileDataAccess.SetAsInProgressAsync(operation);
                 await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
                 var versionData = scope.ServiceProvider.GetService<ICurrentVersionData>();
