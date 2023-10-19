@@ -1,7 +1,5 @@
 ﻿using Database.DataAccess.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using TaxCalculatingService.Interfaces;
 using WebApi.Helpers;
 
 namespace WebApi.Controllers
@@ -12,14 +10,11 @@ namespace WebApi.Controllers
     {
         private readonly IFileUploadHelper _fileUploadHelper;
         private readonly IFileDataAccess _fileDataAccess;
-        private readonly IConfiguration _configuration;
 
         public UploadFileController(
             IFileUploadHelper fileUploadHelper,
-            IConfiguration configuration,
             IFileDataAccess fileDataAccess)
         {
-            _configuration = configuration;
             _fileUploadHelper = fileUploadHelper;
             _fileDataAccess = fileDataAccess;
         }
@@ -73,15 +68,10 @@ namespace WebApi.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
             }
 
-            var filePath = Path.Combine(_configuration["ResultStorageFolder"], filename);
-            if (!System.IO.File.Exists(filePath))
-            {
-                return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
-            }
+            var resultFileContent = await _fileDataAccess.GetCalculationResultFileContentAsync(operationId);
 
-            await using var stream = System.IO.File.OpenRead(filePath);
             await _fileDataAccess.SetAsDownloadedAsync(operationId);
-            return File(stream, "application/octet-stream", filename);
+            return File(resultFileContent, "application/octet-stream", filename);
         }
     }
 }

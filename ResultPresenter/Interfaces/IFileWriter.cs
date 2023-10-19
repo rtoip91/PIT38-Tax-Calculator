@@ -4,7 +4,7 @@ namespace ResultsPresenter.Interfaces
 {
     public interface IFileWriter
     {
-        Task<string> PresentData(Guid operationId, MemoryStream inputFileContent,
+        Task<MemoryStream> PresentData(Guid operationId, MemoryStream inputFileContent,
             CalculationResultDto calculationResultDto);
     }
 }

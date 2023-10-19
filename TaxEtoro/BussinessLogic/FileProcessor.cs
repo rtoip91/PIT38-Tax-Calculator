@@ -145,9 +145,11 @@ internal sealed class FileProcessor : IFileProcessor
     {
         var fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
 
-        var fileName = await fileWriter.PresentData(operationGuid, fileContent, result);
+        using var resultFileContent = await fileWriter.PresentData(operationGuid, fileContent, result);
 
-        _logger.LogInformation($"Created results in {fileName}");
+        _logger.LogInformation($"Created results for {operationGuid}");
+
+        await _fileDataAccess.AddCalculationResultFileContentAsync(operationGuid, resultFileContent);
     }
 
     private async Task<CalculationResultDto> Calculate(string fileName, MemoryStream fileContent,

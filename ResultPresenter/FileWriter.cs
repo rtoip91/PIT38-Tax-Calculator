@@ -39,13 +39,13 @@ public sealed class FileWriter : IFileWriter
         _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
-    public async Task<string> PresentData(Guid operationId,  MemoryStream inputFileContent,
+    public async Task<MemoryStream> PresentData(Guid operationId,  MemoryStream inputFileContent,
         CalculationResultDto calculationResultDto)
     {
         CreateDirectory();
         _operationGuid = operationId;
 
-        await using FileStream zipFile = await CreateOrUpdateZipFile();
+        MemoryStream zipFile = new MemoryStream();
         using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
 
         await WriteCfdResultsToFile(calculationResultDto.CdfDto, archive);
@@ -54,7 +54,7 @@ public sealed class FileWriter : IFileWriter
         await WriteDividendResultsToFile(calculationResultDto.DividendDto, archive);
         await WritePitZgToFile(archive);
         await CopyExcelFileToZip(inputFileContent, archive);
-        return await GetFileName();
+        return zipFile;
     }
 
     private async Task<string> GetFileName()

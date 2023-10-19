@@ -170,6 +170,29 @@ public sealed class FileDataAccess : IFileDataAccess
         return true;
     }
 
+    public async Task<bool> AddCalculationResultFileContentAsync(Guid operationGuid, MemoryStream resultFileContent)
+    {
+        await using var context = new ApplicationDbContext();
+
+        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+        if (fileEntity == null) return false;
+
+        fileEntity.CalculationResultFileContent = resultFileContent.ToArray();
+
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<MemoryStream> GetCalculationResultFileContentAsync(Guid operationGuid)
+    {
+        await using var context = new ApplicationDbContext();
+
+        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+        if (fileEntity == null ) return null;
+        if (fileEntity.CalculationResultFileContent == null) return null;
+        return new MemoryStream(fileEntity.CalculationResultFileContent);
+    }
+
 
     public async Task<bool> SetAsDeletedAsync(Guid operationGuid)
     {

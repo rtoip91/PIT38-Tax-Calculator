@@ -3,9 +3,6 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-RUN mkdir -p /var/ExcelFiles
-RUN mkdir -p /var/ResultFiles
-
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["../WebApi/WebApi.csproj", "../WebApi/"]
@@ -17,8 +14,7 @@ COPY ["../ResultPresenter/ResultsPresenter.csproj", "../ResultPresenter/"]
 ENV ASPNETCORE_URLS=https://+:443;http://+:80
 ENV ASPNETCORE_ENVIRONMENT=Development
 
-
-RUN dotnet restore "../WebApi/WebApi.csproj"
+RUN dotnet restore "../WebApi/WebApi.csproj"  
 COPY . .
 WORKDIR "/src/../WebApi"
 RUN dotnet build "WebApi.csproj" -c Release -o /app/build

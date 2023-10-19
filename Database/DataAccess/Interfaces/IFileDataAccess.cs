@@ -23,4 +23,6 @@ public interface IFileDataAccess
     Task<IList<string>> GetCalculationResultFilesToDeleteAsync();
     Task<int> RemoveOldDataAboutDeletedFiles();
     Task<bool> RemoveFileContentAsync(string fileName);
+    Task<bool> AddCalculationResultFileContentAsync(Guid operationGuid, MemoryStream resultFileContent);
+    Task<MemoryStream> GetCalculationResultFileContentAsync(Guid operationGuid);
 }

@@ -24,7 +24,7 @@ internal sealed class FileProcessingService : BackgroundService
             while (!stoppingToken.IsCancellationRequested)
             {
                 await _fileProcessor.ProcessFiles(stoppingToken);
-                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(3), stoppingToken);
             }
         }
         catch (TaskCanceledException)
