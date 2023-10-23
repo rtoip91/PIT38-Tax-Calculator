@@ -23,7 +23,14 @@ public sealed class FileDataAccess : IFileDataAccess
         fileEntity.Status = FileStatus.Added;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
         fileEntity.FileVersion = fileVersion;
-        fileEntity.InputFileContent = fileContent.ToArray();
+        
+        FileContentEntity fileContentEntity = new FileContentEntity
+        {
+            FileContent = fileContent.ToArray(),
+            FileType = FileType.InputFile
+        };
+        
+        fileEntity.InputFileContent = fileContentEntity;
 
         await context.FileEntities.AddAsync(fileEntity);
         await context.SaveChangesAsync();
@@ -46,7 +53,7 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
 
-        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+        FileEntity fileEntity = context.FileEntities.Include(f => f.InputFileContent).FirstOrDefault(f => f.OperationGuid == operationGuid);
 
         if (fileEntity is null) return null;
 
@@ -143,12 +150,12 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
 
-        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.CalculationResultFileName == fileName);
+        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.InputFileContent).FirstOrDefault(f => f.CalculationResultFileName == fileName);
         if (fileEntity == null) return false;
 
         fileEntity.Status = FileStatus.Deleted;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
-        fileEntity.InputFileContent = null;
+        context.Remove(fileEntity.InputFileContent);
 
         await context.SaveChangesAsync();
         return true;
@@ -158,14 +165,13 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
 
-        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.InputFileName == fileName);
+        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.InputFileContent).FirstOrDefault(f => f.InputFileName == fileName);
         if (fileEntity == null)
         {
             return false;
         }
-       
-        fileEntity.InputFileContent = null;
-
+        
+        context.Remove(fileEntity.InputFileContent);
         await context.SaveChangesAsync();
         return true;
     }
@@ -177,7 +183,13 @@ public sealed class FileDataAccess : IFileDataAccess
         FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
         if (fileEntity == null) return false;
 
-        fileEntity.CalculationResultFileContent = resultFileContent.ToArray();
+        FileContentEntity fileContentEntity = new FileContentEntity
+        {
+            FileContent = resultFileContent.ToArray(),
+            FileType = FileType.ResultFile
+        };
+        
+        fileEntity.CalculationResultFileContent = fileContentEntity;
 
         await context.SaveChangesAsync();
         return true;
@@ -187,10 +199,10 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
 
-        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.CalculationResultFileContent).FirstOrDefault(f => f.OperationGuid == operationGuid);
         if (fileEntity == null ) return null;
         if (fileEntity.CalculationResultFileContent == null) return null;
-        return new MemoryStream(fileEntity.CalculationResultFileContent);
+        return new MemoryStream(fileEntity.CalculationResultFileContent.FileContent);
     }
 
 

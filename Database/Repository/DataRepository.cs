@@ -1,34 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime;
 using Database.Entities.InMemory;
 
 namespace Database.Repository
 {
     internal sealed class DataRepository : IDataRepository
     {
-        public DataRepository()
-        {
-            IncomeByCountryEntities = new List<IncomeByCountryEntity>();
-            ClosedPositions = new List<ClosedPositionEntity>();
-            TransactionReports = new List<TransactionReportEntity>();
-            Dividends = new List<DividendEntity>();
-            StockCalculations = new List<StockEntity>();
-            PurchasedCryptoCalculations = new List<PurchasedCryptoEntity>();
-            SoldCryptoCalculations = new List<SoldCryptoEntity>();
-            DividendsCalculations = new List<DividendCalculationsEntity>();
-            CfdCalculations = new List<CfdEntity>();
-        }
-
-        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get; }
-        public IList<ClosedPositionEntity> ClosedPositions { get; }
-        public IList<TransactionReportEntity> TransactionReports { get; }
-        public IList<DividendEntity> Dividends { get; }
-        public IList<StockEntity> StockCalculations { get; }
-        public IList<PurchasedCryptoEntity> PurchasedCryptoCalculations { get; }
-        public IList<SoldCryptoEntity> SoldCryptoCalculations { get; }
-        public IList<DividendCalculationsEntity> DividendsCalculations { get; }
-        public IList<CfdEntity> CfdCalculations { get; }
-        public Guid OperationGuid { get; set; }
+        public IList<IncomeByCountryEntity> IncomeByCountryEntities { get; } = new List<IncomeByCountryEntity>();
+        public IList<ClosedPositionEntity> ClosedPositions { get; } = new List<ClosedPositionEntity>();
+        public IList<TransactionReportEntity> TransactionReports { get; } = new List<TransactionReportEntity>();
+        public IList<DividendEntity> Dividends { get; } = new List<DividendEntity>();
+        public IList<StockEntity> StockCalculations { get; } = new List<StockEntity>();
+        public IList<PurchasedCryptoEntity> PurchasedCryptoCalculations { get; } = new List<PurchasedCryptoEntity>();
+        public IList<SoldCryptoEntity> SoldCryptoCalculations { get; } = new List<SoldCryptoEntity>();
+        public IList<DividendCalculationsEntity> DividendsCalculations { get; } = new List<DividendCalculationsEntity>();
+        public IList<CfdEntity> CfdCalculations { get; } = new List<CfdEntity>();
     }
 }

@@ -10,7 +10,6 @@ using Database.DataAccess.Interfaces;
 using Database.Entities.Database;
 using ExcelReader.Dto;
 using ExcelReader.Interfaces;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -22,20 +21,17 @@ namespace TaxCalculatingService.BussinessLogic;
 internal sealed class FileProcessor : IFileProcessor
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IConfiguration _configuration;
     private readonly IFileDataAccess _fileDataAccess;
     private readonly ILogger<FileProcessor> _logger;
     private readonly IExchangeRatesLocker _exchangeRatesLocker;
     private readonly Stopwatch _stopwatch;
 
     public FileProcessor(IServiceProvider serviceProvider,
-        IConfiguration configuration,
         IFileDataAccess fileDataAccess,
         ILogger<FileProcessor> logger,
         IExchangeRatesLocker exchangeRatesLocker)
     {
         _serviceProvider = serviceProvider;
-        _configuration = configuration;
         _fileDataAccess = fileDataAccess;
         _logger = logger;
         _exchangeRatesLocker = exchangeRatesLocker;
@@ -108,7 +104,7 @@ internal sealed class FileProcessor : IFileProcessor
         {
             try
             {
-                using var fileContent = new MemoryStream(fileEntity.InputFileContent);
+                using var fileContent = new MemoryStream(fileEntity.InputFileContent.FileContent);
                 await _fileDataAccess.SetAsInProgressAsync(operation);
                 await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
                 var versionData = scope.ServiceProvider.GetService<ICurrentVersionData>();

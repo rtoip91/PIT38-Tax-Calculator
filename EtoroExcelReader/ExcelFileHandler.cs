@@ -8,7 +8,6 @@ using ExcelReader.Dictionaries.V2021;
 using ExcelReader.Dto;
 using ExcelReader.Factory;
 using ExcelReader.Interfaces;
-using ExcelReader.Statics;
 using OfficeOpenXml;
 using OfficeOpenXml.Export.ToDataTable;
 
