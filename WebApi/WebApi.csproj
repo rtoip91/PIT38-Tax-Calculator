@@ -20,11 +20,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Calculations\Calculations.csproj" />
     <ProjectReference Include="..\EtoroExcelReader\ExcelReader.csproj" />
-    <ProjectReference Include="..\TaxEtoro\TaxCalculatingService.csproj" />
+    <ProjectReference Include="..\TaxCalculatingService\TaxCalculatingService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="..\TaxEtoro\.dockerignore">
+    <Content Include="..\.dockerignore">
       <Link>.dockerignore</Link>
     </Content>
   </ItemGroup>
