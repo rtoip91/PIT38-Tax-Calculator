@@ -24,10 +24,9 @@ public sealed class FileDataAccess : IFileDataAccess
         fileEntity.StatusChangeDate = DateTime.UtcNow;
         fileEntity.FileVersion = fileVersion;
         
-        FileContentEntity fileContentEntity = new FileContentEntity
+        InputFileContentEntity fileContentEntity = new InputFileContentEntity
         {
-            FileContent = fileContent.ToArray(),
-            FileType = FileType.InputFile
+            FileContent = fileContent.ToArray()
         };
         
         fileEntity.InputFileContent = fileContentEntity;
@@ -183,10 +182,9 @@ public sealed class FileDataAccess : IFileDataAccess
         FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
         if (fileEntity == null) return false;
 
-        FileContentEntity fileContentEntity = new FileContentEntity
+        ResultFileContentEntity fileContentEntity = new ResultFileContentEntity
         {
             FileContent = resultFileContent.ToArray(),
-            FileType = FileType.ResultFile
         };
         
         fileEntity.CalculationResultFileContent = fileContentEntity;

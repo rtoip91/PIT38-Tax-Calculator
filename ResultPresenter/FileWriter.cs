@@ -2,7 +2,6 @@
 using Calculations.Dto;
 using Database.DataAccess.Interfaces;
 using Database.Entities.InMemory;
-using Microsoft.Extensions.Configuration;
 using ResultsPresenter.Interfaces;
 
 namespace ResultsPresenter;
@@ -15,19 +14,13 @@ public sealed class FileWriter : IFileWriter
     private readonly IPurchasedCryptoEntityDataAccess _purchasedCryptoEntityDataAccess;
     private readonly IDividendCalculationsDataAccess _dividendCalculationsDataAccess;
     private readonly IIncomeByCountryDataAccess _incomeByCountryDataAccess;
-    private readonly IFileDataAccess _fileDataAccess;
-    private readonly string _filePath;
-    private string _fileName;
-    private Guid _operationGuid;
 
     public FileWriter(ICfdEntityDataAccess cfdEntityDataAccess,
         IStockEntityDataAccess stockEntityDataAccess,
         ISoldCryptoEntityDataAccess soldCryptoEntityDataAccess,
         IPurchasedCryptoEntityDataAccess purchasedCryptoEntityDataAccess,
         IDividendCalculationsDataAccess dividendCalculationsDataAccess,
-        IIncomeByCountryDataAccess incomeByCountryDataAccess,
-        IFileDataAccess fileDataAccess,
-        IConfiguration configuration)
+        IIncomeByCountryDataAccess incomeByCountryDataAccess)
     {
         _cfdEntityDataAccess = cfdEntityDataAccess;
         _stockEntityDataAccess = stockEntityDataAccess;
@@ -35,16 +28,11 @@ public sealed class FileWriter : IFileWriter
         _purchasedCryptoEntityDataAccess = purchasedCryptoEntityDataAccess;
         _dividendCalculationsDataAccess = dividendCalculationsDataAccess;
         _incomeByCountryDataAccess = incomeByCountryDataAccess;
-        _fileDataAccess = fileDataAccess;
-        _filePath = configuration.GetValue<string>("ResultStorageFolder");
     }
 
-    public async Task<MemoryStream> PresentData(Guid operationId,  MemoryStream inputFileContent,
+    public async Task<MemoryStream> PresentData(Guid operationId, MemoryStream inputFileContent,
         CalculationResultDto calculationResultDto)
     {
-        CreateDirectory();
-        _operationGuid = operationId;
-
         MemoryStream zipFile = new MemoryStream();
         using var archive = new ZipArchive(zipFile, ZipArchiveMode.Update);
 
@@ -57,36 +45,6 @@ public sealed class FileWriter : IFileWriter
         return zipFile;
     }
 
-    private async Task<string> GetFileName()
-    {
-        if (string.IsNullOrEmpty(_fileName))
-        {
-            _fileName = await _fileDataAccess.GetCalculationResultFileNameAsync(_operationGuid);
-        }
-
-        return _fileName;
-    }
-
-    private void CreateDirectory()
-    {
-        var path = $"{_filePath}";
-
-        if (!Directory.Exists(path))
-        {
-            Directory.CreateDirectory(path);
-        }
-    }
-
-    private async Task<FileStream> CreateOrUpdateZipFile()
-    {
-        var fileName = await GetFileName();
-        var path = $"{_filePath}/{fileName}";
-
-        var zipToOpen = new FileStream(path, FileMode.OpenOrCreate);
-
-        return zipToOpen;
-    }
-
     private Task CopyExcelFileToZip(MemoryStream inputFileContent, ZipArchive archive)
     {
         var entry = archive.CreateEntry(Constants.Constants.EtoroExcelFile, CompressionLevel.Fastest);
@@ -94,7 +52,7 @@ public sealed class FileWriter : IFileWriter
         {
             inputFileContent.CopyTo(entryStream);
         }
-        
+
         return Task.CompletedTask;
     }
 
