@@ -1,8 +1,6 @@
-﻿using TaxCalculatingService.BussinessLogic;
-
-namespace WebApi.Helpers
+﻿namespace WebApi.Helpers
 {
-    public interface IFileUploadHelper : IObservable<FileUploadedEvent>
+    public interface IFileUploadHelper
     {
         Task<Guid?> UploadFile(IFormFile inputExcelFile);
     }

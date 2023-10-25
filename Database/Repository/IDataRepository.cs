@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using Database.Entities;
+﻿using System.Collections.Generic;
 using Database.Entities.InMemory;
 
 namespace Database.Repository
 {
-    public interface IDataRepository : IDisposable
+    public interface IDataRepository
     {
         IList<IncomeByCountryEntity> IncomeByCountryEntities { get; }
         IList<ClosedPositionEntity> ClosedPositions { get; }
@@ -16,6 +14,5 @@ namespace Database.Repository
         IList<SoldCryptoEntity> SoldCryptoCalculations { get; }
         IList<DividendCalculationsEntity> DividendsCalculations { get; }
         IList<CfdEntity> CfdCalculations { get; }
-        Guid OperationGuid { get; set; }
     }
 }

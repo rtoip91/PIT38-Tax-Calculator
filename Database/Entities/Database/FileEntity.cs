@@ -10,17 +10,20 @@ namespace Database.Entities.Database
 {
     [Table("File")]
     [Index(nameof(OperationGuid), IsUnique = true)]
-    [Index(nameof(OperationGuid), nameof(Status), IsUnique = false)]
     public record FileEntity
     {
         [Key] public int Id { get; set; }
 
         public string InputFileName { get; set; }
+        
+        public InputFileContentEntity InputFileContent { get; set; }
 
         [JsonConverter(typeof(StringEnumConverter))]
         public FileStatus Status { get; set; }
 
         public string CalculationResultFileName { get; set; }
+        
+        public ResultFileContentEntity CalculationResultFileContent { get; set; }
 
         public string CalculationResultJson { get; set; }
 

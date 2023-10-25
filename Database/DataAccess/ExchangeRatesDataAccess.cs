@@ -37,14 +37,8 @@ namespace Database.DataAccess
 
         public async Task<ExchangeRateEntity> MakeCopyAndSaveToDb(ExchangeRateEntity item)
         {
-            ExchangeRateEntity newEntity = new ExchangeRateEntity
-            {
-                Code = item.Code,
-                Currency = item.Currency,
-                Date = item.Date,
-                Rate = item.Rate
-            };
-
+            //non destructive record copy
+            ExchangeRateEntity newEntity = item with { Id = 0};
             await SaveRate(newEntity);
             return newEntity;
         }

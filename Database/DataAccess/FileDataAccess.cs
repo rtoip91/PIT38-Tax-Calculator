@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
@@ -11,7 +12,7 @@ namespace Database.DataAccess;
 
 public sealed class FileDataAccess : IFileDataAccess
 {
-    public async Task<string> AddNewFileAsync(Guid operationGuid, FileVersion fileVersion)
+    public async Task<string> AddNewFileAsync(Guid operationGuid, FileVersion fileVersion,  MemoryStream fileContent)
     {
         await using var context = new ApplicationDbContext();
 
@@ -22,6 +23,13 @@ public sealed class FileDataAccess : IFileDataAccess
         fileEntity.Status = FileStatus.Added;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
         fileEntity.FileVersion = fileVersion;
+        
+        InputFileContentEntity fileContentEntity = new InputFileContentEntity
+        {
+            FileContent = fileContent.ToArray()
+        };
+        
+        fileEntity.InputFileContent = fileContentEntity;
 
         await context.FileEntities.AddAsync(fileEntity);
         await context.SaveChangesAsync();
@@ -44,7 +52,7 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
 
-        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+        FileEntity fileEntity = context.FileEntities.Include(f => f.InputFileContent).FirstOrDefault(f => f.OperationGuid == operationGuid);
 
         if (fileEntity is null) return null;
 
@@ -141,14 +149,58 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
 
-        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.CalculationResultFileName == fileName);
+        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.InputFileContent).FirstOrDefault(f => f.CalculationResultFileName == fileName);
         if (fileEntity == null) return false;
 
         fileEntity.Status = FileStatus.Deleted;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
+        context.Remove(fileEntity.InputFileContent);
 
         await context.SaveChangesAsync();
         return true;
+    }
+    
+    public async Task<bool> RemoveFileContentAsync(string fileName)
+    {
+        await using var context = new ApplicationDbContext();
+
+        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.InputFileContent).FirstOrDefault(f => f.InputFileName == fileName);
+        if (fileEntity == null)
+        {
+            return false;
+        }
+        
+        context.Remove(fileEntity.InputFileContent);
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> AddCalculationResultFileContentAsync(Guid operationGuid, MemoryStream resultFileContent)
+    {
+        await using var context = new ApplicationDbContext();
+
+        FileEntity fileEntity = context.FileEntities.FirstOrDefault(f => f.OperationGuid == operationGuid);
+        if (fileEntity == null) return false;
+
+        ResultFileContentEntity fileContentEntity = new ResultFileContentEntity
+        {
+            FileContent = resultFileContent.ToArray(),
+        };
+        
+        fileEntity.CalculationResultFileContent = fileContentEntity;
+
+        await context.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<MemoryStream> GetCalculationResultFileContentAsync(Guid operationGuid)
+    {
+        await using var context = new ApplicationDbContext();
+
+        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.CalculationResultFileContent).FirstOrDefault(f => f.OperationGuid == operationGuid);
+        if (fileEntity == null ) return null;
+        if (fileEntity.CalculationResultFileContent == null) return null;
+        return new MemoryStream(fileEntity.CalculationResultFileContent.FileContent);
     }
 
 
@@ -161,6 +213,7 @@ public sealed class FileDataAccess : IFileDataAccess
 
         fileEntity.Status = FileStatus.Deleted;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
+        fileEntity.InputFileContent = null;
 
         await context.SaveChangesAsync();
         return true;

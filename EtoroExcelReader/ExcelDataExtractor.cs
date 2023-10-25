@@ -2,6 +2,7 @@
 using ExcelReader.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Database.Entities.InMemory;
 using ExcelReader.Dto;
@@ -33,9 +34,9 @@ public sealed class ExcelDataExtractor : IExcelDataExtractor
         _extractedDataProcessor = extractedDataProcessor;
     }
 
-    public async Task<bool> ImportDataFromExcel(string directory, string fileName)
+    public async Task<bool> ImportDataFromExcel(MemoryStream fileContent)
     {
-        var extractedData = await _excelFileHandler.ExtractDataFromExcel(directory, fileName);
+        var extractedData = await _excelFileHandler.ExtractDataFromExcel(fileContent);
         var result = await SaveExtractedData(extractedData);
 
         return result;
@@ -43,8 +44,10 @@ public sealed class ExcelDataExtractor : IExcelDataExtractor
 
     private Task<bool> SaveExtractedData(ExtractedDataDto extractedData)
     {
-        IList<ClosedPositionEntity> closedPositionEntities = _extractedDataProcessor.CreateClosedPositionEntitiesWithRelatedTransactionReports(extractedData);
-        IList<TransactionReportEntity> transactionReportEntities = _extractedDataProcessor.CreateUnrelatedTransactionReportEntities(extractedData);
+        IList<ClosedPositionEntity> closedPositionEntities =
+            _extractedDataProcessor.CreateClosedPositionEntitiesWithRelatedTransactionReports(extractedData);
+        IList<TransactionReportEntity> transactionReportEntities =
+            _extractedDataProcessor.CreateUnrelatedTransactionReportEntities(extractedData);
         IList<DividendEntity> dividendEntities = _extractedDataProcessor.CreateDividendEntities(extractedData);
 
         try

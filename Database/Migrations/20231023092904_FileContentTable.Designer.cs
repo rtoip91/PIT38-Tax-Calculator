@@ -3,6 +3,7 @@ using System;
 using Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231023092904_FileContentTable")]
+    partial class FileContentTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,6 +50,25 @@ namespace Database.Migrations
                     b.HasIndex("Code", "Date");
 
                     b.ToTable("ExchangeRates");
+                });
+
+            modelBuilder.Entity("Database.Entities.Database.FileContentEntity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<byte[]>("FileContent")
+                        .HasColumnType("bytea");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FileContent");
                 });
 
             modelBuilder.Entity("Database.Entities.Database.FileEntity", b =>
@@ -96,45 +118,13 @@ namespace Database.Migrations
                     b.ToTable("File");
                 });
 
-            modelBuilder.Entity("Database.Entities.Database.InputFileContentEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("FileContent")
-                        .HasColumnType("bytea");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("InputFileContent");
-                });
-
-            modelBuilder.Entity("Database.Entities.Database.ResultFileContentEntity", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<byte[]>("FileContent")
-                        .HasColumnType("bytea");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ResultFileContent");
-                });
-
             modelBuilder.Entity("Database.Entities.Database.FileEntity", b =>
                 {
-                    b.HasOne("Database.Entities.Database.ResultFileContentEntity", "CalculationResultFileContent")
+                    b.HasOne("Database.Entities.Database.FileContentEntity", "CalculationResultFileContent")
                         .WithMany()
                         .HasForeignKey("CalculationResultFileContentId");
 
-                    b.HasOne("Database.Entities.Database.InputFileContentEntity", "InputFileContent")
+                    b.HasOne("Database.Entities.Database.FileContentEntity", "InputFileContent")
                         .WithMany()
                         .HasForeignKey("InputFileContentId");
 

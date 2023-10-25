@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
 using TaxCalculatingService.Interfaces;
@@ -16,6 +17,18 @@ internal sealed class FileProcessingService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        await _fileProcessor.ProcessFiles(stoppingToken);
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
+
+            while (!stoppingToken.IsCancellationRequested)
+            {
+                await _fileProcessor.ProcessFiles(stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(3), stoppingToken);
+            }
+        }
+        catch (TaskCanceledException)
+        {
+        }
     }
 }

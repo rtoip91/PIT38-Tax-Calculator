@@ -1,23 +1,20 @@
-using Calculations.Statics;
-using Database;
-using ExcelReader.Statics;
 using Serilog;
-using TaxCalculatingService.Statics;
-using WebApi.Helpers;
+using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
+builder.Services.RegisterApplicationServices();
 
 var logger = new LoggerConfiguration()
-  .MinimumLevel.Override("Microsoft.AspNetCore",Serilog.Events.LogEventLevel.Warning)
-  .MinimumLevel.Override("System.Net.Http.HttpClient", Serilog.Events.LogEventLevel.Warning)
-  .MinimumLevel.Information()
-  .WriteTo.Console()
-  .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)
-  .Enrich.FromLogContext()
-  .CreateLogger();
+    .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("System.Net.Http.HttpClient", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)
+    .Enrich.FromLogContext()
+    .CreateLogger();
 
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
@@ -26,20 +23,14 @@ builder.Logging.AddSerilog(logger);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-TaxEtoroServiceRegistration.RegisterServices(builder.Services);
-CalculationsServicesRegistration.RegisterServices(builder.Services);
-DatabaseServiceRegistration.RegisterServices(builder.Services);
-ExcelReaderServiceRegistration.RegisterServices(builder.Services);
-builder.Services.AddTransient<IFileUploadHelper, FileUploadHelper>();
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+
+app.UseSwagger();
+app.UseSwaggerUI();
+ 
 
 app.UseHttpsRedirection();
 

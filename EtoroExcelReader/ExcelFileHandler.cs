@@ -8,7 +8,6 @@ using ExcelReader.Dictionaries.V2021;
 using ExcelReader.Dto;
 using ExcelReader.Factory;
 using ExcelReader.Interfaces;
-using ExcelReader.Statics;
 using OfficeOpenXml;
 using OfficeOpenXml.Export.ToDataTable;
 
@@ -23,21 +22,14 @@ namespace ExcelReader
             _converter = converterFactory.GetConverter();
         }
 
-        public async Task<ExtractedDataDto> ExtractDataFromExcel(string directory, string fileName)
+        public async Task<ExtractedDataDto> ExtractDataFromExcel(MemoryStream fileContent)
         {
             ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
-            var filePath = FileInputUtil.GetFileInfo(directory, fileName).FullName;
-            FileInfo fileInfo = new FileInfo(filePath);
-
-            if (fileInfo.Extension != ".xlsx")
-            {
-                throw new Exception("Wrong file type");
-            }
 
             try
             {
                 using ExcelPackage package = new ExcelPackage();
-                await package.LoadAsync(fileInfo);
+                await package.LoadAsync(fileContent);
 
                 ExtractedDataDto extractedDataDto = new ExtractedDataDto();
 

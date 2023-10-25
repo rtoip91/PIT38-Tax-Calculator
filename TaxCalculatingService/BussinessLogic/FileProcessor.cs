@@ -2,18 +2,14 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Runtime;
 using System.Threading;
 using System.Threading.Tasks;
 using Calculations.Dto;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
-using Database.Enums;
+using Database.Entities.Database;
 using ExcelReader.Dto;
 using ExcelReader.Interfaces;
-using ExcelReader.Statics;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -25,37 +21,28 @@ namespace TaxCalculatingService.BussinessLogic;
 internal sealed class FileProcessor : IFileProcessor
 {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IConfiguration _configuration;
     private readonly IFileDataAccess _fileDataAccess;
     private readonly ILogger<FileProcessor> _logger;
     private readonly IExchangeRatesLocker _exchangeRatesLocker;
-    private readonly object _lock;
-    private readonly SemaphoreSlim _semaphore;
     private readonly Stopwatch _stopwatch;
 
     public FileProcessor(IServiceProvider serviceProvider,
-        IConfiguration configuration,
         IFileDataAccess fileDataAccess,
         ILogger<FileProcessor> logger,
         IExchangeRatesLocker exchangeRatesLocker)
     {
         _serviceProvider = serviceProvider;
-        _configuration = configuration;
         _fileDataAccess = fileDataAccess;
         _logger = logger;
         _exchangeRatesLocker = exchangeRatesLocker;
-        _semaphore = new SemaphoreSlim(0);
-        _lock = new object();
         _stopwatch = new Stopwatch();
     }
 
     private async Task ProcessSingleFile(Guid operation, CancellationToken token)
     {
-        DirectoryInfo directory =
-            FileInputUtil.GetDirectory(@_configuration.GetValue<string>("InputFileStorageFolder"));
         var fileEntity = await _fileDataAccess.GetInputFileDataAsync(operation);
-        FileInfo file = directory.GetFiles(fileEntity.InputFileName).FirstOrDefault();
-        if (file is null)
+
+        if (fileEntity.InputFileContent == null)
         {
             _logger.LogWarning("File {FileEntityInputFileName} was not found, marking as deleted.",
                 fileEntity.InputFileName);
@@ -63,8 +50,8 @@ internal sealed class FileProcessor : IFileProcessor
             return;
         }
 
-        await ProcessFile(directory, file, operation, fileEntity.FileVersion)
-            .ContinueWith(_ => RemoveFile(file), token);
+        await ProcessFile(fileEntity, operation)
+            .ContinueWith(async _ => await RemoveFile(fileEntity), token);
     }
 
     public async Task ProcessFiles(CancellationToken token)
@@ -73,15 +60,13 @@ internal sealed class FileProcessor : IFileProcessor
         {
             return;
         }
-        
-        await ReduceSemaphore(token);
+
+
         var numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
 
         if (numberOfOperations == 0)
         {
             _logger.LogInformation("No pending operations detected waiting for new operation");
-            await _semaphore.WaitAsync(token);
-            await ProcessFiles(token);
             return;
         }
 
@@ -89,7 +74,7 @@ internal sealed class FileProcessor : IFileProcessor
         {
             _stopwatch.Restart();
         }
-        
+
         do
         {
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
@@ -105,90 +90,67 @@ internal sealed class FileProcessor : IFileProcessor
         _logger.LogInformation($"Calculation took {stopwatchResult:m\\:ss\\.fff}");
 
         _exchangeRatesLocker.ClearLockers();
-        GCSettings.LargeObjectHeapCompactionMode = GCLargeObjectHeapCompactionMode.CompactOnce;
-        GC.Collect();
-
-        await ProcessFiles(token);
     }
 
-    private async Task ReduceSemaphore(CancellationToken token)
+    private async Task RemoveFile(FileEntity file)
     {
-        if (_semaphore.CurrentCount == 1) await _semaphore.WaitAsync(token);
+        await _fileDataAccess.RemoveFileContentAsync(file.InputFileName);
+        _logger.LogInformation($"File: {file.InputFileName} was deleted");
     }
 
-    private void RemoveFile(FileInfo file)
-    {
-        file.Delete();
-        _logger.LogInformation($"File: {file.Name} was deleted");
-    }
-
-    private Task ProcessFile(DirectoryInfo directory, FileInfo file, Guid operation, FileVersion fileVersion)
+    private Task ProcessFile(FileEntity fileEntity, Guid operation)
     {
         Task task = Task.Run(async () =>
         {
             try
             {
+                using var fileContent = new MemoryStream(fileEntity.InputFileContent.FileContent);
                 await _fileDataAccess.SetAsInProgressAsync(operation);
                 await using AsyncServiceScope scope = _serviceProvider.CreateAsyncScope();
                 var versionData = scope.ServiceProvider.GetService<ICurrentVersionData>();
-                versionData.FileVersion = fileVersion;
-                CalculationResultDto dto = await Calculate(directory, file, scope, operation);
-                await PresentCalculationResults(dto, file, scope, operation);
+                versionData.FileVersion = fileEntity.FileVersion;
+                CalculationResultDto dto = await Calculate(fileEntity.InputFileName, fileContent, scope, operation);
+                await PresentCalculationResults(dto, fileContent, scope, operation);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, $"Error during processing file {file.FullName}");
+                _logger.LogError(e, $"Error during processing file {fileEntity.InputFileName} ");
             }
         });
         return task;
     }
 
-    private async Task<CalculationResultDto> PerformCalculations(string directory, string fileName,
+    private async Task<CalculationResultDto> PerformCalculations(string fileName, MemoryStream fileContent,
         AsyncServiceScope scope)
     {
         var reader = scope.ServiceProvider.GetService<IExcelDataExtractor>();
         var taxCalculations = scope.ServiceProvider.GetService<ITaxCalculations>();
 
         _logger.LogInformation($"Started processing of the file {fileName}");
-        await reader.ImportDataFromExcel(directory, fileName);
+        await reader.ImportDataFromExcel(fileContent);
         CalculationResultDto result = await taxCalculations.CalculateTaxes();
 
         return result;
     }
 
-    private async Task PresentCalculationResults(CalculationResultDto result, FileInfo file,
+    private async Task PresentCalculationResults(CalculationResultDto result, MemoryStream fileContent,
         AsyncServiceScope scope, Guid operationGuid)
     {
         var fileWriter = scope.ServiceProvider.GetService<IFileWriter>();
 
-        var fileName = await fileWriter.PresentData(operationGuid, file, result);
+        using var resultFileContent = await fileWriter.PresentData(operationGuid, fileContent, result);
 
-        _logger.LogInformation($"Created results in {fileName}");
+        _logger.LogInformation($"Created results for {operationGuid}");
+
+        await _fileDataAccess.AddCalculationResultFileContentAsync(operationGuid, resultFileContent);
     }
 
-    private async Task<CalculationResultDto> Calculate(DirectoryInfo directory, FileInfo file,
+    private async Task<CalculationResultDto> Calculate(string fileName, MemoryStream fileContent,
         AsyncServiceScope scope, Guid operation)
     {
-        CalculationResultDto dto = await PerformCalculations(directory.FullName, file.Name, scope);
+        CalculationResultDto dto = await PerformCalculations(fileName, fileContent, scope);
         var dtoString = JsonConvert.SerializeObject(dto);
         await _fileDataAccess.SetAsCalculatedAsync(operation, dtoString);
         return dto;
-    }
-
-    public void OnCompleted()
-    {
-    }
-
-    public void OnError(Exception error)
-    {
-        throw error;
-    }
-
-    public void OnNext(FileUploadedEvent value)
-    {
-        lock (_lock)
-        {
-            if (_semaphore.CurrentCount == 0) _semaphore.Release();
-        }
     }
 }
