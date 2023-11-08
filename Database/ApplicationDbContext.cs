@@ -24,7 +24,17 @@ namespace Database
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseNpgsql(@"Host=172.17.0.2;Username=postgres;Password=docker;Database=postgres");
+            string isDocker = Environment.GetEnvironmentVariable("IsDocker");
+
+            if (isDocker == "true")
+            {
+                optionsBuilder.UseNpgsql(@"Host=postgres-db;Username=docker;Password=docker;Database=postgres");
+            }
+            else
+            {
+                optionsBuilder.UseNpgsql(@"Host=localhost;Username=docker;Password=docker;Database=postgres");
+            }
+            
         }
 
         internal void MigrateDatabase()

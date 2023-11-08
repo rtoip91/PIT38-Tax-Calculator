@@ -49,7 +49,7 @@ namespace Calculations
 
             if (!bankHoliday)
             {
-                await locker.WaitAsync();
+                // await locker.WaitAsync();
             }
 
             try
@@ -71,7 +71,7 @@ namespace Calculations
             {
                 if (!bankHoliday)
                 {
-                    locker.Release();
+                    // locker.Release();
                 }
             }
         }

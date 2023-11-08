@@ -26,6 +26,13 @@ internal sealed class FileProcessor : IFileProcessor
     private readonly IExchangeRatesLocker _exchangeRatesLocker;
     private readonly Stopwatch _stopwatch;
 
+    
+    private readonly ParallelOptions _parallelOptions = new ParallelOptions()
+    {
+        MaxDegreeOfParallelism = 4
+    };
+    
+    
     public FileProcessor(IServiceProvider serviceProvider,
         IFileDataAccess fileDataAccess,
         ILogger<FileProcessor> logger,
@@ -78,7 +85,8 @@ internal sealed class FileProcessor : IFileProcessor
         do
         {
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
-            await Parallel.ForEachAsync(operations, token,
+         
+            await Parallel.ForEachAsync(operations,token,
                 async (operation, cancellationToken) => { await ProcessSingleFile(operation, cancellationToken); });
 
             numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
