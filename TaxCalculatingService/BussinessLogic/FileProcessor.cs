@@ -23,7 +23,6 @@ internal sealed class FileProcessor : IFileProcessor
     private readonly IServiceProvider _serviceProvider;
     private readonly IFileDataAccess _fileDataAccess;
     private readonly ILogger<FileProcessor> _logger;
-    private readonly IExchangeRatesLocker _exchangeRatesLocker;
     private readonly Stopwatch _stopwatch;
 
     
@@ -35,13 +34,11 @@ internal sealed class FileProcessor : IFileProcessor
     
     public FileProcessor(IServiceProvider serviceProvider,
         IFileDataAccess fileDataAccess,
-        ILogger<FileProcessor> logger,
-        IExchangeRatesLocker exchangeRatesLocker)
+        ILogger<FileProcessor> logger )
     {
         _serviceProvider = serviceProvider;
         _fileDataAccess = fileDataAccess;
         _logger = logger;
-        _exchangeRatesLocker = exchangeRatesLocker;
         _stopwatch = new Stopwatch();
     }
 
@@ -96,8 +93,6 @@ internal sealed class FileProcessor : IFileProcessor
         TimeSpan stopwatchResult = _stopwatch.Elapsed;
 
         _logger.LogInformation($"Calculation took {stopwatchResult:m\\:ss\\.fff}");
-
-        _exchangeRatesLocker.ClearLockers();
     }
 
     private async Task RemoveFile(FileEntity file)

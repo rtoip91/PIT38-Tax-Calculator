@@ -14,17 +14,14 @@ namespace Calculations
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IExchangeRatesDataAccess _exchangeRatesDataAccess;
-        private readonly IExchangeRatesLocker _exchangeRatesLocker;
         private readonly ILogger<ExchangeRates> _logger;
 
         public ExchangeRates(IHttpClientFactory httpClientFactory,
             IExchangeRatesDataAccess exchangeRatesDataAccess,
-            IExchangeRatesLocker exchangeRatesLocker,
             ILogger<ExchangeRates> logger)
         {
             _httpClientFactory = httpClientFactory;
             _exchangeRatesDataAccess = exchangeRatesDataAccess;
-            _exchangeRatesLocker = exchangeRatesLocker;
             _logger = logger;
         }
 
@@ -45,13 +42,6 @@ namespace Calculations
 
             DateTime newDate = date.AddDays(subtractDays);
 
-            SemaphoreSlim locker = _exchangeRatesLocker.GetLocker(newDate);
-
-            if (!bankHoliday)
-            {
-                // await locker.WaitAsync();
-            }
-
             try
             {
                 ExchangeRateEntity entity = await GetRateForDay(currencyCode, newDate);
@@ -66,13 +56,6 @@ namespace Calculations
             {
                 Console.WriteLine(ex.Message);
                 throw;
-            }
-            finally
-            {
-                if (!bankHoliday)
-                {
-                    // locker.Release();
-                }
             }
         }
 
@@ -107,7 +90,8 @@ namespace Calculations
         {
             var policy = Policy.Handle<HttpRequestException>()
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
-            string result = await policy.ExecuteAsync(async () => await GetResultFromNbpApi(currencyCode, date));
+            
+            string result = await policy.ExecuteAsync(() => GetResultFromNbpApi(currencyCode, date));
 
             ExchangeRatesDto? exchangeRates;
             try

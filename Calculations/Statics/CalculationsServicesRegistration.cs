@@ -10,7 +10,6 @@ public static class CalculationsServicesRegistration
     public static void RegisterServices(IServiceCollection services)
     {
         services.AddTransient<IExchangeRates, ExchangeRates>();
-        services.AddSingleton<IExchangeRatesLocker, ExchangeRatesLocker>();
         services.AddScoped<ICalculator<CalculationResultDto>, Calculator>();       
         services.AddTransient<ICalculator<CfdCalculatorDto>, CfdCalculator>();
         services.AddTransient<ICalculator<CryptoDto>, CryptoCalculator>();
