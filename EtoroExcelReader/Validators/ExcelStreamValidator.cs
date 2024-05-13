@@ -48,7 +48,7 @@ public sealed class ExcelStreamValidator : IExcelStreamValidator
                     }
 
                     var columns = excelData.ColumnNames[expectedWorksheetName];
-                    if (columns == null)
+                    if (columns == null && excelData.ColumnNames[expectedWorksheetName] == null)
                     {
                         continue;
                     }
