@@ -39,13 +39,12 @@ namespace ExcelReader
                     await CreateDataTableAsync(package, ExcelSpreadsheetsV2021.TransactionReports);
                 DataTable dividendsDataTable = await CreateDataTableAsync(package, ExcelSpreadsheetsV2021.Dividends);
 
-                Task extractClosedPositions =
-                    ExtractClosedPositionsAsync(closedPositionsDataTable, extractedDataDto);
-                Task extractTransactionReports =
-                    ExtractTransactionReportsAsync(transactionReportsDataTable, extractedDataDto);
-                Task extractDividends = ExtractDividendsAsync(dividendsDataTable, extractedDataDto);
 
-                await Task.WhenAll(extractClosedPositions, extractTransactionReports, extractDividends);
+                await ExtractClosedPositionsAsync(closedPositionsDataTable, extractedDataDto);
+                await ExtractTransactionReportsAsync(transactionReportsDataTable, extractedDataDto);
+                await ExtractDividendsAsync(dividendsDataTable, extractedDataDto);
+
+                // await Task.WhenAll(extractClosedPositions, extractTransactionReports, extractDividends);
                 return extractedDataDto;
             }
             catch (Exception)

@@ -68,7 +68,7 @@ namespace WebApi.Controllers
                 return StatusCode(StatusCodes.Status400BadRequest, "File doesn't exist");
             }
 
-            using var resultFileContent = await _fileDataAccess.GetCalculationResultFileContentAsync(operationId);
+            var resultFileContent = await _fileDataAccess.GetCalculationResultFileContentAsync(operationId);
 
             await _fileDataAccess.SetAsDownloadedAsync(operationId);
             return File(resultFileContent, "application/octet-stream", filename);

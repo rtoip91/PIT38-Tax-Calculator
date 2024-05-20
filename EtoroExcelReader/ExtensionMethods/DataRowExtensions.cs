@@ -98,7 +98,7 @@ namespace ExcelReader.ExtensionMethods
                 return 0;
             }
 
-            return long.Parse(value, ChooseProvider(value));
+            return long.TryParse(value, out var result) ? result : 0;
         }
 
         internal static DateTime ToDate(this object item)
