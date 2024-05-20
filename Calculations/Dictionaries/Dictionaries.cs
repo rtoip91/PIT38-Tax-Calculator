@@ -1,7 +1,13 @@
 ﻿namespace Calculations.Dictionaries
 {
+    /// <summary>
+    /// Contains dictionaries.
+    /// </summary>
     public static class Dictionaries
     {
+        /// <summary>
+        /// Dictionary mapping cryptocurrency codes to their full names.
+        /// </summary>
         public static Dictionary<string, string> CryptoCurrenciesDictionary = new Dictionary<string, string>
         {
             { "BTC", "Bitcoin" },
