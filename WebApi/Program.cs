@@ -1,15 +1,18 @@
+using Database;
 using Serilog;
 using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.AddNpgsqlDbContext<ApplicationDbContext>("postgresdb");
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.RegisterApplicationServices();
 
+
 var logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Override("System.Net.Http.HttpClient", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)
@@ -24,7 +27,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
+
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.MigrateDatabase();
+}
 
 // Configure the HTTP request pipeline.
 
@@ -37,5 +48,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

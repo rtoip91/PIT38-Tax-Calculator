@@ -12,7 +12,7 @@ namespace ExcelReader.ExtensionMethods
 
         internal static decimal ToDecimal(this object item)
         {
-            string value = item.ToString();
+            var value = item.ToString();
             if (string.IsNullOrWhiteSpace(value))
             {
                 return 0;
@@ -46,17 +46,15 @@ namespace ExcelReader.ExtensionMethods
         internal static TransactionType ToTransactionType(this object item)
         {
             var value = item.ToString().AsSpan();
-            if (value != null)
+            if (value == null) return TransactionType.Long;
+            if (value.Length >= 8 && value.Slice(0, 8).Equals("Sprzedaj", StringComparison.Ordinal))
             {
-                if (value.Length >= 8 && value.Slice(0, 8).Equals("Sprzedaj", StringComparison.Ordinal))
-                {
-                    return TransactionType.Short;
-                }
+                return TransactionType.Short;
+            }
 
-                if (value.Length >= 4 && value.Slice(0, 4).Equals("Sell", StringComparison.Ordinal))
-                {
-                    return TransactionType.Short;
-                }
+            if (value.Length >= 4 && value.Slice(0, 4).Equals("Sell", StringComparison.Ordinal))
+            {
+                return TransactionType.Short;
             }
 
             return TransactionType.Long;

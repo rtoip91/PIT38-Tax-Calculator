@@ -20,7 +20,7 @@ public sealed class ExcelStreamValidator : IExcelStreamValidator
     {
         try
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.License.SetNonCommercialPersonal("Rtoip91"); 
             using ExcelPackage package = new ExcelPackage();
             await package.LoadAsync(excelFileStream);
 

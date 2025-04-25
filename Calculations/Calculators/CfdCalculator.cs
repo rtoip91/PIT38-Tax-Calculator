@@ -1,9 +1,7 @@
-﻿using System.Globalization;
-using Calculations.Dto;
+﻿using Calculations.Dto;
 using Calculations.Extensions;
 using Calculations.Interfaces;
 using Database.DataAccess.Interfaces;
-using Database.Entities;
 using Database.Entities.Database;
 using Database.Entities.InMemory;
 using Database.Enums;

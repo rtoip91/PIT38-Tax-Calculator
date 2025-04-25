@@ -4,21 +4,26 @@ using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities.Database;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Database.DataAccess
 {
     public sealed class ExchangeRatesDataAccess : IExchangeRatesDataAccess
     {
         private readonly IMemoryCache _memoryCache;
-
-        public ExchangeRatesDataAccess(IMemoryCache memoryCache)
+        private readonly IServiceScopeFactory _scopeFactory;
+        public ExchangeRatesDataAccess(IMemoryCache memoryCache, IServiceScopeFactory scopeFactory)
         {
+           
             _memoryCache = memoryCache;
+            _scopeFactory = scopeFactory;
         }
+        
 
         public async Task<ExchangeRateEntity> GetRate(string currencyCode, DateTime date)
         {
-            await using var context = new ApplicationDbContext();
+            using var scope = _scopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var exchangeRate = _memoryCache.Get<ExchangeRateEntity>($"{currencyCode}-{date.Date.ToShortDateString()}");
             if (exchangeRate == null)
             {
@@ -45,7 +50,8 @@ namespace Database.DataAccess
 
         public async Task<int> SaveRate(ExchangeRateEntity exchangeRate)
         {
-            await using var context = new ApplicationDbContext();
+            using var scope = _scopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             await context.AddAsync(exchangeRate);
             _memoryCache.Set($"{exchangeRate.Code}-{exchangeRate.Date.Date.ToShortDateString()}", exchangeRate,
                 TimeSpan.FromMinutes(2));

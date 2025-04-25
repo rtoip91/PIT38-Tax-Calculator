@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Database
 {
-    internal sealed class ApplicationDbContext : DbContext
+    public sealed class ApplicationDbContext : DbContext
     {
         public DbSet<ExchangeRateEntity> ExchangeRates { get; set; }
         public DbSet<FileEntity> FileEntities { get; set; }
@@ -22,10 +22,6 @@ namespace Database
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(@"Host=localhost;Username=postgres;Password=password;Database=postgres");
-        }
 
         internal void MigrateDatabase()
         {

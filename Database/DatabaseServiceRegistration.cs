@@ -9,10 +9,6 @@ namespace Database
     {
         public static void RegisterServices(IServiceCollection services)
         {
-            using ( var dbContext = new ApplicationDbContext())
-            {
-                dbContext.MigrateDatabase();
-            }
             services.AddTransient<IExchangeRatesDataAccess, ExchangeRatesDataAccess>();
             services.AddTransient<ICfdEntityDataAccess, CfdEntityDataAccess>();
             services.AddTransient<IPurchasedCryptoEntityDataAccess, PurchasedCryptoEntityDataAccess>();
@@ -23,7 +19,7 @@ namespace Database
             services.AddTransient<IDividendsDataAccess, DividendsDataAccess>();
             services.AddTransient<IDividendCalculationsDataAccess, DividendCalculationsDataAccess>();
             services.AddTransient<IIncomeByCountryDataAccess, IncomeByCountryDataAccess>();
-            services.AddTransient<IFileDataAccess, FileDataAccess>();
+            services.AddScoped<IFileDataAccess, FileDataAccess>();
             services.AddScoped<IDataRepository, DataRepository>();
         }
     }
