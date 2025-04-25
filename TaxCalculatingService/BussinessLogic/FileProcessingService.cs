@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TaxCalculatingService.Interfaces;
 
@@ -8,11 +9,11 @@ namespace TaxCalculatingService.BussinessLogic;
 
 internal sealed class FileProcessingService : BackgroundService
 {
-    private readonly IFileProcessor _fileProcessor;
+    private readonly IServiceScopeFactory _scopeFactory;
 
-    public FileProcessingService(IFileProcessor fileProcessor)
+    public FileProcessingService(IServiceScopeFactory scopeFactory)
     {
-        _fileProcessor = fileProcessor;
+       _scopeFactory = scopeFactory;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -23,7 +24,9 @@ internal sealed class FileProcessingService : BackgroundService
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                await _fileProcessor.ProcessFiles(stoppingToken);
+                using var scope = _scopeFactory.CreateScope();
+                var fileProcessor = scope.ServiceProvider.GetRequiredService<IFileProcessor>();
+                await fileProcessor.ProcessFiles(stoppingToken);
                 await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
             }
         }
