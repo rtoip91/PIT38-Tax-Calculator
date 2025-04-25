@@ -24,7 +24,7 @@ namespace ExcelReader
 
         public async Task<ExtractedDataDto> ExtractDataFromExcel(MemoryStream fileContent)
         {
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.License.SetNonCommercialPersonal("Rtoip91"); 
 
             try
             {

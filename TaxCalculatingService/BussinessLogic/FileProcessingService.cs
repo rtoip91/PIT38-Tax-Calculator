@@ -21,13 +21,13 @@ internal sealed class FileProcessingService : BackgroundService
         try
         {
             await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
-
+            
             while (!stoppingToken.IsCancellationRequested)
             {
                 using var scope = _scopeFactory.CreateScope();
                 var fileProcessor = scope.ServiceProvider.GetRequiredService<IFileProcessor>();
                 await fileProcessor.ProcessFiles(stoppingToken);
-                await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+                await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
             }
         }
         catch (TaskCanceledException)

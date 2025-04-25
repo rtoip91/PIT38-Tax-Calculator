@@ -4,29 +4,31 @@ using System.Threading.Tasks;
 using Database.DataAccess.Interfaces;
 using Database.Entities.Database;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Database.DataAccess
 {
     public sealed class ExchangeRatesDataAccess : IExchangeRatesDataAccess
     {
         private readonly IMemoryCache _memoryCache;
-        private readonly ApplicationDbContext _context;
-
-        public ExchangeRatesDataAccess(IMemoryCache memoryCache, ApplicationDbContext context)
+        private readonly IServiceScopeFactory _scopeFactory;
+        public ExchangeRatesDataAccess(IMemoryCache memoryCache, IServiceScopeFactory scopeFactory)
         {
-            _context = context;
+           
             _memoryCache = memoryCache;
+            _scopeFactory = scopeFactory;
         }
         
 
         public async Task<ExchangeRateEntity> GetRate(string currencyCode, DateTime date)
         {
-           
+            using var scope = _scopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
             var exchangeRate = _memoryCache.Get<ExchangeRateEntity>($"{currencyCode}-{date.Date.ToShortDateString()}");
             if (exchangeRate == null)
             {
                 exchangeRate =
-                    _context.ExchangeRates.FirstOrDefault(rate =>
+                    context.ExchangeRates.FirstOrDefault(rate =>
                         rate.Code == currencyCode && rate.Date.Date == date.Date);
                 if (exchangeRate != null)
                 {
@@ -48,10 +50,12 @@ namespace Database.DataAccess
 
         public async Task<int> SaveRate(ExchangeRateEntity exchangeRate)
         {
-            await _context.AddAsync(exchangeRate);
+            using var scope = _scopeFactory.CreateScope();
+            var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            await context.AddAsync(exchangeRate);
             _memoryCache.Set($"{exchangeRate.Code}-{exchangeRate.Date.Date.ToShortDateString()}", exchangeRate,
                 TimeSpan.FromMinutes(2));
-            return await _context.SaveChangesAsync();
+            return await context.SaveChangesAsync();
         }
     }
 }

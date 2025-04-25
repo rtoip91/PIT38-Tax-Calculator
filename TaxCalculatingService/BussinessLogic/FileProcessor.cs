@@ -61,7 +61,6 @@ internal sealed class FileProcessor : IFileProcessor
             return;
         }
 
-
         var numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();
 
         if (numberOfOperations == 0)

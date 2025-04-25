@@ -12,6 +12,7 @@ builder.Services.RegisterApplicationServices();
 var logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Override("System.Net.Http.HttpClient", Serilog.Events.LogEventLevel.Warning)
+    .MinimumLevel.Override("Microsoft.EntityFrameworkCore.Database.Command", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Information()
     .WriteTo.Console()
     .WriteTo.File("../logs/log.txt", rollingInterval: RollingInterval.Day)
