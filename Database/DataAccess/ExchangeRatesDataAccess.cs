@@ -10,20 +10,23 @@ namespace Database.DataAccess
     public sealed class ExchangeRatesDataAccess : IExchangeRatesDataAccess
     {
         private readonly IMemoryCache _memoryCache;
+        private readonly ApplicationDbContext _context;
 
-        public ExchangeRatesDataAccess(IMemoryCache memoryCache)
+        public ExchangeRatesDataAccess(IMemoryCache memoryCache, ApplicationDbContext context)
         {
+            _context = context;
             _memoryCache = memoryCache;
         }
+        
 
         public async Task<ExchangeRateEntity> GetRate(string currencyCode, DateTime date)
         {
-            await using var context = new ApplicationDbContext();
+           
             var exchangeRate = _memoryCache.Get<ExchangeRateEntity>($"{currencyCode}-{date.Date.ToShortDateString()}");
             if (exchangeRate == null)
             {
                 exchangeRate =
-                    context.ExchangeRates.FirstOrDefault(rate =>
+                    _context.ExchangeRates.FirstOrDefault(rate =>
                         rate.Code == currencyCode && rate.Date.Date == date.Date);
                 if (exchangeRate != null)
                 {
@@ -45,11 +48,10 @@ namespace Database.DataAccess
 
         public async Task<int> SaveRate(ExchangeRateEntity exchangeRate)
         {
-            await using var context = new ApplicationDbContext();
-            await context.AddAsync(exchangeRate);
+            await _context.AddAsync(exchangeRate);
             _memoryCache.Set($"{exchangeRate.Code}-{exchangeRate.Date.Date.ToShortDateString()}", exchangeRate,
                 TimeSpan.FromMinutes(2));
-            return await context.SaveChangesAsync();
+            return await _context.SaveChangesAsync();
         }
     }
 }
