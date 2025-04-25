@@ -149,12 +149,12 @@ public sealed class FileDataAccess : IFileDataAccess
     {
         await using var context = new ApplicationDbContext();
 
-        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.InputFileContent).FirstOrDefault(f => f.CalculationResultFileName == fileName);
+        FileEntity fileEntity = context.FileEntities.Include(fileEntity => fileEntity.CalculationResultFileContent).FirstOrDefault(f => f.CalculationResultFileName == fileName);
         if (fileEntity == null) return false;
 
         fileEntity.Status = FileStatus.Deleted;
         fileEntity.StatusChangeDate = DateTime.UtcNow;
-        context.Remove(fileEntity.InputFileContent);
+        context.Remove(fileEntity.CalculationResultFileContent);
 
         await context.SaveChangesAsync();
         return true;

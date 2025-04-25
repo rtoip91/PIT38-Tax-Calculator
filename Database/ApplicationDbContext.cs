@@ -22,10 +22,6 @@ namespace Database
             AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseNpgsql(@"Host=localhost;Username=postgres;Password=password;Database=postgres");
-        }
 
         internal void MigrateDatabase()
         {

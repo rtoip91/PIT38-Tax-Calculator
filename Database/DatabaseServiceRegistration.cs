@@ -9,6 +9,8 @@ namespace Database
     {
         public static void RegisterServices(IServiceCollection services)
         {
+            
+            
             using ( var dbContext = new ApplicationDbContext())
             {
                 dbContext.MigrateDatabase();

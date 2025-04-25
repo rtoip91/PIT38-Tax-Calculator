@@ -1,11 +1,13 @@
+using Database;
 using Serilog;
 using WebApi.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-
+builder.AddNpgsqlDbContext<ApplicationDbContext>("postgresdb");
 // Add services to the container.
 builder.Services.AddControllers();
 builder.Services.RegisterApplicationServices();
+
 
 var logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft.AspNetCore", Serilog.Events.LogEventLevel.Warning)
