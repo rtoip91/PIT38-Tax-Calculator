@@ -5,6 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <IsAspireSharedProject>true</IsAspireSharedProject>
+        <LangVersion>13</LangVersion>
     </PropertyGroup>
 
     <ItemGroup>
