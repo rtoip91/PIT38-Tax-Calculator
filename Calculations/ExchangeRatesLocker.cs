@@ -1,11 +1,10 @@
 ﻿using Calculations.Interfaces;
-using System.Collections.Generic;
 
 namespace Calculations
 {
     internal class ExchangeRatesLocker : IExchangeRatesLocker
     {
-        private readonly Dictionary<DateTime, SemaphoreSlim> _lockers = new Dictionary<DateTime, SemaphoreSlim>();
+        private readonly Dictionary<DateTime, SemaphoreSlim> _lockers = new();
 
         public SemaphoreSlim GetLocker(DateTime exchangeRateDate)
         {
@@ -28,6 +27,7 @@ namespace Calculations
                 {
                     locker.Value.Dispose();
                 }
+
                 _lockers.Clear();
             }
         }

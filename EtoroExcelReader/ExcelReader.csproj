@@ -16,4 +16,8 @@
     <ProjectReference Include="..\Database\Database.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Dictionaries\v2025\" />
+  </ItemGroup>
+
 </Project>
