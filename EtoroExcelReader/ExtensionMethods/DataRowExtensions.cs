@@ -70,6 +70,17 @@ namespace ExcelReader.ExtensionMethods
             {
                 return TransactionType.Short;
             }
+            
+            if (value.StartsWith("Long", StringComparison.Ordinal))
+            {
+                return TransactionType.Long;
+            }
+            
+            if (value.StartsWith("Short", StringComparison.Ordinal))
+            {
+                return TransactionType.Short;
+            }
+            
 
             return TransactionType.Long;
         }
