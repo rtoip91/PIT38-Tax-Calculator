@@ -12,66 +12,94 @@ namespace ExcelReader.ExtensionMethods
 
         internal static decimal ToDecimal(this object item)
         {
-            var value = item.ToString();
-            if (string.IsNullOrWhiteSpace(value))
+            if (item is null)
+                return 0;
+
+            ReadOnlySpan<char> value = item.ToString();
+            if (value.IsEmpty || value.IsWhiteSpace())
             {
                 return 0;
             }
 
-            value = value.TrimEnd('%');
+            if (value.EndsWith('%'))
+            {
+                value = value.Slice(0, value.Length - 1);
+            }
+
             return decimal.Parse(value, ChooseProvider(value));
         }
 
         internal static string ToCountryName(this object item)
         {
-            var value = item.ToString();
-            if (string.IsNullOrEmpty(value))
+            if (item is null)
+                return CyprusIsoCode;
+
+            ReadOnlySpan<char> value = item.ToString();
+            if (value.IsEmpty)
             {
                 return CyprusIsoCode;
             }
 
-            var isoString = value.Substring(0, 2);
+            string isoString = value.Slice(0, 2).ToString();
             try
             {
                 Country countryData = Country.List.First(c => c.TwoLetterCode == isoString);
                 return countryData.Name;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine($"Unsupported code {isoString}", isoString);
+                Console.WriteLine($"Unsupported code {isoString}");
                 throw;
             }
         }
 
         internal static TransactionType ToTransactionType(this object item)
         {
-            var value = item.ToString().AsSpan();
-            if (value == null) return TransactionType.Long;
-            if (value.Length >= 8 && value.Slice(0, 8).Equals("Sprzedaj", StringComparison.Ordinal))
+            if (item is null)
+                return TransactionType.Long;
+
+            ReadOnlySpan<char> value = item.ToString();
+            if (value.IsEmpty) return TransactionType.Long;
+
+            if (value.StartsWith("Sprzedaj", StringComparison.Ordinal))
             {
                 return TransactionType.Short;
             }
 
-            if (value.Length >= 4 && value.Slice(0, 4).Equals("Sell", StringComparison.Ordinal))
+            if (value.StartsWith("Sell", StringComparison.Ordinal))
             {
                 return TransactionType.Short;
             }
+            
+            if (value.StartsWith("Long", StringComparison.Ordinal))
+            {
+                return TransactionType.Long;
+            }
+            
+            if (value.StartsWith("Short", StringComparison.Ordinal))
+            {
+                return TransactionType.Short;
+            }
+            
 
             return TransactionType.Long;
         }
 
         internal static string OperationToString(this object item)
         {
+            if (item is null)
+                return string.Empty;
+
             string value = item.ToString();
+            var span = value.AsSpan();
 
-            if (value.AsSpan(0, 3).Equals("Buy", StringComparison.Ordinal))
+            if (span.StartsWith("Buy", StringComparison.Ordinal))
             {
-                value = value.Replace("Buy", "Kup");
+                value = "Kup" + value.Substring(3);
             }
-
-            if (value.AsSpan(0, 4).Equals("Sell", StringComparison.Ordinal))
+            else if (span.StartsWith("Sell", StringComparison.Ordinal))
             {
-                value = value.Replace("Sell", "Sprzedaj");
+                value = "Sprzedaj" + value.Substring(4);
             }
 
             return value;
@@ -79,8 +107,11 @@ namespace ExcelReader.ExtensionMethods
 
         internal static int ToInt(this object item)
         {
-            string value = item.ToString();
-            if (string.IsNullOrWhiteSpace(value))
+            if (item is null)
+                return 0;
+
+            ReadOnlySpan<char> value = item.ToString();
+            if (value.IsEmpty || value.IsWhiteSpace())
             {
                 return 0;
             }
@@ -90,8 +121,11 @@ namespace ExcelReader.ExtensionMethods
 
         internal static long ToLong(this object item)
         {
-            string value = item.ToString();
-            if (string.IsNullOrWhiteSpace(value))
+            if (item is null)
+                return 0;
+
+            ReadOnlySpan<char> value = item.ToString();
+            if (value.IsEmpty || value.IsWhiteSpace())
             {
                 return 0;
             }
@@ -101,20 +135,16 @@ namespace ExcelReader.ExtensionMethods
 
         internal static DateTime ToDate(this object item)
         {
+            if (item is null)
+                throw new ArgumentNullException(nameof(item));
+
             string value = item.ToString();
             return DateTime.Parse(value, new CultureInfo("pl-PL"));
         }
 
-        private static CultureInfo ChooseProvider(string value)
+        private static CultureInfo ChooseProvider(ReadOnlySpan<char> value)
         {
-            if (value.Contains('.'))
-            {
-                return CultureInfo.InvariantCulture;
-            }
-            else
-            {
-                return new CultureInfo("pl-PL");
-            }
+            return value.Contains('.') ? CultureInfo.InvariantCulture : new CultureInfo("pl-PL");
         }
     }
 }

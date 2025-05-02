@@ -22,6 +22,8 @@ internal sealed class ConverterFactory : IConverterFactory
             FileVersion.V2022 => new V2022Converter(),
             FileVersion.V2021A => new V2021Converter(),
             FileVersion.V2023 => new V2023Converter(),
+            FileVersion.V2025 => new V2025Converter(),
+
             _ => throw new ArgumentException("Unsupported version")
         };
     }

@@ -76,8 +76,15 @@ internal sealed class FileProcessor : IFileProcessor
 
         do
         {
+            var parallelOptions = new ParallelOptions
+            {
+                MaxDegreeOfParallelism = 6,
+                CancellationToken = token,
+                TaskScheduler = TaskScheduler.Default
+            };
+
             IList<Guid> operations = await _fileDataAccess.GetOperationsToProcessAsync();
-            await Parallel.ForEachAsync(operations, token,
+            await Parallel.ForEachAsync(operations, parallelOptions,
                 async (operation, cancellationToken) => { await ProcessSingleFile(operation, cancellationToken); });
 
             numberOfOperations = await _fileDataAccess.GetOperationsToProcessNumberAsync();

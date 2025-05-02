@@ -16,4 +16,5 @@ internal static class ServiceExtensions
         ExcelReaderServiceRegistration.RegisterServices(serviceCollection);
         serviceCollection.AddTransient<IFileUploadHelper, FileUploadHelper>();
     }
+    
 }
