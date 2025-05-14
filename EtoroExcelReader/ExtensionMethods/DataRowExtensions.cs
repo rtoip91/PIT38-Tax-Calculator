@@ -16,7 +16,7 @@ namespace ExcelReader.ExtensionMethods
                 return 0;
 
             ReadOnlySpan<char> value = item.ToString();
-            if (value.IsEmpty || value.IsWhiteSpace())
+            if (value.IsEmpty || value.IsWhiteSpace()|| value is "-")
             {
                 return 0;
             }
