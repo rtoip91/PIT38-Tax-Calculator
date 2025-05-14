@@ -20,7 +20,7 @@ public sealed class V2025ExcelData : IExcelData
             "Data otwarcia",
             "Data zamknięcia",
             "Dźwignia",
-            "Opłaty w spreadzie (USD)",
+            "Opłaty za spreadzie (USD)",
             "Spread rynkowy (USD)",
             "Zysk (USD)",
             "Kurs walutowy przy otwarciu (USD)",

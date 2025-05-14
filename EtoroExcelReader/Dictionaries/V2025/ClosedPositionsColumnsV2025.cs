@@ -10,6 +10,8 @@ internal static class ClosedPositionsColumnsV2025
     internal const int OpeningDate = 5;
     internal const int ClosingDate = 6;
     internal const int Leverage = 7;
+    internal const int OpeningConversionRate = 11;
+    internal const int ClosingConversionRate = 12;
     internal const int OpeningRate = 13;
     internal const int ClosingRate = 14;
     internal const int IsReal = 19;

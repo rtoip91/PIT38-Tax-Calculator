@@ -10,14 +10,27 @@ public sealed class V2025Converter : IRowToEntityConverter
 {
     public ClosedPositionEntity ToClosedPositionEntity(DataRow row)
     {
-        ClosedPositionEntity closedPositionEntity = new ClosedPositionEntity
+        var openingConversionRate = row[ClosedPositionsColumnsV2025.OpeningConversionRate].ToDecimal();
+        var closingConversionRate = row[ClosedPositionsColumnsV2025.ClosingConversionRate].ToDecimal();
+        
+        var openingRate = row[ClosedPositionsColumnsV2025.OpeningRate].ToDecimal();
+        var closingRate = row[ClosedPositionsColumnsV2025.ClosingRate].ToDecimal();
+        if (openingConversionRate != 0)
+        {
+            openingRate *= openingConversionRate;
+        }
+        if (closingConversionRate != 0)
+        {
+            closingRate *= closingConversionRate;
+        }
+        var closedPositionEntity = new ClosedPositionEntity
         {
             PositionId = row[ClosedPositionsColumnsV2025.PositionId].ToLong(),
             TransactionType = row[ClosedPositionsColumnsV2025.OperationType].ToTransactionType(),
             Operation = row[ClosedPositionsColumnsV2025.Operation].OperationToString(),
             Amount = row[ClosedPositionsColumnsV2025.Amount].ToDecimal(),
-            OpeningRate = row[ClosedPositionsColumnsV2025.OpeningRate].ToDecimal(),
-            ClosingRate = row[ClosedPositionsColumnsV2025.ClosingRate].ToDecimal(),
+            OpeningRate = openingRate,
+            ClosingRate = closingRate,
             Leverage = row[ClosedPositionsColumnsV2025.Leverage].ToInt(),
             OpeningDate = row[ClosedPositionsColumnsV2025.OpeningDate].ToDate(),
             ClosingDate = row[ClosedPositionsColumnsV2025.ClosingDate].ToDate(),
